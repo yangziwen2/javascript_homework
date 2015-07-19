@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>手风琴效果 - 妙味课堂 - www.miaov.com</title>
+<link href="miaov_style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+window.onload = function(){
+	var oShowDiv = document.getElementById('show');
+	var oUl = document.getElementsByTagName('ul')[0];
+	var oLiArr = document.getElementsByTagName('li');
+	window.iPicLiMaxWidth = 550;
+	window.iPicLiMinWidth = 22;
+	for(var i=0; i<oLiArr.length; i++){
+		oLiArr[i].index = i;
+		oLiArr[i].timeSpan = 10;
+		oLiArr[i].onmouseover = function(){
+			startMove(this, {timer:'timer0', width:iPicLiMaxWidth});
+			for(var j=0; j<oLiArr.length; j++){
+				if(j==this.index){
+					continue;	
+				}
+				startMove(oLiArr[j], {timer:'timer0', width:iPicLiMinWidth});
+			}
+		}
+	}
+}
+
+function calculateLastWidth(oLiArr){
+	var previousTotalWidth = 0;
+	for(var i=0; i<oLiArr.length-1; i++){
+		previousTotalWidth += parseInt(getStyle(oLiArr[i],'width'));
+	}
+	var theLastWidth = iPicLiMaxWidth + iPicMinWidth*(oLiArr.length-1) - previousTotalWidth;
+	return theLastWidth;
+}
+
+function calculateWidthOffset(oLiArr){
+	var currentTotalWidth = 0;
+	var index = 0;
+	var width = 0;
+	for(var i=0; i<oLiArr.length -1; i++){
+		var currentWidth = parseInt(getStyle(oLiArr[i],'width'));
+		if(currentWidth > width){
+			width = currentWidth;
+			index = i;
+		}
+		currentTotalWidth += currentWidth;
+	}
+	var widthOffset = iPicLiMaxWidth + iPicMinWidth*oLiArr.length -currentTotalWidth;
+	var widthOffsetResult = {offset:widthOffset, index:index};
+	return widthOffsetResult;
+}
+
+function startMove(obj, attrs){
+	clearInterval(obj[attrs.timer]);
+	obj[attrs.timer] = setInterval(function(){
+		doMove(obj, attrs);							 
+	}, 30);
+}
+
+function doMove(obj, attrs){
+	var isFinished = true;
+	for(var attr in attrs){
+		if(attr == 'id' || attr == 'tagName' || attr == 'tagIndex'){
+			continue;	
+		}
+		if(attr == 'timer'){
+			continue;	
+		}
+		if(typeof attrs[attr] == 'object'){
+			var subAttrs = attrs[attr];
+			var subObj = subAttrs.id? obj.getElementById(subAttrs.id): obj.getElementsByTagName(subAttrs.tagName)[subAttrs.tagIndex];
+			subObj.timeSpan = obj.timeSpan;
+			doMove(subObj, subAttrs);
+			continue;
+		}
+		var iTarget = attrs[attr];
+		var iCur=0;
+		if(attr=='opacity'){
+			iCur=parseInt(parseFloat(getStyle(obj, 'opacity'))*100);
+		}else{
+			iCur=parseInt(getStyle(obj, attr));
+		}
+		var iSpeed=(iTarget-iCur)/obj.timeSpan;
+		iSpeed=iSpeed>0?Math.ceil(iSpeed):Math.floor(iSpeed);
+		if(attr=='opacity'){
+			obj.style.filter="alpha(opacity:"+(iCur+iSpeed)+")";
+			obj.style.opacity=(iCur+iSpeed)/100;
+		}else{
+			obj.style[attr]=iCur+iSpeed+'px';
+		}
+		isFinished = isFinished && (iCur == iTarget);
+	}
+	if(isFinished){
+		clearInterval(obj[attr.timer]);	
+	}
+}
+
+function getStyle(obj, attr){
+	if(obj.currentStyle){
+		return obj.currentStyle[attr];
+	}else{
+		return getComputedStyle(obj, false)[attr];	
+	}
+}
+</script>
+</head>
+
+<body>
+
+<div id="show">
+    <ul>
+        <li class="active">
+            <span class="bg0">这是第一个</span>
+            <img src="images/t103_27.jpg" />
+        </li>
+        <li>
+            <span class="bg1">这是第二个</span>
+            <img src="images/t103_26.jpg" />
+        </li>
+        <li>
+            <span class="bg2">这是第三个</span>
+            <img src="images/t103_29.jpg" />
+        </li>
+        <li>
+            <span class="bg3">这是第四个</span>
+            <img src="images/t103_28.jpg" />
+        </li>
+        <li>
+            <span class="bg4">这是第五个</span>
+            <img src="images/tlh_29.jpg" />
+        </li>
+        <li>
+            <span class="bg5">这是第六个</span>
+            <img src="images/tlh_06.jpg" />
+        </li>
+    </ul>
+</div>
+
+</body>
+</html>

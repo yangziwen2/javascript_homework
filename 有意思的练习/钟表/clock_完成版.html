@@ -1,0 +1,177 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+#canvas {width:600px; height:600px; position:relative; margin:10px auto 0px; background: url(images/plate.jpg) no-repeat 0 0;}
+div.fingerDiv {position:absolute; width:600px; height:600px;}
+img.finger {margin-left:285px;}
+</style>
+<script type="text/javascript" src="js/raphael.js"></script>
+<script type="text/javascript">
+window.onload = function(){
+	var oClock = '\v' == 'v' ? initIEClock(): initStandardClock();
+	oClock.start();
+	var oStartBtn = document.getElementById('startBtn');
+	var oStopBtn = document.getElementById('stopBtn');
+	oStartBtn.onclick = function(){
+		oClock.start();	
+	};
+	oStopBtn.onclick = function(){
+		oClock.stop();
+	};
+}
+
+function initStandardClock(){
+	var oClock = {};
+	oClock.secondFinger =initFinger('secondDiv');
+	oClock.minuteFinger = initFinger('minuteDiv');
+	oClock.hourFinger = initFinger('hourDiv');
+	oClock.run = function(timeSpan){
+		var oDate = new Date();
+		this.moveSecondFinger(oDate, timeSpan);
+		this.moveMinuteFinger(oDate, timeSpan);
+		this.moveHourFinger(oDate, timeSpan);
+	};
+	var secondCount = 0;
+	var minuteCount = 0;
+	var hourCount = 0;
+	oClock.moveSecondFinger = function(oDate, timeSpan){
+		var angle = oDate.getSeconds() * 6;
+		secondCount += angle? 0: 1;
+		moveFinger(this.secondFinger, secondCount*360 + angle, timeSpan);
+	};
+	oClock.moveMinuteFinger = function(oDate, timeSpan){
+		var angle = oDate.getMinutes() * 6 + oDate.getSeconds()/10;	
+		minuteCount += angle? 0: 1;
+		moveFinger(this.minuteFinger, minuteCount*360 + angle, timeSpan);
+	};
+	oClock.moveHourFinger = function(oDate, timeSpan){
+		var angle = oDate.getHours() * 30 + oDate.getMinutes()/2;
+		moveFinger(this.hourFinger, hourCount*360 + angle, timeSpan);
+	};
+	oClock.run = function(timeSpan){
+		var oDate = new Date();
+		this.moveSecondFinger(oDate, timeSpan);
+		this.moveMinuteFinger(oDate, timeSpan);
+		this.moveHourFinger(oDate, timeSpan);
+	};
+	oClock.start = function(){
+		clearInterval(oClock.timer);
+		oClock.timer = setInterval(function(){
+			oClock.run(500);
+		}, 1000);
+		oClock.run(0);
+	};
+	oClock.stop = function(){
+		clearInterval(oClock.timer);
+	};
+	return oClock;
+	
+	function setRotateStyle(oFinger, angle){
+		var styleStr = '-moz-transform:rotate('+angle+'deg); ';
+		styleStr += '-webkit-transform:rotate('+angle+'deg);';
+		oFinger.style.cssText = styleStr;
+		oFinger.angle = angle;
+	}
+	function initFinger(fingerId){
+		var finger = document.getElementById(fingerId);
+		finger.angle = 0;
+		return finger;
+	}
+	function moveFinger(oFinger, targetAngle, timeSpan){
+		var times = 20;
+		var timeInterval = parseInt(timeSpan/times);
+		var startAngle = oFinger.angle;
+		var speed = (targetAngle - startAngle)/times;
+		clearInterval(oFinger.timer);
+		oFinger.timer = setInterval(function(){
+			var nextAngle = oFinger.angle + speed;
+			nextAngle = nextAngle > targetAngle? targetAngle: nextAngle;
+			setRotateStyle(oFinger, nextAngle);
+			if(nextAngle == targetAngle){
+				clearInterval(oFinger.timer);	
+			}
+		}, timeInterval);
+	}
+}
+
+function initIEClock(){
+	var oClock = {};
+	oClock.secondFinger = initFinger('secondDiv', 'secondFinger');
+	oClock.minuteFinger = initFinger('minuteDiv', 'minuteFinger');
+	oClock.hourFinger = initFinger('hourDiv', 'hourFinger');
+	var secondCount = 0;
+	var minuteCount = 0;
+	var hourCount = 0;
+	oClock.getSecondAngle = function(oDate){
+		var angle = oDate.getSeconds()*6;
+		secondCount += angle? 0: 1;
+		return secondCount * 360 + angle;
+	};
+	oClock.getMinuteAngle = function(oDate){
+		var angle = oDate.getMinutes()*6 + oDate.getSeconds()/10;
+		minuteCount += angle? 0: 1;
+		return minuteCount * 360 + angle;
+	};
+	oClock.getHourAngle = function(oDate){
+		var angle = oDate.getHours()*30 + oDate.getMinutes()/2;
+		hourCount += angle? 0: 1;
+		return hourCount * 360 + angle;
+	};
+	oClock.moveSecondFinger = function(oDate, timeSpan){
+		this.secondFinger.animate({rotation: this.getSecondAngle(oDate)}, timeSpan, '>');
+	};
+	oClock.moveMinuteFinger = function(oDate, timeSpan){
+		this.minuteFinger.animate({rotation: this.getMinuteAngle(oDate)}, timeSpan);
+	};
+	oClock.moveHourFinger = function(oDate, timeSpan){
+		this.hourFinger.animate({rotation: this.getHourAngle(oDate)}, timeSpan);
+	};
+	oClock.run = function(timeSpan){
+		var oDate = new Date();
+		this.moveSecondFinger(oDate, timeSpan);
+		this.moveMinuteFinger(oDate, timeSpan);
+		this.moveHourFinger(oDate, timeSpan);
+	};
+	oClock.start = function(){
+		clearInterval(oClock.timer);
+		oClock.timer = setInterval(function(){
+			oClock.run(800);
+		}, 1000);
+		oClock.run(0);
+	};
+	oClock.stop = function(){
+		clearInterval(oClock.timer);
+	};
+	return oClock;
+	function initFinger(fingerDivId, fingerId){
+		var oImg = document.getElementById(fingerId);
+		var oDiv = document.getElementById(fingerDivId);
+		var R = Raphael(fingerDivId, oDiv.offsetWidth, oDiv.offsetHeight);
+		var iLeft = parseInt((oDiv.offsetWidth - oImg.offsetWidth)/2);
+		//var iTop =  parseInt((oDiv.offsetHeight - oImg.offsetHeight)/2);	//这句在ie6下有问题
+		var img = R.image(oImg.src, iLeft, 0, oImg.offsetWidth, oImg.offsetHeight);
+		oImg.parentNode.removeChild(oImg);	//如果不删掉oImg，ie6下会有问题。删掉之后ie6下的png透明的问题也就自然消除了，因为剩下的是矢量图了。
+		return img;
+	}
+}
+</script>
+</head>
+<body>
+<input type="button" value="运行" id="startBtn" />
+<input type="button" value="暂停" id="stopBtn" />
+<div id="canvas">
+	<div id="hourDiv" class="fingerDiv">
+    	<img src="images/hourFinger.png" id="hourFinger" class="finger"/>
+    </div>
+    <div id="minuteDiv" class="fingerDiv">
+    	<img src="images/minuteFinger.png" id="minuteFinger" class="finger"/>
+    </div>
+    <div id="secondDiv" class="fingerDiv">
+    	<img src="images/secondeFinger.png" id="secondFinger" class="finger"/>
+    </div>
+</div>
+</body>
+</html>

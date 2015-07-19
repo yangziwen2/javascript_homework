@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style type="text/css">
+#op_tvplay_citybox{ width:382px; height:344px; background:#fff;border: 1px solid #8BA4D8; position:absolute; left:0; top:20px; display:none;}
+.op_tvplay_citytitle{  background: url(http://www.baidu.com/aladdin/img/tvplay/popup_title.gif) repeat scroll 0 0;color: #6688CC;font-size: 12px;font-weight: bold;height: 24px;line-height: 25px;padding-left: 7px; position:absolute; width:375px;}
+.op_tvplay_citytitle span{  background: url(http://www.baidu.com/aladdin/img/tvplay/popup_close.gif) no-repeat scroll 0 0;cursor: pointer; display:block;height: 12px; position: absolute;right: 4px;top: 6px;width: 12px;}
+#op_tvplay_city{width:372px; height:318px; overflow-y:auto; position:absolute; top:26px;padding-left:10px;}
+#op_tvplay_city td{ padding:3px 0; line-height:150%; vertical-align:top;}
+#op_tvplay_city .op_tvplay_cityheight{ font-weight:bold;padding:3px;font-size:12px;}
+#op_tvplay_city a{ margin-right:10px;white-space:nowrap; float:left;font-size:12px;}
+.op_tvplay_txt{ height:20px; font:13px/14px Arial;}
+#op_tvplay_click{position:relative;}
+#op_tvplay_click b{ color: #7a77c8;cursor: pointer;text-decoration: underline;  font-weight:normal;}
+#op_tvplay_click i{ font-size:10px;font-style: normal;color: #7a77c8;cursor:pointer;}
+#op_tvplay_shadow{ width:382px; height:344px; background:#000;position:absolute; left:5px; top:25px; opacity:0.2;filter:alpha(opacity:20);display:none;}
+</style>
+</head>
+
+<body>
+<div class="op_tvplay_txt">北京，今日共有17部电影正在上映，6部电影即将上映。<span id="op_tvplay_click"><span><b>切换城市</b><i>▼</i></span>
+<div id="op_tvplay_shadow"></div>
+<div id="op_tvplay_citybox">
+	<div class="op_tvplay_citytitle">城市列表<span></span></div>
+	<div id="op_tvplay_city">
+    </div>
+</div>
+</span></div>
+<script type="text/javascript">
+var cityBtn=document.getElementById("op_tvplay_click").children[0];
+		var citySha=document.getElementById("op_tvplay_shadow");
+		var cityBox=document.getElementById("op_tvplay_citybox");
+		var cityClose=cityBox.children[0].children[0];
+		var cityInfo = [
+			{
+				title: '热门城市',
+				items: ['北京|上海|深圳|广州|成都|武汉|杭州|重庆|南京|大连|天津|西安|沈阳|长春'],
+				separateLine: true
+			},
+			{
+				title: 'A',
+				items: ['安达|安康|安庆|鞍山|安顺|安阳']
+			},
+			{
+				title: 'B',
+				items: ['百色|白银|保定|宝鸡|保山|包头|巴彦淖尔|巴中|北海|北京|蚌埠|本溪|毕节|滨州']
+			},
+			{
+				title: 'C',
+				items: ['沧州|长春|常德|长乐|长沙|常熟|长治|常州|巢湖|潮州|承德|成都|澄迈县|郴州|赤壁|赤峰|池州|重庆|楚雄|滁州|慈溪']
+			},
+			{
+				title: 'D',
+				items: ['大丰|大理|大连|丹东|丹江口|丹阳|大庆|大同|达州|德阳|德州|迪庆|东莞|东台|东阳|东营|都江堰|都匀']
+			},
+			{
+				title: 'E',
+				items: ['鄂尔多斯|峨眉山|恩施|鄂州']
+			},
+			{
+				title: 'F',
+				items: ['丰城|奉化|佛山|抚顺|富阳|福州']
+			},
+			{
+				title: 'G',
+				items: ['盖州|赣州|高邮|格尔木|广汉|广州|贵港|桂林|贵阳']
+			},
+			{
+				title: 'H',
+				items: ['海安|海口|海门|海宁|海盐|邯郸|杭州|汉中|哈尔滨|鹤壁|合肥|衡阳|鹤山|河源|菏泽|贺州|呼和浩特|红河|洪湖|侯马|淮安|怀化|淮南|黄冈|黄山|黄石|惠州|虎林|葫芦岛|呼伦贝尔|湖州']
+			},
+			{
+				title: 'I',
+				items: ['伊犁']
+			},
+			{
+				title: 'J',
+				items: ['佳木斯|建德|江都|江门|江山|姜堰|江阴|江油|建阳|胶州|焦作|嘉兴|揭阳|吉林市|即墨|济南|晋城|景德镇|靖江|荆门|荆州|金华|济宁|晋江|金坛|缙云县|晋中|锦州|九江|酒泉|济源|句容']
+			},
+			{
+				title: 'K',
+				items: ['开封|凯里|喀什|昆明|昆山']
+			},
+			{
+				title: 'L',
+				items: ['莱阳|莱州|廊坊|兰溪|兰州|耒阳|冷水江|乐平|乐山|拉萨|涟源|连云港|聊城|利川|丽江|醴陵|临安|临沧|临海|临沂|丽水|六安|六盘水|浏阳|柳州|溧阳|龙口|陇南|龙泉|龙岩|娄底|漯河|洛阳|泸州']
+			},
+			{
+				title: 'M',
+				items: ['马鞍山|芒市|茂名|眉山|梅州|孟州|绵阳|绵竹|牡丹江']
+			},
+			{
+				title: 'N',
+				items: ['南安|南昌|南充|南京|南宁|南平|南通|南阳|讷河|内江|宁波|宁德']
+			},
+			{
+				title: 'P',
+				items: ['盘锦|攀枝花|蓬莱|平顶山|平度|平湖|萍乡|邳州|莆田|濮阳']
+			},
+			{
+				title: 'Q',
+				items: ['启东|青岛|清远|青州|秦皇岛|齐齐哈尔|泉州|曲靖|衢州']
+			},
+			{
+				title: 'R',
+				items: ['仁怀|日照|如皋|瑞安']
+			},
+			{
+				title: 'S',
+				items: ['三河|三门峡|三明|三亚|上海|商洛|商丘|上饶|上虞|尚志|汕头|汕尾|韶关|绍兴|邵阳|嵊州|沈阳|深圳|射阳|石河子|石家庄|石狮|十堰|石嘴山|寿光|沭阳|思茅|四平|绥化|遂宁|随州|宿迁|宿州|苏州']
+			},
+			{
+				title: 'T',
+				items: ['泰安|太仓|泰兴|太原|泰州|台州|唐山|滕州|天津|天水|通化|通辽|铜陵|铜仁|桐乡']
+			},
+			{
+				title: 'W',
+				items: ['潍坊|威海|渭南|温岭|温州|乌海|武汉|芜湖|吴江|乌兰浩特|乌鲁木齐|武威|无锡|梧州']
+			},
+			{
+				title: 'X',
+				items: ['厦门|西安|湘潭|湘西|湘乡|襄阳|咸宁|咸阳|西昌|兴城|邢台|兴义|西宁|新乡|信阳|新余|西双版纳|宣城|许昌|徐州']
+			},
+			{
+				title: 'Y',
+				items: ['延安|延边|盐城|阳江|扬中|扬州|烟台|宜宾|宜昌|宜春|银川|英德|营口|义乌|宜兴|益阳|仪征|永安|永康|岳阳|玉林|榆林|运城|云浮|玉溪|余姚|禹州']
+			},
+			{
+				title: 'Z',
+				items: ['枣庄|张家港|张家界|张家口|漳平|张掖|漳州|湛江|肇庆|招远|郑州|镇江|中山|周口|舟山|珠海|诸暨|驻马店|株洲|淄博|自贡|资阳|邹城|遵义']
+			}
+		];
+		//生成城市列表
+		function initCityList(cityInfo, renderTo){
+			var tempWrap = document.createElement('div');
+			tempWrap.innerHTML = '<table width="348" border="0" cellspacing="0" cellpadding="0"><tr style="display:none"></tr></table>';
+			var tbl = tempWrap.getElementsByTagName('table')[0];
+			var tb = tbl.tBodies[0];
+                        var cont = 0;
+			tb.removeChild(tb.childNodes[0]);
+			for(var i=0; i<cityInfo.length; i++){
+                                cont++;
+				var tr = document.createElement('tr');
+				var titleTd = document.createElement('td');
+				titleTd.innerHTML = cityInfo[i].title;
+				titleTd.className = "op_tvplay_cityheight";
+				var contentTd = document.createElement('td');
+				for(var j=0,b=cityInfo[i].items[0].split("|"),c=b.length; j<c; j++){
+					var name = b[j];
+					var a = document.createElement('a');
+					a.innerHTML = name;
+					a.href = 'http://www.baidu.com/s?wd=' + encodeURIComponent(name+"影讯")+'&ie=utf-8';
+					contentTd.appendChild(a);
+				}
+				if(cityInfo[i].separateLine){
+					var titleTr = document.createElement('tr');
+					titleTd.colSpan = "2";
+					titleTr.appendChild(titleTd);
+					contentTd.colSpan = "2";
+					titleTd.className="";
+					tb.appendChild(titleTr);
+				}else{
+					tr.appendChild(titleTd);
+				}
+					if(cont%2==0){
+					tr.style.background="#f7f7f7";
+				}
+				tr.appendChild(contentTd);
+				tb.appendChild(tr);
+			}
+			renderTo.appendChild(tempWrap.childNodes[0]);
+		};
+            initCityList(cityInfo, document.getElementById("op_tvplay_city"));
+            cityBtn.onclick=function(ev)
+            {
+                var event=ev||window.event;
+                event.cancelBubble=true;
+            	cityBox.style.display=citySha.style.display="block";	
+            };
+            cityClose.onclick=function(ev)
+            {
+                var event=ev||window.event;
+                event.cancelBubble=true;
+            	cityBox.style.display=citySha.style.display="none";		
+            }
+            cityBox.onclick=function(ev)
+            {
+                var event=ev||window.event;
+                event.cancelBubble=true;
+            }
+            document.onclick=function()
+			{
+				cityBox.style.display=citySha.style.display="none";	
+			}
+</script>
+</body>
+</html>

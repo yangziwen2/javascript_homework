@@ -1,0 +1,251 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+#wrap {width:480px; height:440px; border: 1px solid #333; margin: 50px auto 0px; position:relative; cursor: pointer}
+#wrap div {width:80px; height:40px; background:red; font-size: 24px; color: #FFF; text-align:center; line-height:40px;}
+#wrap div.inner {background: #999}
+</style>
+<script>
+(function(){
+	window.SphereLabel = function(center, radius, omega, theta, domObj){
+		this.center = center || {x: 400, y:400};
+		this.radius = radius || 100;
+		this.setTheta(typeof(theta) == 'number'? theta: Math.random()*180);
+		this.setOmega(typeof(omega) == 'number'? omega: Math.random()*360);
+		this.domObj = domObj;
+		this.domObj.style.position = 'absolute';
+		this.domObj.oriWidth = this.domObj.offsetWidth;
+		this.domObj.oriHeight = this.domObj.offsetHeight;
+		this.polarToCart();
+		this.locateDomObj();
+	};
+	SphereLabel.prototype = {
+		polarToCart: function(){
+			var radianTheta = SphereLabel.angleToRadian(this.theta);
+			var radianOmega = SphereLabel.angleToRadian(this.omega);
+			var hypotenuse = this.radius * Math.sin(radianTheta);
+			this.x = -hypotenuse * Math.cos(radianOmega);
+			this.y = -this.radius * Math.cos(radianTheta);
+			this.z = hypotenuse * Math.sin(radianOmega);
+		},
+		locateDomObj: function(){
+			this.polarToCart();
+			var opa = (this.z / this.radius + 1) * 0.45 + 0.1;
+			var factor = (opa + 2)/3;
+			var objWidth = this.domObj.oriWidth * factor;
+			var objHeight = this.domObj.oriHeight * factor;
+			with(this.domObj.style){
+				width = objWidth + 'px';
+				height = objHeight + 'px';
+				left = this.center.x + parseInt(this.x - objWidth/2) + 'px';
+				top = this.center.y + parseInt(this.y - objHeight/2) + 'px';
+				opacity = opa;
+				filter = 'alpha(opacity:' + parseInt((opa*100)) + ')';
+				lineHeight = objHeight + 'px';
+				zIndex = parseInt(10000+10000*this.z);
+			}
+		},
+		setTheta: function(theta){
+			theta = Math.abs((theta+90)%90) > 0.001? theta: theta + 0.01;	//防止 tan(90);
+			this.theta = theta;
+		},
+		setOmega: function(omega){
+			//omega->xLeft开始为0 thetaV->xLeft开始为0
+			//omegaV->yTop开始为0 theta->yTop开始为0
+			//tan(omegaV) = sin(omega) * tan(theta);
+			//sin(thetaV) = cos(theta) / cos(omegaV)
+			/*浏览器坐标的手性与标准笛卡尔坐标的有差别
+			（除非想象从显示器背面看屏幕，并假想z-index取负值），
+			因此算法写的很烂，应该还可以大幅简化。
+			*/
+			this.omega = (omega + 360) % 360;
+			this.omegaV = SphereLabel.radianToAngle(Math.atan(
+				Math.sin(SphereLabel.angleToRadian(this.omega))
+				* Math.tan(SphereLabel.angleToRadian(this.theta))
+			));
+			this.omegaV = Math.abs((this.omegaV + 360)%90) > 0.001? this.omegaV: this.omegaV + 0.01;	//防止 tan(90);
+			this.thetaV = SphereLabel.radianToAngle(Math.asin(
+				Math.cos(SphereLabel.angleToRadian(this.theta)) 
+				/ Math.cos(SphereLabel.angleToRadian(this.omegaV))
+			));
+			this.thetaV = Math.abs(this.thetaV);
+			var range = Math.floor(this.omega / 90);
+			if(range > 0 && range < 3){
+				this.thetaV = 180 - this.thetaV;
+			}
+			this.omegaV = Math.abs(this.omegaV);
+			if(this.theta<90){
+				if(this.omega > 180){
+					this.omegaV = 360 - this.omegaV;
+				}
+			}else{
+				if(this.omega < 180){
+					this.omegaV = 180 - this.omegaV;	
+				}else{
+					this.omegaV = 180 + this.omegaV;
+				}
+			}
+		},
+		setOmegaV: function(omegaV){
+			this.omegaV = (omegaV + 360) % 360;
+			this.theta = SphereLabel.radianToAngle(Math.acos(
+				Math.sin(SphereLabel.angleToRadian(this.thetaV)) 
+				* Math.cos(SphereLabel.angleToRadian(this.omegaV))
+			));
+			this.theta = (this.theta + 180) % 180;
+			this.omega = SphereLabel.radianToAngle(Math.asin(
+				Math.tan(SphereLabel.angleToRadian(this.omegaV)) 
+				/ Math.tan(SphereLabel.angleToRadian(this.theta))
+			));
+			this.omega = Math.abs(this.omega);
+			if(this.thetaV < 90){
+				if(this.omegaV > 180){
+					this.omega = 360 - this.omega;	
+				}
+			}else{
+				if(this.omegaV < 180){
+					this.omega = 180 - this.omega;	
+				}else{
+					this.omega = 180 + this.omega;	
+				}
+			}
+		},
+		moveOmegaAngle: function(deltaOmega, deltaOmegaV){
+			this.setOmegaV(this.omegaV + deltaOmegaV);
+			this.setOmega(this.omega + deltaOmega);
+			this.locateDomObj();
+		},
+		toString: function(){
+			var str = '';
+			str += 'omega:' + this.omega.toFixed(2);
+			str += '\ttheta:' + this.theta.toFixed(2);
+			str += '\tomegaV:' + this.omegaV.toFixed(2);
+			str += '\tthetaV:' + this.thetaV.toFixed(2);
+			return str;
+		}
+	}
+	SphereLabel.angleToRadian = function(angle){
+		return angle/180*Math.PI;
+	};
+	SphereLabel.radianToAngle = function(radian){
+		return radian/Math.PI*180;
+	};
+	SphereLabel.propotionalDistribute = function(omegaNum, thetaNum, startOmega){
+		typeof(startOmega) != 'number' && (startOmega = 0);
+		var omegaInterval = 360/omegaNum;
+		var thetaInterval1 = 180/(thetaNum + 1);
+		var thetaInterval2 = 180/thetaNum;
+		var angleArr = [];
+		for(var i=0; i<omegaNum; i++){
+			var thetaN = thetaNum - (i+1)%2;
+			for(var j=0; j<thetaN; j++){
+				var currentInterval = i%2? thetaInterval1: thetaInterval2;
+				angleArr.push({omega: i*omegaInterval + startOmega, theta: (j+1)*currentInterval});
+			}
+		}
+		return angleArr;
+	};
+})();
+
+window.onload = function(){
+	var angleArr = SphereLabel.propotionalDistribute(6, 4, 20);	//21 = 4 * 6 - 6 / 2
+	var oWrapDiv = document.getElementById('wrap');
+	var aDiv = oWrapDiv.getElementsByTagName('div');
+	var aSl = [];
+	for(var i=0; i<aDiv.length; i++){
+		aDiv[i].innerHTML = i;
+		var radius = aDiv[i].className == 'inner'? 100: 200;
+		aSl.push(new SphereLabel({x: 240, y: 220}, radius, angleArr[i].omega, angleArr[i].theta, aDiv[i], ''));
+	}
+	document.onmousedown = function(){
+		return false;	
+	}
+	var moveTimer = null;
+	oWrapDiv.onmousedown = function(event){
+		clearInterval(moveTimer)
+		event = event || window.event;
+		var oriX = event.clientX;
+		var oriY = event.clientY;
+		var currentPos = {x: event.clientX, y: event.clientY};
+		var lastPos = {x: event.clientX, y: event.clientY};
+		var timer = null;
+		document.onmousemove = function(event){
+			event = event || window.event;
+			clearTimeout(timer);
+			lastPos.x = currentPos.x;
+			lastPos.y = currentPos.y;
+			currentPos.x = event.clientX;
+			currentPos.y = event.clientY;
+			for(var i=0; i<aSl.length; i++){
+				var deltaOmega = (currentPos.x - lastPos.x)/3;
+				var deltaOmegaV = (currentPos.y - lastPos.y)/3;
+				aSl[i].moveOmegaAngle(deltaOmega, deltaOmegaV);
+			}
+			timer = setTimeout(function(){
+				lastPos.x = currentPos.x;
+				lastPos.y = currentPos.y;
+			}, 100);
+			return false;
+		};
+		document.onmouseup = function(){
+			clearTimeout(timer);
+			document.onmousemove = document.onmouseup = null;
+			if(lastPos.x == currentPos.x && lastPos.y == currentPos.y){
+				return false;
+			}
+			var speedX = (currentPos.x - lastPos.x)/3;
+			var speedY = (currentPos.y - lastPos.y)/3;
+			startMove();
+			return false;
+			function startMove(){
+				clearInterval(moveTimer);
+				moveTimer = setInterval(function(){
+					doMove();
+				}, 30);
+			}
+			function doMove(){
+				if(Math.abs(speedX) < 0.5 && Math.abs(speedY) < 0.5){
+					clearInterval(moveTimer);
+					return;
+				}
+				for(var i=0; i<aSl.length; i++){
+					aSl[i].moveOmegaAngle(speedX, speedY);
+				}
+				speedX *= 0.95;
+				speedY *= 0.95;
+			}
+		};
+		return false;
+	}
+}
+</script>
+</head>
+<body>
+<div id="wrap">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<html>
+<head>
+<style>
+body {cursor: default;}
+div {position:absolute; width:1px; height:1px; border:1px solid #333;background-color:#333;}
+</style>
+<script>
+window.onload = function(){
+	var originXPos = 0;
+	var originYPos = 0;
+	var currentXPos = 0;
+	var currentYPos = 0;
+	window.aDivArr = null;
+	document.getElementById('clearBtn').onclick = function(ev){
+		var oEvent = ev || event;
+		var oDoc = (document.documentElement || document.body);
+		var oDivArr = oDoc.getElementsByTagName('div');
+		for(var i=oDivArr.length-1; i>=0; i--){
+			oDoc.removeChild(oDivArr[i]);
+		}
+		oEvent.cancelBubble = true;
+	}
+	document.onmousedown = function(ev){
+		var oEvent = ev || event;
+		window.aDivArr = [];
+		originXPos = oEvent.clientX;
+		originYPos = oEvent.clientY;
+		currentXPos = oEvent.clientX;
+		currentYPos = oEvent.clientY;
+		document.onmousemove = function(ev){
+			var oEvent = ev || event;
+			currentXPos = oEvent.clientX;
+			currentYPos = oEvent.clientY;
+			var radius = Math.min(Math.abs(currentXPos-originXPos)/2, Math.abs(currentYPos-originYPos)/2);
+			radius = Math.ceil(radius);
+			var center = {
+				x: originXPos + radius*(currentXPos>originXPos? 1: -1),
+				y: originYPos + radius*(currentYPos>originYPos? 1: -1)
+			};
+			clearCircle(window.aDivArr);
+			window.aDivArr = createCircleDivs(center, radius);
+			drawCircle(window.aDivArr);
+		}
+		
+		document.onmouseup = function(){
+			document.onmousemove = null;
+			document.onmouseup = null;
+		}
+	}
+}
+
+function createCircleDivs(center, radius){
+	var aDivArr = [];
+	for(var i=1; i<=radius*4; i++){
+		var angle = i*1.6/radius;
+		var x = center.x + Math.cos(angle)*radius;
+		var y = center.y + Math.sin(angle)*radius;
+		var oDiv = document.createElement('div');
+		oDiv.style.top = y + 'px';
+		oDiv.style.left = x + 'px';
+		aDivArr.push(oDiv);
+	}
+	return aDivArr;
+}
+function drawCircle(aDivArr){
+	for(var i=0; i<aDivArr.length; i++){
+		var oDoc = (document.documentElement || document.body);
+		oDoc.appendChild(aDivArr[i]);
+		document.title = oDoc;
+	}
+}
+function clearCircle(aDivArr){
+	for(var i=0; i<aDivArr.length; i++){
+		(document.documentElement || document.body).removeChild(aDivArr[i]);
+	}
+}
+</script>
+</head>
+<body>
+<input type="button" value="clear all" id="clearBtn"/>
+</body>
+</html>

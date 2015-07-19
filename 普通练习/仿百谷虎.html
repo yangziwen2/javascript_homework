@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>
+<style>
+.searchArea {
+	height: 80px; 
+	width: 450px;
+	margin: 50px auto 0px;
+}
+.searchArea .queryTxt{
+	width: 350px;
+}
+.frameWrap {
+	margin: 0px;
+	padding: 0px;
+	width: 49%;
+	height: 500px;
+	display: inline-block
+}
+</style>
+<script>
+window.onload = function(){
+	var oTxt = document.getElementById('queryTxt');
+	var oBtn = document.getElementById('queryBtn');
+	// var googleSearchTpl = 'http://www.google.com.hk/#hl=zh-CN&newwindow=1&safe=strict&site=&btnK=Google+%E6%90%9C%E7%B4%A2&aq=f&gs_sm=e&gs_upl=768l4364l0l4900l19l10l0l0l0l0l0l0ll0l0&bav=on.2,or.r_gc.r_pw.,cf.osb&fp=a334ebc00792e307&biw=1366&bih=647';
+	oBtn.onclick = function(){
+		var queryStr = encodeURIComponent(oTxt.value);
+		// var googleSearch = googleSearchTpl + '&q=' + queryStr + '&oq=' + queryStr;
+		var baiduSearch = 'http://www.baidu.com/s?wd=' + queryStr;
+		var sogouSearch = 'http://www.sogou.com/sogou?query=' + queryStr;
+		// window.open(baiduSearch, 'frame1');
+		window.open('http://www.baidu.com/s?wd=jquery&pn=10', 'frame1');
+		// window.open(googleSearch, 'frame2');
+		window.open(sogouSearch, 'frame2');
+	}
+	oTxt.onkeydown = function(event){
+		event = event || window.event;
+		if(event.keyCode == 13 && event.ctrlKey){
+			oBtn.onclick();
+			return false;
+		}
+	}
+}
+</script>
+</head>
+<body>
+<div class="searchArea">
+	<input id="queryTxt" class="queryTxt"/>
+	<input id="queryBtn" type="button" value="搜索"/>
+	<span id="dispSpan"></span>
+</div>
+<div class="frameWrap">
+	<iframe name="frame1" frameborder="0" style="width:100%; height: 100%" scrolling="auto">
+	</iframe>
+</div>
+<div class="frameWrap">
+	<iframe name="frame2" frameborder="1" style="width:100%; height: 100%" >
+		abc
+	</iframe>
+</div>
+</body>
+</html>

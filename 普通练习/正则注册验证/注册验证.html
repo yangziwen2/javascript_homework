@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>
+<style>
+body { margin: 0 auto; text-align: center; font-family: Helvetica, Arial, sans-serif; font-size: .9em; line-height: 1.2em; color: #4f4f4f; background: none #4f4f4f top center repeat-y;}
+body#login,body#landing { background-image: none; background-color: #fff; width: 470px;}
+#login #container,#landing #container { width: 470px;}
+#login #content,#landing #container { width: 470px; margin-top: 40px;}
+#loginBox { width: 470px; position: relative; float: left; background: url(./image/bgLoginBoxTop.png) top left no-repeat; text-align: center; padding: 22px 0 0 0; margin: 0 0 10px 0;}
+#loginBox form { padding: 0 75px; text-align: left;}
+#loginBox .close { width: 470px; height: 79px; position: relative; float: left; background: url(./image/bgLoginBoxBot.png) bottom left no-repeat;}
+#loginBox h2 { color: #fff; font-size: 90%; padding: 0 0 0 0;}
+#loginBox img { margin: 40px 0 0 0;}
+#loginBox span { margin: 40px 0 0 0;}
+#loginBox .textFieldLogin { width: 200px; margin: 1px 0 10px 0;}
+#loginBox .nameFieldLogin { width: 200px; margin: 1px 0 10px 0;}
+#loginBox label{ font-size: 90%;}
+div.MBbuttonLogin { background-image: url(./image/bgButtonLogin.png); background-attachment: scroll; background-repeat: no-repeat; background-position: top left; display: block; float: left; height: 23px; font-size: 90%; cursor: pointer; float: left; left: 120px; position: relative;}
+div.MBbuttonLogin input { background: transparent; background-image: url(./image/bgButtonLoginR.gif); display: block; padding: 2px 20px 5px 38px !important; float: left; border: none; color: #4f4f4f; height: 23px; cursor: pointer;}
+div.MBbuttonLogin input:hover { border: none; color: #ff0000}
+div.MBbuttonLogin input:focus { border: none; background-color: inherit;}
+#resetpasswordform div.MBbuttonLogin {margin: 30px 12px 0 0;}
+#loginError { width: 470px; float: left; position: relative; background: url(./image/bgLoginErrorTop.png) top left no-repeat; padding: 5px 10px 5px 0; margin: 0 0 10px 0;}
+#loginError .close { width: 470px; height: 17px; background: url(./image/bgLoginErrorBot.png) bottom left no-repeat; margin: 0 0 -22px 0;}
+#loginError p { padding: 0px 20px 0 55px; font-size: 85%;}
+#loginBox label div { width: 80px; float: left;}
+</style>
+<script type="text/javascript">
+function beforeSubmit(){
+	var result = validateSubmitInfo();
+	if('ok' != result){
+		//document.getElementById('password').value = '';
+		//document.getElementById('passwordRepeat').value = '';
+		var oErrorDiv = document.getElementById('loginError');
+		if(!oErrorDiv){
+			var oErrorDiv = document.createElement('div');
+			oErrorDiv.id = 'loginError';
+		}
+		oErrorDiv.innerHTML = '<p style="font-weight:bold;">'+result+'</p><div class="close"></div>';
+		var oContent = document.getElementById('content');
+		var oLoginBox = document.getElementById('loginBox');
+		oContent.insertBefore(oErrorDiv, oLoginBox);
+	}else{
+		oSubmitForm = document.getElementById('submitForm');
+		oSubmitForm.action = 'http://www.miaov.com';
+		oSubmitForm.submit();
+	}
+}
+function validateSubmitInfo(){
+	var loginName = document.getElementById('loginName').value;
+	if(!/^[a-zA-Z_]{3,128}$/.test(loginName)){
+		return '用户名输入有误，用户名中只能包含字母和下划线';	
+	}
+	var password = document.getElementById('password').value;
+	var passwordRepeat = document.getElementById('passwordRepeat').value;
+	if(!/^[\w]{6,20}$/.test(password)){
+		return '密码输入有误，请重新输入6-20位字母作为密码';	
+	}
+	if(password != passwordRepeat){
+		return '输入的密码前后不一致，请重新输入6-20位字母作为密码';	
+	}
+	var email = document.getElementById('email').value;
+	if(!/^[\w_\.]+@\w+\.\w+$/.test(email)){
+		return '请输入正确的邮箱';
+	}
+	var qq = document.getElementById('qq').value;
+	if(!/^\d{5,12}$/.test(qq)){
+		return '请输入正确的qq号';	
+	}
+	var age = document.getElementById('age').value;
+	if(!/^\d+$/.test(age) || age<=12 || age >=100){
+		return '请输入正确的年龄';	
+	}
+	var phone = document.getElementById('phone').value;
+	if(!/^(([0-9]{3}-)?\d{8}|13\d{9})$/.test(phone)){
+		return '请输入正确的电话号码';	
+	}
+	return 'ok';
+}
+</script>
+</head>
+<body id="login" onload="document.getElementById('loginName').focus();">
+<div id="container">
+	<div id="content">
+		<div id="loginBox">
+			<h2>&nbsp;</h2>
+			<span>请填写注册信息</span><br/><br/>
+			<form id="submitForm" action="http://www.miaov.com" method="post" onsubmit="checkForm()">
+				<label><div>用户名:</div></label> 
+				<input id="loginName" class="nameFieldLogin" name="loginName" type="text" value=""/><br/>
+				<label><div>密码:</div></label>
+				<input id="password" class="textFieldLogin" name="password" type="password" value="" /><br />
+                <label><div>确认密码:</div></label>
+				<input id="passwordRepeat" class="textFieldLogin" name="passwordRepeat" type="password" value="" /><br/>
+                <label><div>邮箱:</div></label>
+                <input id="email" class="textFieldLogin" name="email" type="text" value=""/><br/>
+                <label><div>QQ号:</div></label>
+                <input id="qq" class="textFieldLogin" name="qq" type="text" value=""/><br/>
+                <label><div>年龄:</div></label>
+                <input id="age" class="textFieldLogin" name="age" type="text" value=""/><br/>
+            	<label><div>电话:</div></label>
+                <input id="phone" class="textFieldLogin" name="phone" type="text"  value=""/><br/>
+                <br/>
+                <div class="MBbuttonLogin">
+				    <input type="button" id="submitButton" value="提交" onclick="beforeSubmit()"/>
+                    <div style="width:12px; right:-12px; height:23px; position:absolute; background-image:url(image/bgButtonLoginR.png)"></div>
+				</div>
+			</form>
+			<div class="close" /></div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+
+<style>
+* {margin:0px; padding:0px;}
+li {list-style:none; display:block;}
+.box {position:relative; left:200px; top:100px; height:240px; width:721px; border:1px solid;}
+.box li {float:left; margin:10px; text-align:center; position:relative;}
+.img {border:1px solid #ccc; padding:1px;}
+.right {width:180px; height:172px; position:absolute; top:0px; left:140px; border:1px solid #333; background:#fff; display:block; z-index:20; display:none}
+.right li {margin:8px 0px 0px 10px; text-align:left; font-size:14px;}
+.right li span {color:#666;}
+.show .right{display:block}
+.show .img{border:1px solid #09C}
+</style>
+<script>
+window.onload = function(){
+	var oUlArr = document.getElementsByTagName('ul');
+	var oUl = '';
+	for(var i=0; i<oUlArr.length; i++){
+		if('box' == oUlArr[i].className){
+			oUl = oUlArr[i];
+			break;
+		}
+	}
+	var currentLiNum = NaN;
+	if(typeof oUl != 'object'){
+		return;		
+	}
+	var oLiArr = oUl.children;
+	for(var i=0; i<oLiArr.length; i++){
+		oLiArr[i].timer = null;
+		oLiArr[i].index = i;
+		oLiArr[i].onmouseover = function(){
+			if(!isNaN(currentLiNum)){
+				clearTimeout(oLiArr[currentLiNum].timer);
+				oLiArr[currentLiNum].className = '';
+			}
+			//clearTimeout(this.timer);
+			this.className = 'show';
+			currentLiNum = this.index;
+		};
+		oLiArr[i].onmouseout = function(){
+			var currentLi = this;
+			this.timer = setTimeout(function(){
+				currentLi.className = '';			
+			}, 500);
+			//this.className = '';
+		};
+	}
+};
+
+</script>
+</head>
+<body>
+<ul class="box">
+	<li>
+    	<div class="img">
+        	<img src="images/01.jpg"/>
+        </div>
+        <h2 class="title">火影忍者</h2>
+        <p class="intro">吧啦吧啦吧啦</p>
+        <div class="right">
+        	<ul>
+            	<li><span>中文名：</span>火影忍者</li>
+                <li><span>外文名：</span>NARUTO，ナルト</li>
+                <li><span>作者：</span>岸本齐史</li>
+                <li><span>出品时间：</span>1999年</li>
+                <li><span>集数：</span>537话（连载中）</li>
+            </ul>
+        </div>
+    </li>
+    <li>
+    	<div class="img">
+        	<img src="images/02.jpg"/>
+        </div>
+        <h2 class="title">死神</h2>
+        <p class="intro">吧啦吧啦吧啦</p>
+        <div class="right">
+        	<ul>
+            	<li><span>中文名：</span>死神</li>
+                <li><span>外文名：</span>BLEACH，ブリーチ</li>
+                <li><span>作者：</span>久保带人</li>
+                <li><span>出品时间：</span>2001年</li>
+                <li><span>集数：</span>445话（连载中）</li>
+            </ul>
+        </div>
+    </li>
+    <li>
+    	<div class="img">
+        	<img src="images/03.jpg"/>
+        </div>
+        <h2 class="title">名侦探柯南</h2>
+        <p class="intro">吧啦吧啦吧啦</p>
+        <div class="right">
+        	<ul>
+            	<li><span>中文名：</span>名侦探柯南</li>
+                <li><span>外文名：</span>Detective Conan，名探侦コナン</li>
+                <li><span>作者：</span>青山冈昌</li>
+                <li><span>出品时间：</span>1994年</li>
+                <li><span>集数：</span>774话（连载中）</li>
+            </ul>
+        </div>
+    </li>
+    <li>
+    	<div class="img">
+        	<img src="images/04.jpg"/>
+        </div>
+        <h2 class="title">海贼王</h2>
+        <p class="intro">吧啦吧啦吧啦</p>
+        <div class="right">
+        	<ul>
+            	<li><span>中文名：</span>海贼王</li>
+                <li><span>外文名：</span>ONE PIECE</li>
+                <li><span>作者：</span>尾田荣一郎</li>
+                <li><span>出品时间：</span>1997年</li>
+                <li><span>集数：</span>662话（连载中）</li>
+            </ul>
+        </div>
+    </li>
+    <li>
+    	<div class="img">
+        	<img src="images/05.jpg"/>
+        </div>
+        <h2 class="title">银魂</h2>
+        <p class="intro">吧啦吧啦吧啦</p>
+        <div class="right">
+        	<ul>
+            	<li><span>中文名：</span>银魂</li>
+                <li><span>外文名：</span>Silver Soul，ぎんたま</li>
+                <li><span>作者：</span>空知英秋</li>
+                <li><span>出品时间：</span>2003年</li>
+                <li><span>集数：</span>351话（连载中）</li>
+            </ul>
+        </div>
+    </li>
+</ul>
+</body>
+</html>

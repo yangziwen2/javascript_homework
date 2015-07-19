@@ -1,0 +1,154 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>New Web Project</title>
+		<style>
+			.handler {
+				width: 10px; height: 10px; background-color: #3399FF;
+				position: absolute;
+			}
+			.left-handler{ left: 0px; }
+			.top-handler { top: 0px; }
+			.right-handler { right: 0px; }
+			.bottom-handler { bottom: 0px; }
+			.left-handler.top-handler {cursor: nw-resize}
+			.left-handler.bottom-handler {cursor: sw-resize}
+			.right-handler.top-handler {cursor: ne-resize}
+			.right-handler.bottom-handler {cursor: se-resize}
+			.img-mask {cursor: crosshair;}
+		</style>
+	</head>
+	<body>
+		<div>
+			<div id="wrapper" style="width: 500px; height: 400px; position: relative; border: 1px solid #f00; margin: 100px auto 0px; text-align: center;">
+				<img id="img" src="C:\Users\yangziwen\Pictures\sheep4.jpg" style="max-width: 500px; max-height: 400px; border: 1px solid #ddd; margin-top: -1px;" />
+				<div id="mask" class="img-mask" style="width: 300px; height: 300px; border: 1px dashed #000; position: absolute; left: 100px; top: 50px;">
+					<div class="handler left-handler top-handler"></div>
+					<div class="handler left-handler bottom-handler"></div>
+					<div class="handler right-handler top-handler"></div>
+					<div class="handler right-handler bottom-handler"></div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="jquery-1.11.3.min.js"></script>
+	<script>
+		var maskMousedown = false;
+		var $mask = $('#mask');
+		var $img = $('#img');
+		var imgPos = $.extend({
+			width: $img.width(),
+			height: $img.height()
+		}, $img.position());
+		imgPos.right = imgPos.left + imgPos.width;
+		imgPos.bottom = imgPos.top + imgPos.height;
+		var oriMaskPos = {};
+		var oriMousePos = {};
+		$mask.on('mousedown', function(ev) {
+			oriMaskPos = $.extend({
+				width: $mask.width(),
+				height: $mask.height()
+			}, $mask.position());
+			oriMaskPos.right = oriMaskPos.left + oriMaskPos.width;
+			oriMaskPos.bottom = oriMaskPos.top + oriMaskPos.height;
+			oriMousePos = {
+				left: ev.pageX, 
+				top: ev.pageY
+			};
+			maskMousedown = true;
+		});
+		$(document).on('mousemove', function(ev) {
+			if(!maskMousedown) return;
+			var x = ev.pageX - oriMousePos.left,
+				y = ev.pageY - oriMousePos.top;
+			var left = 0, top = 0, width = 0, height = 0;
+			if($activeHandler != null) {
+				var width = 0, height = 0, length = 0;
+				if($activeHandler.is('.left-handler.top-handler')) {
+					width = Math.max(oriMaskPos.width - x, 20);
+					height = Math.max(oriMaskPos.height - y, 20);
+					length = Math.max(width, height);
+					if(length + imgPos.left > oriMaskPos.right) {
+						length = oriMaskPos.right - imgPos.left;
+					}
+					if(length + imgPos.top > oriMaskPos.bottom) {
+						length = oriMaskPos.bottom - imgPos.top;
+					}
+					left = oriMaskPos.right - length;
+					top = oriMaskPos.bottom - length;
+				} else if($activeHandler.is('.left-handler.bottom-handler')) {
+					width = Math.max(20, oriMaskPos.width - x);
+					height = Math.max(oriMaskPos.height + y, 20);
+					length = Math.max(width, height);
+					if(length + imgPos.left > oriMaskPos.right) {
+						length = oriMaskPos.right - imgPos.left;
+					}
+					if(length + oriMaskPos.top > imgPos.bottom) {
+						length = imgPos.bottom - oriMaskPos.top;
+					}
+					left = oriMaskPos.right - length;
+					top = oriMaskPos.top;
+				} else if($activeHandler.is('.right-handler.top-handler')) {
+					width = Math.max(oriMaskPos.width + x, 20);
+					height = Math.max(oriMaskPos.height - y, 20);
+					length = Math.max(width, height);
+					if(length + oriMaskPos.left > imgPos.right) {
+						length = imgPos.right - oriMaskPos.left;
+					}
+					if(length + imgPos.top > oriMaskPos.bottom) {
+						length = oriMaskPos.bottom - imgPos.top;
+					}
+					left = oriMaskPos.left;
+					top = oriMaskPos.bottom - length;
+				} else if($activeHandler.is('.right-handler.bottom-handler')) {
+					width = Math.max(oriMaskPos.width + x, 20);
+					height = Math.max(oriMaskPos.height + y, 20);
+					length = Math.max(width, height);
+					if(length + oriMaskPos.left > imgPos.right) {
+						length = imgPos.right - oriMaskPos.left;
+					}
+					if(length + oriMaskPos.top > imgPos.bottom) {
+						length = imgPos.bottom - oriMaskPos.top;
+					}
+					left = oriMaskPos.left; 
+					top = oriMaskPos.top;
+				}
+				$mask.height(length);
+				$mask.width(length);
+			} else {
+				width = $mask.width();
+				height = $mask.height();
+				left = Math.max(oriMaskPos.left + x, imgPos.left);
+				top = Math.max(oriMaskPos.top + y, imgPos.top);
+				left + width > imgPos.right && (left = imgPos.right - width);
+				top + height > imgPos.bottom && (top = imgPos.bottom - height);
+			}
+			$mask.css({left: left, top: top});
+		});
+		
+		$(document).on('mouseup', function() {
+			maskMousedown = false;
+			$activeHandler = null;
+		});
+		
+		var $activeHandler = null;
+		$mask.children('.handler').on('mousedown', function(ev) {
+			$activeHandler = $(this);
+		});
+		
+		function getCutInfo() {
+			var $mask = $('#mask');
+			var $img = $('#img');
+			var maskPos = $mask.position();
+			var imgPos = $img.position();
+			return {
+				left: maskPos.left - imgPos.left,
+				top: maskPos.top - imgPos.top,
+				width: $mask.width(),
+				height: $mask.height()
+			}
+		}
+	</script>
+</html>

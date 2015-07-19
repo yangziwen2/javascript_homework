@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+* {
+	margin:0px;
+	padding:0px;
+}
+#gameArea{
+	width:400px;
+	height:250px;
+	border: 2px solid #333;
+	position: relative;
+	margin: 100px auto 0px;
+}
+div.snakeBody{
+	border:1px solid #333;
+	width:8px;
+	height:8px;
+	background-color:red;
+	position: absolute;
+}
+div.food{
+	width:8px;
+	height:8px;
+	border:1px solid #333;
+	background:blue;
+	position:absolute;
+}
+</style>
+<script>
+window.onload = function(){
+	initSnake('gameArea');
+}
+
+function initSnake(gameArea){
+	var initSize = 5,
+		hFlag = 0,
+		vFlag = 0,
+		preHFlag = 0,
+		preVFlag = 0,
+		speed = 10,
+		timeSpan = 500;
+	typeof(gameArea) == 'string' && (gameArea = document.getElementById(gameArea));
+	var bodyArr = [];
+	for(var i=0; i<initSize; i++){
+		bodyArr.push(document.createElement('div'));
+		bodyArr[i].className = 'snakeBody';
+	}
+	startGame();
+	
+	function startGame(){
+		hFlag = 1;
+		preHFlag = 1;
+		vFlag = 0;
+		preVFlag = 0;
+		gameArea.innerHTML = '';
+		bodyArr.length = initSize;
+		for(var i=0; i<bodyArr.length; i++){
+			bodyArr[i].style.left = '0px';
+			bodyArr[i].style.top = '0px';
+			gameArea.appendChild(bodyArr[i]);
+		}
+		var food = createFood();
+		var timer = null;
+		startMove();
+		function startMove(){
+			clearTimeout(timer);
+			timer = setTimeout(function(){
+				clearTimeout(timer);
+				doMove() && (timer = setTimeout(arguments.callee, timeSpan));
+			}, timeSpan);
+		}
+		function doMove(){
+			hFlag = preHFlag;
+			vFlag = preVFlag;
+			var newLeft = getStyleInt(bodyArr[0], 'left') + 10*hFlag;
+			var newTop = getStyleInt(bodyArr[0], 'top') + 10*vFlag;
+			var aliveFlag = true;
+			aliveFlag = aliveFlag && checkBoundary(gameArea, newLeft, newTop);
+			aliveFlag = aliveFlag && checkBody(bodyArr, newLeft, newTop);
+			var isEating = eatFood(bodyArr, food, newLeft, newTop);
+			if(isEating){
+				food.className = 'snakeBody';
+				food.style.left = bodyArr[bodyArr.length - 1].style.left;
+				food.style.top = bodyArr[bodyArr.length - 1].style.top;
+			}
+			for(var i=bodyArr.length - 1; i>0; i--){
+				bodyArr[i].style.left = bodyArr[i-1].style.left;
+				bodyArr[i].style.top = bodyArr[i-1].style.top;
+			}
+			if(isEating){
+				bodyArr.push(food);
+				food = createFood();
+			}
+			if(!aliveFlag){
+				restartGame();
+			}else{
+				bodyArr[0].style.left = newLeft + 'px';
+				bodyArr[0].style.top = newTop + 'px';
+			}
+			timeSpan = 500 - Math.min(parseInt(bodyArr.length/5)*100, 400);
+			return aliveFlag;
+		}
+		document.onkeydown = function(event){
+			event = event || window.event;
+			if(event.keyCode <37 || event.keyCode > 40){
+				return;	
+			}
+			var newHFlag = (event.keyCode - 38)%2;
+			var newVFlag = (event.keyCode - 39)%2;
+			if(hFlag == 0 && newHFlag != 0){
+				preHFlag = newHFlag;
+				preVFlag = 0;
+			}else if(vFlag == 0 && newVFlag != 0){
+				preVFlag = newVFlag;
+				preHFlag = 0;
+			}
+		}
+		function restartGame(){
+			alert('失败了，请重新开始');
+			timeSpan = 500;
+			startGame();
+		}
+		function checkBoundary(gameArea, newLeft, newTop){
+			if(newLeft < 0 || newLeft > gameArea.offsetWidth - 10){
+				return false;
+			}
+			if(newTop < 0 || newTop > gameArea.offsetHeight - 10){
+				return false;	
+			}
+			return true;
+		}
+		function checkBody(bodyArr, newLeft, newTop){
+			for(var i=1; i<bodyArr.length-1; i++){
+				if(newLeft == bodyArr[i].offsetLeft && newTop == bodyArr[i].offsetTop){
+					return false;
+				}
+			}
+			return true;
+		}
+		function createFood(){
+			var food = document.createElement('div');
+			food.className = 'food';
+			while(true){
+				var foodLeft = generateRandomNum(gameArea.offsetWidth);
+				var foodTop =  generateRandomNum(gameArea.offsetHeight);
+				var flag = true;
+				for(var i=0; i<bodyArr.length; i++){
+					if(foodLeft == bodyArr[i].offsetLeft && foodTop == bodyArr[i].offsetTop){
+						flag = false;
+						break;
+					}
+				}
+				if(flag){
+					break;	
+				}
+			}
+			food.style.left = foodLeft + 'px';
+			food.style.top = foodTop + 'px';
+			gameArea.appendChild(food);
+			return food;
+		}
+		function eatFood(bodyArr, food, newLeft, newTop){
+			//注意ie下，这里不能用offsetLeft,offsetTop
+			if(newLeft == getStyleInt(food, 'left') && newTop == getStyleInt(food, 'top')){
+				return true;
+			}else{
+				return false;
+			}
+		}
+	}
+}
+
+function generateRandomNum(scale){
+	return Math.round(Math.random()*(scale-10)/10)*10
+}
+
+function setStyleInt(obj, attr, value){
+	setStyle(obj, attr, value + 'px');	
+}
+
+function setStyle(obj, attr, value){
+	obj.style[attr] = value;
+}
+
+function getStyleInt(obj, attr){
+	return parseInt(getStyle(obj, attr));	
+}
+
+function getStyle(obj, attr){
+	if(obj.currentStyle){
+		return obj.currentStyle[attr];	
+	}else{
+		return getComputedStyle(obj, false)[attr];	
+	}
+}
+</script>
+</head>
+
+<body>
+<div id="gameArea">
+</div>
+</body>
+</html>

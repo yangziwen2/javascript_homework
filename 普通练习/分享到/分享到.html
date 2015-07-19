@@ -1,0 +1,147 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+* {margin:0; padding:0}
+#wrap {position:fixed; right:-232px; top: 0px; width:256px;}
+#floatImg {width:24px; margin-top:90px; height:88px; float:left; cursor:pointer;}
+#floatContent {width:230px; background-color:#fff; overflow:hidden; float:left; position:relative; border:1px solid #eee;}
+#floatTopContent {padding-left:10px; color:#333; font-weight:normal; height:22px; line-height:22px; font-size:12px; background: url(images/passit_float_bg.gif) no-repeat 0px 0px;}
+#floatIcon { width:228px; height:224px; overflow:hidden;}
+#floatIcon a {background-color:#FFF; float:left; width:106px; height:22px; line-height:22px; margin:0px 3px 6px 4px; overflow:hidden; text-decoration:none; color:#333;}
+#floatIcon a span{width:90px; height:16px; overflow:hidden; position:relative; padding-left:20px; left:3px; top:3px; float:left; font-size:12px; cursor:pointer; background:url(images/passit_16_ie6.gif) no-repeat; display:block;}
+#floatIcon a:hover {background:url(images/passit_float_bg.gif) no-repeat 0px -23px;}
+</style>
+<script type="text/javascript">
+window.onload = function(){
+	var oWrap = document.getElementById('wrap');
+	var oFloatImg = document.getElementById('floatImg');
+	var oFloatContent = document.getElementById('floatContent');
+	var oFloatIcon = document.getElementById('oFloatIcon');
+	oFloatImg.onmouseover = oFloatContent.onmouseover = function(event){
+		event = event || window.event;
+		var target = event.currentTarget;
+		var fromTarget = event.relatedTarget;
+		while(fromTarget != document){
+			if(!fromTarget){
+				break;	
+			}
+			if(target == fromTarget.parentNode){
+				return false;	
+			}
+			fromTarget = fromTarget.parentNode;
+		}
+		clearInterval(oWrap.timer);
+		oWrap.timer = setInterval(function(){
+			var currentRight = getStyleInt(oWrap, 'right');
+			if(currentRight >= 0){
+				clearInterval(oWrap.timer);
+			}else{
+				oWrap.style.right = (10+currentRight>0? 0: currentRight + 10) + 'px';
+			}
+		}, 20);
+	}
+	oWrap.onmouseout = function(event){
+		event = event || window.event;
+		var target = event.currentTarget;
+		var toTarget = event.relatedTarget;
+		while(toTarget != document){
+			if(!toTarget){
+				break;	
+			}
+			if(target == toTarget.parentNode){
+				return false;	
+			}
+			toTarget = toTarget.parentNode;
+		}
+		clearInterval(oWrap.timer);
+		oWrap.timer = setInterval(function(){
+			var currentRight = getStyleInt(oWrap, 'right');
+			if(currentRight <= -232){
+				clearInterval(oWrap.timer);
+			}else{
+				oWrap.style.right = (currentRight - 10 < -232? -232: currentRight - 10) + 'px';
+			}
+		}, 20);
+	}
+	window.onresize = function(){
+		var iClientHeight = document.documentElement.clientHeight;
+		var iWrapHeight = oWrap.offsetHeight;
+		oWrap.style.top = parseInt((iClientHeight - iWrapHeight)/2 ) + 'px';
+	}
+	window.onresize();
+}
+function getStyleInt(obj, attr){
+	return parseInt(getStyle(obj, attr));	
+}
+
+function getStyle(obj, attr){
+	if(obj.currentStyle){
+		return obj.currentStyle[attr];	
+	}else{
+		return getComputedStyle(obj, false)[attr];	
+	}
+}
+
+</script>
+</head>
+<body style="height:2000px;">
+<div id="wrap">
+	<img src="images/float_btn13.png" id="floatImg" />
+    <div id="floatContent">
+    	<h5 id="floatTopContent">转帖分享，如此简单</h5>
+        <div id="floatIcon">
+        	<a target="_blank" title="使用一键群发分享到各大主流微博" href="http://www.passit.cn/share?url=file%3A%2F%2F%2FC%3A%2FDocuments%20and%20Settings%2Fyzw%2F%E6%A1%8C%E9%9D%A2%2Fjs%E5%A4%87%E8%AF%BE%2F%E5%88%86%E4%BA%AB%E5%88%B0.html&title=%u65E0%u6807%u9898%u6587%u6863&content=&image=&pub=0&type=12">
+            <span style="background-position:0px -784px;">一键群发</span>
+            </a>
+            <a target="_blank" href="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=file%3A%2F%2F%2FC%3A%2FDocuments%20and%20Settings%2Fyzw%2F%E6%A1%8C%E9%9D%A2%2Fjs%E5%A4%87%E8%AF%BE%2F%E5%88%86%E4%BA%AB%E5%88%B0.html&title=%E6%97%A0%E6%A0%87%E9%A2%98%E6%96%87%E6%A1%A3">
+            <span style="background-position:0px -768px;">QQ空间</span>
+            </a>
+            <a target="_blank" href="http://service.weibo.com/share/share.php?url=file%3A%2F%2F%2FC%3A%2FDocuments%20and%20Settings%2Fyzw%2F%E6%A1%8C%E9%9D%A2%2Fjs%E5%A4%87%E8%AF%BE%2F%E5%88%86%E4%BA%AB%E5%88%B0.html&source=bookmark&title=%E6%97%A0%E6%A0%87%E9%A2%98%E6%96%87%E6%A1%A3&appkey=511460290&pic=">
+            <span style="background-position:0px 0px;">新浪微博</span>
+            </a>
+            <a target="_blank"  href="http://share.renren.com/share/buttonshare.do?link=file%3A%2F%2F%2FC%3A%2FDocuments%20and%20Settings%2Fyzw%2F%E6%A1%8C%E9%9D%A2%2Fjs%E5%A4%87%E8%AF%BE%2F%E5%88%86%E4%BA%AB%E5%88%B0.html&title=%E6%97%A0%E6%A0%87%E9%A2%98%E6%96%87%E6%A1%A3">
+            <span style="background-position:0px -32px;">人人网</span>
+            </a>
+            <a target="_blank"  href="http://shuqian.qq.com/post?from=3&uri=file%3A%2F%2F%2FC%3A%2FDocuments%20and%20Settings%2Fyzw%2F%E6%A1%8C%E9%9D%A2%2Fjs%E5%A4%87%E8%AF%BE%2F%E5%88%86%E4%BA%AB%E5%88%B0.html&title=%E6%97%A0%E6%A0%87%E9%A2%98%E6%96%87%E6%A1%A3&desc=">
+            <span style="background-position:0px -80px;">QQ书签</span>
+            </a>
+            <a target="_blank"  href="http://www.kaixin001.com/repaste/bshare.php?rtitle=%E6%97%A0%E6%A0%87%E9%A2%98%E6%96%87%E6%A1%A3&rurl=file%3A%2F%2F%2FC%3A%2FDocuments%20and%20Settings%2Fyzw%2F%E6%A1%8C%E9%9D%A2%2Fjs%E5%A4%87%E8%AF%BE%2F%E5%88%86%E4%BA%AB%E5%88%B0.html&rcontent=">
+            <span style="background-position:0px -16px;">开心网</span>
+            </a>
+            <a target="_blank"  href="http://pengyou.qq.com/index.php?mod=usershare&act=onekey&to=xiaoyou&url=file%3A%2F%2F%2FC%3A%2FDocuments%20and%20Settings%2Fyzw%2F%E6%A1%8C%E9%9D%A2%2Fjs%E5%A4%87%E8%AF%BE%2F%E5%88%86%E4%BA%AB%E5%88%B0.html&title=%E6%97%A0%E6%A0%87%E9%A2%98%E6%96%87%E6%A1%A3">
+            <span style="background-position:0px -1120px;">QQ校友</span>
+            </a>
+            <a target="_blank"  href="http://apps.hi.baidu.com/share/?url=file%3A%2F%2F%2FC%3A%2FDocuments%20and%20Settings%2Fyzw%2F%E6%A1%8C%E9%9D%A2%2Fjs%E5%A4%87%E8%AF%BE%2F%E5%88%86%E4%BA%AB%E5%88%B0.html&title=%E6%97%A0%E6%A0%87%E9%A2%98%E6%96%87%E6%A1%A3&content=">
+            <span style="background-position:0px -128px;">百度Hi</span>
+            </a>
+            <a target="_blank"  href="javascript:void(0)">
+            <span style="background-position:0px -64px;">收藏夹</span>
+            </a>
+            <a target="_blank"  href="http://cang.baidu.com/do/add?it=%E6%97%A0%E6%A0%87%E9%A2%98%E6%96%87%E6%A1%A3&iu=file%3A%2F%2F%2FC%3A%2FDocuments%20and%20Settings%2Fyzw%2F%E6%A1%8C%E9%9D%A2%2Fjs%E5%A4%87%E8%AF%BE%2F%E5%88%86%E4%BA%AB%E5%88%B0.html&dc=&fr=ien#nw=1">
+            <span style="background-position:0px -176px;">百度收藏</span>
+            </a>
+            <a target="_blank"  href="http://www.douban.com/recommend/?url=file%3A%2F%2F%2FC%3A%2FDocuments%20and%20Settings%2Fyzw%2F%E6%A1%8C%E9%9D%A2%2Fjs%E5%A4%87%E8%AF%BE%2F%E5%88%86%E4%BA%AB%E5%88%B0.html&title=%E6%97%A0%E6%A0%87%E9%A2%98%E6%96%87%E6%A1%A3&comment=">
+            <span style="background-position:0px -112px;">豆瓣</span>
+            </a>
+            <a target="_blank"  href="http://t.sohu.com/third/post.jsp?&url=file%3A%2F%2F%2FC%3A%2FDocuments%20and%20Settings%2Fyzw%2F%E6%A1%8C%E9%9D%A2%2Fjs%E5%A4%87%E8%AF%BE%2F%E5%88%86%E4%BA%AB%E5%88%B0.html&title=%E6%97%A0%E6%A0%87%E9%A2%98%E6%96%87%E6%A1%A3&content=utf-8&pic=&source=VCfjCRgKSw">
+            <span style="background-position:0px -800px;">搜狐微博</span>
+            </a>
+            <a target="_blank"  href="http://t.163.com/article/user/checkLogin.do?source=Passit&info=%E6%97%A0%E6%A0%87%E9%A2%98%E6%96%87%E6%A1%A3%20file%3A%2F%2F%2FC%3A%2FDocuments%20and%20Settings%2Fyzw%2F%E6%A1%8C%E9%9D%A2%2Fjs%E5%A4%87%E8%AF%BE%2F%E5%88%86%E4%BA%AB%E5%88%B0.html&pic=">
+            <span style="background-position:0px -816px;">网易微博</span>
+            </a>
+            <a target="_blank"  href="http://v.t.qq.com/share/share.php?title=%E6%97%A0%E6%A0%87%E9%A2%98%E6%96%87%E6%A1%A3&url=file%3A%2F%2F%2FC%3A%2FDocuments%20and%20Settings%2Fyzw%2F%E6%A1%8C%E9%9D%A2%2Fjs%E5%A4%87%E8%AF%BE%2F%E5%88%86%E4%BA%AB%E5%88%B0.html&source=1000000&appkey=b2ba17be39f34852b741b743339c2505&site=http://www.passit.cn&pic=">
+            <span style="background-position:0px -1072px;">腾讯微博</span>
+            </a>
+            <a target="_blank"  href="http://t.ifeng.com/interface.php?_c=share&_a=share&sourceUrl=file%3A%2F%2F%2FC%3A%2FDocuments%20and%20Settings%2Fyzw%2F%E6%A1%8C%E9%9D%A2%2Fjs%E5%A4%87%E8%AF%BE%2F%E5%88%86%E4%BA%AB%E5%88%B0.html&title=%E6%97%A0%E6%A0%87%E9%A2%98%E6%96%87%E6%A1%A3&pic=&source=Passit">
+            <span style="background-position:0px -1136px;">凤凰网微博</span>
+            </a>
+            <a>
+            	<span style="color:rgb(51,51,51); background-position:0px -1334px;">更多...</span>
+            </a>
+        </div>
+    </div>
+</div>
+</html>

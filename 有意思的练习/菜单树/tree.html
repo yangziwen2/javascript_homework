@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+* {padding:0; margin:0}
+#treeDiv li {list-style:none; margin-left:20px;}
+a:link {color:#333; text-decoration:none}
+a:visited {color:#333; text-decoration:none}
+a:active {text-decoration:none;}
+a:hover {text-decoration:none;}
+#treeDiv a {font-size:14px;}
+a.topBtn {text-decoration:none; font-size:14px; margin:5px;}
+</style>
+<script type="text/javascript" src="js/tree.js"></script>
+<script type="text/javascript" src="js/buildTreeNode.js"></script>
+<script type="text/javascript">
+window.onload = function(){
+	var oTreeDiv = document.getElementById('treeDiv');
+	buildTreeNode({
+		parentNode: oTreeDiv,
+		currentNode: tree,
+		isCollapse: true, 
+		callbackFn: myCallback
+	});
+	var oCollapseAllBtn = document.getElementById('collapseAll');
+	var oExpandAllBtn = document.getElementById('expandAll');
+	oCollapseAllBtn.onclick = oExpandAllBtn.onclick = function(){
+		var oRootUl = oTreeDiv.children[1];
+		var oUlArr = oRootUl.getElementsByTagName('ul');
+		var oImgArr = oRootUl.getElementsByTagName('img');
+		for(var i=0; i<oUlArr.length; i++){
+			oUlArr[i].style.display = this.id == 'collapseAll'? 'none': 'block';
+		}
+		for(var i=0; i<oImgArr.length; i++){
+			if(!oImgArr[i].className){
+				continue;
+			}
+			if(oImgArr[i].className.indexOf('toggleFlag') < 0){
+				continue;
+			}
+			oImgArr[i].src= this.id == 'collapseAll'? 'images/collaspe.jpg': 'images/expand.jpg';
+		}
+	}
+}
+function myCallback(currentNode){
+	this.href = 'content.html' + currentNode.nodeLink;
+	this.target = 'contentFrame';
+	this.onclick();
+}
+</script>
+</head>
+<body>
+<a class="topBtn" id="collapseAll" href="javascript:void(0);" >Collapse All</a>
+<a class="topBtn" id="expandAll" href="javascript:void(0);" >Expand All</a>
+<div id="treeDiv">
+</div>
+</body>
+</html>

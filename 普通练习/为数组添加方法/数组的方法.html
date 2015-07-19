@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<script>
+
+Array.prototype.sum = function(){
+	var result = 0;
+	for(var i=0; i<this.length; i++){
+		result += this[i];
+	}
+	return result;
+}
+
+Array.prototype.max = function(){
+	if(!this.length){
+		return NaN;
+	}
+	var result = this[0];
+	for(var i=1; i<this.length; i++){
+		result = this[i] > result? this[i]: result;
+	}
+	return result;
+}
+
+Array.prototype.min = function(){
+	if(!this.length){
+		NaN;
+	}
+	var result = this[0];
+	for(var i=1; i<this.length; i++){
+		result = this[i] < result? this[i]: result;
+	}
+	return result;
+}
+
+Array.prototype.avg = function(precision){
+	if(!this.length){
+		return NaN;
+	}
+	var result = this.sum()/this.length;
+	precision = Number(precision);
+	if(!isNaN(precision)){
+		result = result.toFixed(precision);
+	}
+	return result;
+}
+
+Array.prototype.vari = function(precision){
+	if(!this.length){
+		return NaN;
+	}
+	var avg = this.avg();
+	var result = 0;
+	for(var i=0; i<this.length; i++){
+		result += Math.pow(this[i]-avg, 2);
+	}
+	result /= this.length;
+	precision = Number(precision);
+	if(!isNaN(precision)){
+		result = result.toFixed(precision);
+	}
+	return result;
+}
+
+Array.prototype.dev = function(){
+	if(!this.length){
+		return NaN;
+	}
+	return Math.sqrt(this.vari());
+}
+
+window.onload = function(){
+	var oArrInput = document.getElementById('arrInput');
+	oArrInput.value = '[5,3,1,33,6,8]';
+	var oSumBtn = document.getElementById('sumBtn');
+	var oMaxBtn = document.getElementById('maxBtn');
+	var oMinBtn = document.getElementById('minBtn');
+	var oAvgBtn = document.getElementById('avgBtn');
+	var oVariBtn = document.getElementById('variBtn');
+	var oDevBtn = document.getElementById('devBtn');
+	oSumBtn.onclick = function(){
+		var aNumArr = getNumArr(oArrInput);
+		alert('数组的和为:' + aNumArr.sum());
+	}
+	oMaxBtn.onclick = function(){
+		var aNumArr = getNumArr(oArrInput);
+		alert('数组中的最大值为:' + aNumArr.max());
+	}
+	oMinBtn.onclick = function(){
+		var aNumArr = getNumArr(oArrInput);
+		alert('数组中的最小值为:' + aNumArr.min());
+	}
+	oAvgBtn.onclick = function(){
+		var aNumArr = getNumArr(oArrInput);
+		alert('数组的平均值为:' + aNumArr.avg(4));
+	}
+	oVariBtn.onclick = function(){
+		var aNumArr = getNumArr(oArrInput);
+		alert('数组的方差为:' + aNumArr.vari(4));
+	}
+	oDevBtn.onclick = function(){
+		var aNumArr = getNumArr(oArrInput);
+		alert('数组的标准差为:' + aNumArr.dev(4));
+	}
+}
+
+function getNumArr(oArrInput){
+	var sInputStr = oArrInput.value;
+	if(!sInputStr){
+		return;
+	}
+	var aNumArr = eval('('+oArrInput.value+')');
+	return aNumArr;
+}
+
+</script>
+</head>
+<body>
+请输入数组:
+<input type="text" id="arrInput" style="width:400px;"/>
+<br/>
+<input type="button" value="求和" id="sumBtn"/>
+<input type="button" value="最大值" id="maxBtn"/>
+<input type="button" value="最小值" id="minBtn"/>
+<input type="button" value="平均值" id="avgBtn"/>
+<input type="button" value="方差" id="variBtn"/>
+<input type="button" value="标准差" id="devBtn"/>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<html>
+<head>
+<script type="text/javascript">
+window.onload = function(){
+	var oOutsideDiv = document.getElementById('outsideDiv');
+	var oInputArr = oOutsideDiv.getElementsByTagName('input');
+	for(var i=0; i<oInputArr.length; i++){
+		(function(i){
+			oInputArr[i].getIndex = function(){
+				return i+1;
+			}
+		})(i);
+		oInputArr[i].onclick = function(){
+			alert(this.getIndex());
+		}
+	}
+	/*for(var i=0; i<oInputArr.length; i++){
+		(function(i){
+			oInputArr[i].onclick = function(){
+				alert(i+1);
+			}
+		})(i);
+	}*/
+}
+</script>
+</head>
+<body>
+<div id="outsideDiv">
+<input type="button" value="btn1"/>
+<input type="button" value="btn2"/>
+<input type="button" value="btn3"/>
+<input type="button" value="btn4"/>
+<input type="button" value="btn5"/>
+<input type="button" value="btn6"/>
+</div>
+</body>
+</html>

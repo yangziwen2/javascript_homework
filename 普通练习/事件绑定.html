@@ -1,0 +1,38 @@
+<html>
+<head>
+<script>
+var testFunc = function(){
+	alert('abc');
+}
+function addEvent(obj, evName, func){
+	if(obj.attachEvent){
+		evName = 'on' + evName;
+		obj.attachEvent(evName, func);
+	}else{
+		obj.addEventListener(evName, func, false);	
+	}
+}
+function removeEvent(obj, evName, func){
+	if(obj.detachEvent){
+		evName = 'on' + evName;
+		obj.detachEvent(evName, func);
+	}else{
+		obj.removeEventListener(evName, func);
+	}
+}
+function addEv(){
+	var btn = document.getElementById('testBtn');
+	addEvent(btn, 'click', testFunc);
+}
+function removeEv(){
+	var btn = document.getElementById('testBtn');
+	removeEvent(btn, 'click', testFunc);
+}
+</script>
+</head>
+<body>
+<input type="button" value="test" onclick="test()" id="testBtn"/>
+<input type="button" value="addEvent" onclick="addEv()"/>
+<input type="button" value="removeEvent" onclick="removeEv()"/>
+</body>
+</html>

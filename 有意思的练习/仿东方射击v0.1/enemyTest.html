@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+#playArea {width:400px; height:500px; margin-top:5px; margin-left:50%; left: -200px; border:1px solid #333; position:relative; overflow:hidden;"}
+#div1 {width: 24px; height:30px; border:1px solid #ccc; background:url(images/enemy.png) no-repeat -5px 0px;}
+</style>
+<script type="text/javascript" src="js/simpleAnimate.js"></script>
+<script type="text/javascript" src="js/template.js"></script>
+<script type="text/javascript" src="js/scenario.js"></script>
+<script type="text/javascript" src="js/player.js"></script>
+<script type="text/javascript" src="js/bullet.js"></script>
+<script type="text/javascript" src="js/enemy.js"></script>
+<script>
+
+window.onload = function(){
+	var playArea = document.getElementById('playArea');
+	var player = new Player(playArea);
+	Enemy.startHitCheck(player);
+	new Enemy(playArea,scenarioArr[0]);
+	new Enemy(playArea, scenarioArr[1]);
+}
+</script>
+</head>
+<body style="">
+<div id="playArea"></div>
+</body>
+</html>

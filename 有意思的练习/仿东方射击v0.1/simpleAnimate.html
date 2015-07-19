@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Raphael的运动框架</title>
+<style>
+* {margin:0; padding:0}
+
+#wrap {width:400px; height:500px; position:relative; margin:20px; border:1px solid #333; float:left;}
+#wrap ul {list-style:none;margin:10px;}
+#wrap li {position:relative; height:60px;}
+#wrap li div {width:50px; height:50px; border:1px solid #333; position:absolute; opacity:0.5; filter:alpha(opacity:50);}
+#wrap div {cursor: pointer;}
+
+#wrap2 {width:400px; height:500px; position:relative; margin:20px; border:1px solid #333;float:left;}
+#wrap2 #polarDiv {width:50px; height:50px; border:1px solid #333; position:absolute; left:175px; top:225px; background:#36C; opacity:0.5; filter:alpha(opacity:50)}
+#wrap2 #parabolaDiv {width:50px; height:50px; border:1px solid #333; position:absolute; background:#699; opacity:0.5; filter:alpha(opacity:50)}
+#wrap2 div {cursor: pointer;}
+</style>
+<script type="text/javascript" src="js/simpleAnimate.js"></script>
+<script type="text/javascript">
+window.onload = function(){
+	var easingArr = ['linear', '>', '<', '<>', 'elastic', 'backIn', 'backOut', 'bounce'];
+	var colorArr = ['#f00', '#f80', '#ff0', '#0f0', '#0ff', '#00f', '#80f', '#666'];
+	var oWrapDiv = document.getElementById('wrap');
+	var aDivs = oWrapDiv.getElementsByTagName('div');
+	for(var i=0; i<aDivs.length; i++){
+		(function(i){
+			aDivs[i].style.background = colorArr[i];
+			aDivs[i].onclick = function(){
+				animate(this,{left: 330, opacity:100}, 2000, easingArr[i], function(){
+					animate(this, {left: 0, opacity: 50}, 2000, easingArr[i]);
+				}, 500);
+			}
+		})(i);
+	}
+	var oPolarDiv = document.getElementById('polarDiv');
+	oPolarDiv.onclick = function(){
+		animate(this, {r: 200, theta: 360, opacity:100}, 3000, 'bounce', function(){
+			relocatePolar(this, {center: {x: 300, y: 250}, r: 100});
+			animate(this, {theta:540, opacity: 50}, 3000, '>', function(){
+				relocatePolar(this, {theta: 0, r:0, center:{x: 200, y:250}});
+			});
+		}, 500);
+	}
+	var oParabolaDiv = document.getElementById('parabolaDiv');
+	oParabolaDiv.onclick = function(){
+		animate(this, {left:350, opacity: 100}, 2000, 'linear');
+		animate(this, {top: 450}, 2000, 'bounce', function(){
+			animate(this, {left: 0, opacity: 75}, 1000, '>', function(){
+				animate(this, {top: 0, opacity: 50}, 1000, '<');
+			})
+		}, 500);
+	}
+}
+</script>
+</head>
+<body>
+<div id="outsideDiv" style="margin:auto auto; position:relative; width:900px;">
+    <div id="wrap">
+        <ul>
+            <li>
+                <div></div>
+            </li>
+            <li>
+                <div></div>
+            </li>
+            <li>
+                <div></div>
+            </li>
+            <li>
+                <div></div>
+            </li>
+            <li>
+                <div></div>
+            </li>
+            <li>
+                <div></div>
+            </li>
+            <li>
+                <div></div>
+            </li>
+            <li>
+                <div></div>
+            </li>
+        </ul>
+    </div>
+    <div id="wrap2">
+        <div id="polarDiv"></div>
+        <div id="parabolaDiv"></div>
+    </div>
+</div>
+</body>
+</html>

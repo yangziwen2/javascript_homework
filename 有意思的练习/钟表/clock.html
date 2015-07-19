@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+#canvas {width:600px; height:600px; position:relative; margin:30px auto 0px; background: url(images/plate.jpg) no-repeat 0 0;}
+div.fingerDiv {position:absolute; width:600px; height:600px; padding:auto;}
+img.finger {margin-left:285px;}
+</style>
+<script type="text/javascript" src="js/raphael.js"></script>
+<script type="text/javascript">
+window.onload = function(){
+	var oClock = initClock();
+	setInterval(function(){
+		oClock.run(800);
+	}, 1000);
+	oClock.run(0);
+}
+function initClock(){
+	var oClock = {};
+	oClock.secondFinger = initFinger('secondDiv', 'secondFinger');
+	oClock.minuteFinger = initFinger('minuteDiv', 'minuteFinger');
+	oClock.hourFinger = initFinger('hourDiv', 'hourFinger');
+	var secondCount = 0;
+	var minuteCount = 0;
+	var hourCount = 0;
+	oClock.getSecondAngle = function(oDate){
+		var angle = oDate.getSeconds()*6;
+		secondCount += angle? 0: 1;
+		return secondCount * 360 + angle;
+	};
+	oClock.getMinuteAngle = function(oDate){
+		var angle = oDate.getMinutes()*6 + oDate.getSeconds()/10;
+		minuteCount += angle? 0: 1;
+		return minuteCount * 360 + angle;
+	};
+	oClock.getHourAngle = function(oDate){
+		var angle = oDate.getHours()*30 + oDate.getMinutes()/2;
+		hourCount += angle? 0: 1;
+		return hourCount * 360 + angle;
+	};
+	oClock.moveSecondFinger = function(oDate, timeSpan){
+		this.secondFinger.animate({rotation: this.getSecondAngle(oDate)}, timeSpan, '>');
+	};
+	oClock.moveMinuteFinger = function(oDate, timeSpan){
+		this.minuteFinger.animate({rotation: this.getMinuteAngle(oDate)}, timeSpan);
+	};
+	oClock.moveHourFinger = function(oDate, timeSpan){
+		this.hourFinger.animate({rotation: this.getHourAngle(oDate)}, timeSpan);
+	};
+	oClock.run = function(timeSpan){
+		var oDate = new Date();
+		this.moveSecondFinger(oDate, timeSpan);
+		this.moveMinuteFinger(oDate, timeSpan);
+		this.moveHourFinger(oDate, timeSpan);
+	};
+	return oClock;
+}
+
+function initFinger(fingerDivId, fingerId){
+	var oImg = document.getElementById(fingerId);
+	var oDiv = document.getElementById(fingerDivId);
+	var R = Raphael(fingerDivId, oDiv.offsetWidth, oDiv.offsetHeight);
+	var iLeft = parseInt((oDiv.offsetWidth - oImg.offsetWidth)/2);
+	var iTop =  parseInt((oDiv.offsetHeight - oImg.offsetHeight)/2);
+	var img = R.image(oImg.src, iLeft, iTop, oImg.offsetWidth, oImg.offsetHeight);
+	return img;
+}
+</script>
+</head>
+<body>
+<div id="canvas">
+	<div id="hourDiv" class="fingerDiv">
+    	<img src="images/hourFinger.png" id="hourFinger" class="finger"/>
+    </div>
+    <div id="minuteDiv" class="fingerDiv">
+    	<img src="images/minuteFinger.png" id="minuteFinger" class="finger"/>
+    </div>
+    <div id="secondDiv" class="fingerDiv">
+    	<img src="images/secondeFinger.png" id="secondFinger" class="finger"/>
+    </div>
+</div>
+</body>
+</html>

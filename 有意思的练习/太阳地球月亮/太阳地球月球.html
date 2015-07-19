@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+#wrap {width:600px; height:400px; border:1px solid #333; margin:50px auto 0; position:relative; background-color:#000}
+#wrap .celestialCenter {width:1px; height:1px; border:1px solid #333; position:absolute;}
+#wrap .celestialPic {position:absolute;}
+</style>
+<script type="text/javascript">
+(function(){
+	window.CelestialBody = function(selfObj, masterObj, radius, omega, leanAngle){
+		this.selfObj = selfObj;
+		this.masterObj = masterObj;
+		this.radius = radius;
+		this.omega = omega;
+		this.theta = 0;
+		this.leanAngle = leanAngle;
+		this.centerX = masterObj.centerX + radius;
+		this.centerY = masterObj.centerY + 0;
+		this.timeSpan = 10;
+		this.setPosition(this.centerX, this.centerY);
+		this.selfObj.style.zIndex = 100;
+	};
+	window.CelestialBody.prototype = {
+		step: function(){
+			this.theta = this.theta + this.omega * this.timeSpan / 1000;
+			this.centerX = this.masterObj.centerX + Math.cos(this.theta)*this.radius;
+			this.centerY = this.masterObj.centerY + Math.sin(this.theta)*this.radius*Math.cos(this.leanAngle);
+			this.setPosition(this.centerX,this.centerY);
+			var masterZIndex = parseInt(this.masterObj.selfObj.style.zIndex);
+			masterZIndex = isNaN(masterZIndex)? 100: masterZIndex;
+			if(this.centerY > this.masterObj.centerY){
+				this.selfObj.style.zIndex = masterZIndex+1;
+			}else{
+				this.selfObj.style.zIndex = masterZIndex-1;	
+			}
+		},
+		run: function(){
+			clearInterval(this.timer);
+			var _this = this;
+			this.timer = setInterval(function(){
+				_this.step();
+			}, this.timeSpan);
+		},
+		'stop': function(){
+			clearInterval(this.timer);
+		},
+		setPosition: function(centerX, centerY){
+			this.selfObj.style.left = parseInt(centerX) + 'px';
+			this.selfObj.style.top = parseInt(centerY) + 'px';
+		}
+	}
+})();
+window.onload = function(){
+	var oSunCenter = document.getElementById('sunCenter');
+	var oSun = new CelestialBody(oSunCenter, {
+		centerX: 300,
+		centerY: 200
+	}, 0, 0, 0);
+	var oEarthCenter = document.getElementById('earthCenter');
+	var oEarth = new CelestialBody(oEarthCenter, oSun, 230, 0.5, 1);
+	var oMoonCenter = document.getElementById('moonCenter');
+	var oMoon = new CelestialBody(oMoonCenter, oEarth, 50, 2, 0.7);
+	var oRunBtn = document.getElementById('runBtn');
+	var oStopBtn = document.getElementById('stopBtn');
+	oRunBtn.onclick = function(){
+		oEarth.run();
+		oMoon.run();
+	}
+	oStopBtn.onclick = function(){
+		oEarth.stop();
+		oMoon.stop();
+	}
+	oRunBtn.onclick();
+}
+</script>
+</head>
+
+<body>
+<div id="wrap">
+<input type="button" value="运行" id="runBtn"/>
+<input type="button" value="停止" id="stopBtn"/>
+	<div id="sunCenter" class="celestialCenter" style="left:300px; top:200px;">
+    	<div id="sunPic" class="celestialPic" style="width:100px; height:100px; left:-50px; top:-50px;">
+        	<img src="images/sun2.jpg" style="width:100px; height:100px;" />
+        </div>
+    </div>
+    <div id="earthCenter" class="celestialCenter">
+    	<div id="earthPic" class="celestialPic" style="width:30px; height:30px; left:-15px; top:-15px;">
+        	<img src="images/earth.png" style="width:30px; height:30px;"/>
+        </div>
+    </div>
+    <div id="moonCenter" class="celestialCenter">
+    	<div id="moonPic" class="celestialPic" style="width:14px; height:14px; left:-7px; top:-7px;">
+        	<img src="images/moon.png" style="width:14px; height:14px;" />
+        </div>
+    </div>
+</div>
+</body>
+</html>

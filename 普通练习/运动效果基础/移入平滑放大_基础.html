@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+* {margin:0px; padding:0px;}
+#div1 {width:100px; height:100px;position:absolute; background-color:#09F;}
+</style>
+<script type="text/javascript">
+window.onload = function(){
+	var oDiv = document.getElementById('div1');
+	oDiv.style.top = '0px';
+	oDiv.style.width = getStyle(oDiv,'width');
+	oDiv.originalWidthInt = parseInt(oDiv.style.width);
+	oDiv.style.height = getStyle(oDiv,'height');
+	oDiv.originalHeightInt = parseInt(oDiv.style.height);
+	oDiv.targetWidthInt = 200;
+	oDiv.targetHeightInt = 300;
+	oDiv.onmouseover = function(){
+		oDiv.speedX = (oDiv.targetWidthInt-oDiv.originalWidthInt)/10;
+		oDiv.speedY = (oDiv.targetHeightInt-oDiv.originalHeightInt)/10;
+		oDiv.isOver = true;
+		startMove(oDiv);
+	};
+	oDiv.onmouseout = function(){
+		oDiv.speedX = -(oDiv.targetWidthInt-oDiv.originalWidthInt)/5;
+		oDiv.speedY = -(oDiv.targetHeightInt-oDiv.originalHeightInt)/5;
+		oDiv.isOver = false;
+		startMove(oDiv);
+	};
+}
+
+function startMove(obj){
+	clearInterval(obj.timer);
+	obj.timer = setInterval(function(){
+		doMove(obj);								 
+	}, 30);
+}
+
+function doMove(obj){
+	var iWidth = parseInt(obj.style.width);
+	if(obj.isOver){
+		iWidth = iWidth >= obj.targetWidthInt? iWidth: iWidth + obj.speedX;
+	}else{
+		iWidth = iWidth <= obj.originalWidthInt? iWidth: iWidth + obj.speedX;	
+	}
+	iWidth = obj.isOver? Math.min(iWidth, obj.targetWidthInt):Math.max(iWidth, obj.originalWidthInt);
+	obj.style.width = iWidth + 'px';
+	
+	var iHeight = parseInt(obj.style.height);
+	if(obj.isOver){
+		iHeight = iHeight >= obj.targetHeightInt? iHeight: iHeight + obj.speedY;
+	}else{
+		iHeight = iHeight <= obj.originalHeightInt? iHeight: iHeight + obj.speedY;
+	}
+	iHeight = obj.isOver? Math.min(iHeight, obj.targetHeightInt): Math.max(iHeight, obj.originalHeightInt);
+	obj.style.height = iHeight + 'px';
+}
+
+function getStyle(obj, attr){
+	if(obj.currentStyle){
+		return obj.currentStyle[attr];	
+	}else{
+		return getComputedStyle(obj, false)[attr];	
+	}
+}
+</script>
+<title>无标题文档</title>
+</head>
+<div id="div1">
+</div>
+<body>
+</body>
+</html>

@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+* {margin:0px; padding:0px; border-width:0px;}
+#parentDiv {width:200px; height:200px; background:#39F; position:absolute; left:400px; top:200px;}
+#parentDiv div {background:#F03; width:10px; height:10px; position:absolute;}
+</style>
+<script type="text/javascript">
+window.onload = function(){
+	window.oDispInput = document.getElementById('dispInput');
+	var oParentDiv = document.getElementById('parentDiv');
+	var oLtDiv = document.getElementById('ltDiv');
+	var oLbDiv = document.getElementById('lbDiv');
+	var oRtDiv = document.getElementById('rtDiv');
+	var oRbDiv = document.getElementById('rbDiv');
+	var leftAttrs = {cursor:'clientX', leftOrTop: 'Left', widthOrHeight: 'Width'};
+	var topAttrs = {cursor:'clientY', leftOrTop: 'Top', widthOrHeight: 'Height'};
+	var aDragDivArr = [[oLtDiv, oRtDiv],[oLbDiv, oRbDiv]];
+	for(var i=0; i<aDragDivArr.length; i++){
+		for(var j=0; j<aDragDivArr[i].length; j++){
+			var $this = aDragDivArr[i][j];
+			$this.isLeftResized = !j;
+			$this.isTopResized = !i;
+			$this.onmousedown = function(ev){
+				var oEvent = ev || event;
+				var $this = this;
+				initParentDiv(oParentDiv);
+				var disX = this.offsetLeft - oEvent.clientX;
+				var disY = this.offsetTop - oEvent.clientY;
+				document.onmousemove = function(ev){
+					var oEvent = ev || event;
+					resizeParent($this, oEvent, disX, oParentDiv, $this.isLeftResized, leftAttrs);
+					resizeParent($this, oEvent, disY, oParentDiv, $this.isTopResized, topAttrs);
+					return false;
+				}
+				document.onmouseup = function(){
+					document.onmousemove = document.onmouseup = null;
+					return false;
+				}
+				return false;
+			}
+		}
+	}
+}
+
+function resizeParent($this, oEvent, dis, oParentDiv, isLeftTopResized, attrs){
+	var val = oEvent[attrs['cursor']] + dis;
+	if(isLeftTopResized){
+		var newLeftOrTop = val + oParentDiv['original' + attrs.leftOrTop];
+		var newWidthOrHeight = oParentDiv['original' + attrs.leftOrTop] - newLeftOrTop + oParentDiv['original' + attrs.widthOrHeight];
+	}else{
+		var newWidthOrHeight = val + $this['offset' + attrs.widthOrHeight]
+	}
+	if(newWidthOrHeight<=20){
+		newLeftOrTop = oParentDiv['original' + attrs.leftOrTop] + oParentDiv['original' + attrs.widthOrHeight] - 20;
+		newWidthOrHeight = 20;
+	}
+	oParentDiv.style[attrs.widthOrHeight.toLowerCase()] = newWidthOrHeight + 'px';
+	if(isLeftTopResized){
+		oParentDiv.style[attrs.leftOrTop.toLowerCase()] = newLeftOrTop + 'px';
+	}
+}
+
+function initParentDiv(oParentDiv){
+	oParentDiv.originalLeft = oParentDiv.offsetLeft;
+	oParentDiv.originalTop = oParentDiv.offsetTop;
+	oParentDiv.originalWidth = oParentDiv.offsetWidth;
+	oParentDiv.originalHeight = oParentDiv.offsetHeight;
+}
+</script>
+</head>
+<body>
+<input type="text" id="dispInput" style="width:400px; position:absolute;"/>
+<div id="parentDiv">
+<div id="ltDiv" style="left:0px; top:0px;"></div>
+<div id="lbDiv" style="left:0px; bottom:0px;"></div>
+<div id="rtDiv" style="right:0px; top:0px;"></div>
+<div id="rbDiv" style="right:0px; bottom:0px;"></div>
+</div>
+</body>
+</html>

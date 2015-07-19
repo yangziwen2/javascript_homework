@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<link rel="stylesheet" type="text/css" href="miaov_style.css">
+<script type="text/javascript">
+window.onload = function(){
+	var oMessageBoardContainer = getById('messageBoardContainer');
+	var oMessageBoard = getById('messageBoard');
+	var iOriginTop = oMessageBoardContainer.offsetTop;
+	var timer = null;
+	clearInterval(timer);
+	clearTimeout(timer);
+	timer = setTimeout(function(){
+		initMessageBordContainer(oMessageBoardContainer,oMessageBoard);
+	}, 2000);
+	initMessageBoardMotion(oMessageBoardContainer);
+	var oQuirkyPopupShowBtn = getById('quirkyPopupShowBtn');
+	oQuirkyPopupShowBtn.onclick = function(){
+		initMessageBordContainer(oMessageBoardContainer,oMessageBoard);
+		this.style.display = 'none';
+	}
+}
+
+function initMessageBordContainer(oMessageBoardContainer, oMessageBoard){
+	var timer = null;
+	clearInterval(timer);
+	var iSpeed = 10;
+	var iTargetHeight = oMessageBoard.offsetHeight;
+	var iOriginLeft = oMessageBoardContainer.offsetLeft;
+	var iOriginTop = oMessageBoardContainer.offsetTop;
+	timer = setInterval(function(){
+		var iCurrentHeight = oMessageBoardContainer.offsetHeight+iSpeed;
+		if(iCurrentHeight > iTargetHeight){
+			 iCurrentHeight = iTargetHeight; 
+		}
+		oMessageBoardContainer.style.height = iCurrentHeight + 'px';
+		oMessageBoardContainer.style.top = Math.round(iOriginTop-iCurrentHeight/2) + 'px';
+		oMessageBoard.style.top = -Math.round((iTargetHeight-iCurrentHeight)/2) + 'px';
+		if(iCurrentHeight == iTargetHeight){
+			clearTimeout(timer);	
+		}
+	}, 30);
+	getById('closeBtn').onclick = function(){
+		clearInterval(oMessageBoardContainer.timer);
+		var iTargetX = -oMessageBoardContainer.offsetWidth;
+		var iTargetY = 0;
+		oMessageBoardContainer.timer = setInterval(function(){
+			var iCurX = oMessageBoardContainer.offsetLeft;
+			var iCurY = oMessageBoardContainer.offsetTop;
+			var iSpeedX = (iTargetX - iCurX)/10;
+			var iSpeedY = (iTargetY - iCurY)/10;
+			iSpeedX = iSpeedX>0?Math.ceil(iSpeedX): Math.floor(iSpeedX);
+			iSpeedY = iSpeedY>0?Math.ceil(iSpeedY): Math.floor(iSpeedY);
+			oMessageBoardContainer.style.left = (iCurX + iSpeedX) + 'px';
+			oMessageBoardContainer.style.top = (iCurY + iSpeedY) + 'px';
+			if(iSpeedX == 0 && iSpeedY == 0){
+				clearInterval(oMessageBoardContainer.timer);
+				oMessageBoardContainer.style.height = '0px';
+				oMessageBoardContainer.style.top = iOriginTop + 'px';
+				oMessageBoardContainer.style.left = iOriginLeft + 'px';
+				var oQuirkyPopupShowBtn = getById('quirkyPopupShowBtn');
+				oQuirkyPopupShowBtn.style.left = '0px';
+				oQuirkyPopupShowBtn.style.top = '0px';
+				oQuirkyPopupShowBtn.style.display = 'block';
+			}
+		} ,30);
+	}
+}
+
+function initMessageBoardMotion(oMessageBoardContainer){
+	var oMessageBoardTitle = getById('messageBoardTitle');
+	oMessageBoardTitle.onmousedown = function(ev){
+		clearInterval(oMessageBoardContainer.timer);
+		var oEvent = ev || event;
+		if(2 == oEvent.button){
+			return;	
+		}
+		var iLastTop = oMessageBoardContainer.offsetTop;
+		var iLastLeft = oMessageBoardContainer.offsetLeft;
+		var iCurrentTop = iLastTop;
+		var iCurrentLeft = iLastLeft;
+		var relativeDiffX = iCurrentLeft - oEvent.clientX;
+		var relativeDiffY = iCurrentTop - oEvent.clientY;
+		document.onmousemove = function(ev){
+			 var oEvent = ev || event;
+			 oMessageBoardContainer.style.left = (relativeDiffX+oEvent.clientX) + 'px';
+			 oMessageBoardContainer.style.top = (relativeDiffY + oEvent.clientY) + 'px';
+			 iLastTop = iCurrentTop;
+			 iLastLeft = iCurrentLeft;
+			 iCurrentLeft = oMessageBoardContainer.offsetLeft
+			 iCurrentTop = oMessageBoardContainer.offsetTop;
+		}
+		document.onmouseup = function(){
+			document.onmousemove = null;
+			document.onmouseup = null;
+			var iSpeedX = iCurrentLeft - iLastLeft;
+			var iSpeedY = iCurrentTop - iLastTop;
+			var fFrictionFactor = 0.7;
+			var iAcceleration = 2;
+			var iWidth = oMessageBoardContainer.offsetWidth;
+			var iHeight = oMessageBoardContainer.offsetHeight;
+			var totalWidth = document.documentElement.clientWidth;
+			var totalHeight = document.documentElement.clientHeight;
+			clearInterval(oMessageBoardContainer.timer);
+			oMessageBoardContainer.timer = setInterval(function(){
+				var l = oMessageBoardContainer.offsetLeft;
+				var t = oMessageBoardContainer.offsetTop;
+				l += iSpeedX;
+				t += iSpeedY;
+				if(l>totalWidth - iWidth){
+					l = totalWidth - iWidth;
+					iSpeedX = -iSpeedX;
+				}else if (l<0){
+					l = 0;
+					iSpeedX = -iSpeedX;
+				}
+				if(t > totalHeight - iHeight){
+					t = totalHeight - iHeight;
+					iSpeedY *= -fFrictionFactor;
+					iSpeedX *= fFrictionFactor;
+				}else if(t < 0){
+					t = 0;
+					iSpeedY *= -fFrictionFactor;
+					iSpeedX *= fFrictionFactor;
+				}
+				oMessageBoardContainer.style.left = l + 'px';
+				oMessageBoardContainer.style.top = t + 'px';
+				iSpeedY += iAcceleration;
+				if(Math.abs(iSpeedX) < 1){
+					iSpeedX = 0;	
+				}
+			}, 20);
+		}
+	}
+}
+
+function getById(id){
+	return document.getElementById(id);	
+}
+function getByTag(obj, tagName){
+	return obj.getElementsByTagName(tagName);	
+}
+function getStyle(obj, attr){
+	if(obj.currentStyle){
+		return obj.currentStyle[attr];
+	}else{
+		return getComputedStyle(obj, false)[attr];
+	}
+}
+</script>
+</head>
+
+<body>
+<div id="messageBoardContainer">
+	<div id="messageBoard">
+		<div class="wrap">
+			<h2 id="messageBoardTitle">
+				<span>妙味课堂公告栏</span>
+				<a href="javascript:" id="closeBtn" title="关闭"></a>
+			</h2>
+			<div class="content">
+				<p class="indent"><span>妙味课堂将于10月9日、10日举办 JavaScript 相关知识研讨聚会。由石川(blue)为大家分享以下内容：</span></p>
+				<p class="indent"><span>高级拖拽、自定义滚动条、可拖动缩放的弹出层、网页放大镜、官网作品页面、官网照片墙等效果。</span></p>
+				<p class="indent"><span>在北京的朋友想参加此次活动的，请提前通过 <strong><a href="contact.html.php" style="color:#666;">电话</a>、<a href="student.html.php" style="color:#666;">QQ群</a>、<a href="message.html.php" style="color:#666;">在线留言</a>、<a href="http://blog.miaov.com/" style="color:#666;">博客留言</a></strong> 等方式与我们取得联系，以便我们为各位朋友安排活动座位^_^！</span></p>
+				<p class="date"><span>妙味课堂2010年10月</span></p>
+			</div>
+		</div>
+		<div class="bg"></div>
+	</div>
+</div>
+
+<a href="javascript:;" id="quirkyPopupShowBtn" style="display:none;"></a>
+</body>
+</html>

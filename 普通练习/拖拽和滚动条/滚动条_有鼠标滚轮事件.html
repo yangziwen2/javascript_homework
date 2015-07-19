@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>New Web Project</title>
+<style>
+*{
+	margin: 0px;
+	padding: 0px;
+}
+.wrap {
+	width: 400px;
+	height: 300px;
+	border: 1px solid #333;
+	margin: 100px auto 10px;
+	position: relative;
+}
+.wrap ul.outter{
+	width:100%; 
+	height: 100%; 
+	list-style:none;
+}
+.wrap ul.outter li{
+	float: left;
+}
+.contentArea{
+	width: 100%;
+	height: 300px;
+	position: relative;
+	overflow: hidden;
+}
+.content {
+	position: relative;
+}
+.content p{
+	text-indent: 2em;
+}
+.padding_div {
+	padding: 10px;
+}
+.scrollbar {
+	height: 300px;
+	width: 100%;
+	border-left: 1px solid #333;
+	position:relative;
+}
+.dragger {
+	height: 30px;
+	width: 29px;
+	position: absolute;
+	top: 0px;
+	background-color: red;
+}
+</style>
+<script src="event.js"></script>
+<script src="style.js"></script>
+<script src="drag.js"></script>
+<script src="mousewheel.js"></script>
+<script>
+window.onload = function(){
+	var wrap = document.getElementById('wrap');
+	var wrap2 = document.getElementById('wrap2');
+	scrollbar(wrap);
+	scrollbar(wrap2);
+}
+function scrollbar(wrap){
+	var dragger = getElementsByClassName(wrap, 'dragger')[0];
+	var scrollbar = getElementsByClassName(wrap, 'scrollbar')[0];
+	var content = getElementsByClassName(wrap, 'content')[0];
+	var contentArea = getElementsByClassName(wrap, 'contentArea')[0];
+	// var contentArea = content.parentNode;
+	var scrollScale = getStyleInt(scrollbar, 'height') - getStyleInt(dragger, 'height');
+	var contentScale =	content.offsetHeight - contentArea.offsetHeight ;
+	drag(dragger, 'top', {
+		limited: true,
+		fn: scrollContent
+	});
+	addMousescrollEvent(wrap, function(event){
+		var delta = event.scrollDirect == 'down'? 10: -10;
+		var iNow = getStyleInt(dragger, 'top');
+		var iNew = iNow + delta;
+		iNew < 0 && (iNew = 0);
+		iNew > scrollScale && (iNew = scrollScale);
+		setStyleInt(dragger, 'top', iNew);
+		scrollContent(iNew);
+	});
+	function scrollContent(newPos){
+		var ratio = newPos / scrollScale;
+		content.style.marginTop = -Math.round(ratio * contentScale) + 'px';
+	}
+}
+</script>
+</head>
+<body>
+<div class="wrap" id="wrap">
+	<ul class="outter">
+		<li style="width: 370px">
+			<div class="contentArea">
+				<div class="content">
+					<div class="padding_div" >
+					<p>前几天湖南卫视记者来采访我时，说他们也将去采访韩寒，问我有什么问题要问韩寒，他们可以代为询问，这样可以通过剪辑形成“隔空对质”的效果。我让他们代问了三个问题，其中一个问题是：韩寒是什么时候开始读钱钟书的？</p>
+					<br/>
+					<p>2月5日湖南卫视“新闻当事人”播出的节目，果然有韩寒对这个问题的回答，大意是：他是在初一时开始看《围城》的，但是看不懂，初二初三时又看了一遍，还是觉得钱钟书“文笔太难”“太学贯中西，有太多的英语”，他更喜欢当时开始读的林语堂、梁实秋。（视频见（第11分开始）：http://www.imgo.tv/clip-201202-51-2510-229453-240574.shtml ）</p>
+					<br/>
+					<p>韩寒和节目编导可能都不知道我为什么要问这个问题（编导剪辑我对韩寒回答的反驳并没有击中要害）。其实在我问这个问题之前，我已经发了《“天才”韩寒〈书店（一）〉分析》，如果仔细看过我那篇文章，就知道我为何要问这个问题了。我还担心韩寒会针对我这篇文章编一个说得过去的答案，结果却没有。他没有我想的那么聪明。</p>
+					<br/>
+					<p>《书店（一）》一文号称是韩寒在初二下学期刚开始时（1997年3月）在一个月内创作的十几篇小说、散文之一。正如我已在《“天才”韩寒〈书店（一）〉分析》指出的，《书店（一）》的文风模仿钱钟书，而且几处化用了钱钟书《围城》等作品的句子：</p>
+					</div>
+				</div>
+			</div>
+		</li>
+		<li style="width: 30px; height: 100%;">
+			<div class="scrollbar">
+				<div class="dragger"></div>
+			</div>
+		</li>
+	</ul>
+</div>
+<div class="wrap" id="wrap2">
+	<ul class="outter">
+		<li style="width: 370px">
+			<div class="contentArea">
+				<div class="content">
+					<div class="padding_div" >
+					<p>前几天湖南卫视记者来采访我时，说他们也将去采访韩寒，问我有什么问题要问韩寒，他们可以代为询问，这样可以通过剪辑形成“隔空对质”的效果。我让他们代问了三个问题，其中一个问题是：韩寒是什么时候开始读钱钟书的？</p>
+					<br/>
+					<p>2月5日湖南卫视“新闻当事人”播出的节目，果然有韩寒对这个问题的回答，大意是：他是在初一时开始看《围城》的，但是看不懂，初二初三时又看了一遍，还是觉得钱钟书“文笔太难”“太学贯中西，有太多的英语”，他更喜欢当时开始读的林语堂、梁实秋。（视频见（第11分开始）：http://www.imgo.tv/clip-201202-51-2510-229453-240574.shtml ）</p>
+					<br/>
+					<p>韩寒和节目编导可能都不知道我为什么要问这个问题（编导剪辑我对韩寒回答的反驳并没有击中要害）。其实在我问这个问题之前，我已经发了《“天才”韩寒〈书店（一）〉分析》，如果仔细看过我那篇文章，就知道我为何要问这个问题了。我还担心韩寒会针对我这篇文章编一个说得过去的答案，结果却没有。他没有我想的那么聪明。</p>
+					<br/>
+					<p>《书店（一）》一文号称是韩寒在初二下学期刚开始时（1997年3月）在一个月内创作的十几篇小说、散文之一。正如我已在《“天才”韩寒〈书店（一）〉分析》指出的，《书店（一）》的文风模仿钱钟书，而且几处化用了钱钟书《围城》等作品的句子：</p>
+					</div>
+				</div>
+			</div>
+		</li>
+		<li style="width: 30px; height: 100%;">
+			<div class="scrollbar">
+				<div class="dragger"></div>
+			</div>
+		</li>
+	</ul>
+</div>
+
+</body>
+</html>

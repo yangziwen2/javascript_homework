@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<script>
+(function(){
+	window.MyArray = function(){
+		for(var i=0; i<arguments.length; i++){
+			this[i] = arguments[i];	
+		}
+		this.length = arguments.length;
+	}
+	MyArray.prototype = {
+		push: function(){
+			for(var i=0; i<arguments.length; i++){
+				this[this.length + i] = arguments[i];	
+			}
+			this.length += arguments.length;
+		},
+		pop: function(){
+			var value = this[this.length - 1];
+			delete(this[this.length - 1]);
+			this.length --;
+			return value;
+		},
+		unshift: function(){
+			for(var i=this.length + arguments.length - 1; i >= arguments.length; i--){
+				this[i] = this[i-arguments.length];	
+			}
+			for(var i=0; i<arguments.length; i++){
+				this[i] = arguments[i];	
+			}
+			this.length += arguments.length;
+		},
+		shift: function(){
+			var value = this[0];
+			for(var i=0; i<(this.length-1); i++){
+				this[i] = this[i+1];	
+			}
+			delete(this[this.length - 1]);
+			this.length--;
+			return value;
+		},
+		reverse: function(){
+			var len = Math.floor(this.length/2);
+			var temp = null;
+			for(var i=0; i<len; i++){
+				temp = this[i];
+				this[i] = this[this.length - i - 1];
+				this[this.length - i - 1] = temp;
+			}
+		},
+		sort: function(cmpFn){
+			typeof(cmpFn) == 'function' || (cmpFn = function(){
+				var str1 = arguments[0].toString();
+				var str2 = arguments[1].toString();
+				if(str1 == str2){
+					return 0;	
+				}else if(str1 > str2){
+					return 1;
+				}else{
+					return -1;	
+				}
+			});
+			for(var i=this.length-1; i>0; i--){
+				var index = i;
+				for(var j=0; j<i; j++){
+					index = cmpFn(this[j], this[index]) > 0 ? j: index; 
+				}
+				var temp = this[index];
+				this[index] = this[i];
+				this[i] = temp;
+			}
+		},
+		join: function(separator){
+			separator = separator.toString();
+			var str = '';
+			for(var i=0; i<this.length; i++){
+				str += separator.toString() + this[i];	
+			}
+			str = str.length > 0? str.substring(separator.length): str;
+			return '[' + str + ']';
+		},
+		slice: function(startIndex, endIndex){
+			typeof(startIndex) == 'number' || (startIndex = 0);
+			typeof(endIndex) == 'number' || (endIndex = this.length);
+			var newArr = new MyArray();
+			if(startIndex >= this.length){
+				return newArr;	
+			}
+			if(endIndex > this.length){
+				endIndex = this.length;	
+			}
+			startIndex = (startIndex + this.length) % this.length;
+			endIndex = (endIndex + this.length) % this.length;
+			for(var i=startIndex; i<endIndex; i++){
+				newArr[i - startIndex] = this[i];	
+			}
+			newArr.length =  endIndex - startIndex;
+			return newArr;
+		},
+		concat: function(){
+			var count = this.length;
+			var newArr = new MyArray();
+			for(var i=0; i<this.length; i++){
+				newArr[i] = this[i];	
+			}
+			for(var i=0; i<arguments.length; i++){
+				var arr = arguments[i];
+				for(var j=0; j<arr.length; j++){
+					newArr[count + j] = arr[j];
+				}
+				count += arr.length;
+			}
+			newArr.length = count;
+			return newArr;
+		},
+		toString: function(){
+			return this.join(',');
+		},
+		splice: function(index, count){
+			if(index >= this.length){
+				return new MyArray();	
+			}
+			var copyPiece = new MyArray();
+			for(var i=index + count; i<this.length; i++){
+				copyPiece.push(this[i]);	
+			}
+			for(var i=index; i<index + count; i++){
+				delete(this[i]);	
+			}
+			this.length = index;
+			var count = this.length;
+			for(var i=0; i<arguments.length-2; i++){
+				this[this.length + i] = arguments[i+2];
+			}
+			this.length += i;
+			for(var i=0; i<copyPiece.length; i++){
+				this[this.length + i] = copyPiece[i];	
+			}
+			this.length += copyPiece.length;
+		}
+	}
+})();
+</script>
+</head>
+
+<body>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>
+<script>
+(function(){
+	window.ajax = function(url, successFn){
+		var iframeName = 'iframe' + new Date().getTime();
+		var wrap = document.createElement('div');
+		wrap.style.display = 'none';
+		var iframe = document.createElement('iframe');
+		iframe.name = iframeName;
+		wrap.appendChild(iframe);
+		document.body.appendChild(wrap);
+		oniframeload(successFn)
+		function oniframeload(fn){
+			if(typeof fn != 'function'){
+				return;
+			}
+			open(url, iframeName);
+			setTimeout(function(){
+				if(typeof window.getFrameWindow == 'function'){
+					var frameWindow = window.getFrameWindow();
+					window.getFrameWindow = null;
+					var doc = frameWindow.document || frameWindow.Document;
+					var body = doc.body || doc.getElementsByTagName('body')[0];
+					fn(body.innerHTML);
+					document.body.removeChild(wrap);
+				}else{
+					setTimeout(arguments.callee, 10);
+				}
+			}, 10);
+		}
+	}
+	window.buildFrameWindowGetter = function(win){
+		return isWin(win)? function(){
+			return win;
+		}: null;
+	}
+	
+	function isWin(obj){
+		return /Window|global/.test({}.toString.call(obj))||obj==obj.document&&obj.document!=obj;
+	}
+})();
+window.onload = function(){
+	var oBtn = document.getElementById('btn1');
+	oBtn.onclick = function(){
+		ajax('childPage.html', function(data){
+			alert(data);
+		})
+	};
+}
+
+
+</script>
+</head>
+<body>
+	<input type="button" value="button" id="btn1"/>
+</body>
+</html>

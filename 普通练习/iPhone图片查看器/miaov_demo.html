@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>iPhone手机图片查看器 - 妙味课堂 - www.miaov.com</title>
+<link href="style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+window.onload = function(){
+	var oWrap = document.getElementById('wrap');
+	var oUl = oWrap.getElementsByTagName('ul')[0];
+	var oLiArr = oUl.getElementsByTagName('li');
+	oUl.liWidth = parseInt(getStyle(oLiArr[0],'width')); 	
+	oUl.style.left = '0px';
+	oUl.liNum = oLiArr.length;
+	oUl.oncontextmenu = function(){
+		return false;	
+	}
+	oUl.onmousedown = function(ev){
+		clearInterval(this.timer);
+		var oEvent = ev || event;
+		if(oEvent.button == 2){
+			return;	
+		}
+		this.currentLeft = parseInt(this.style.left);
+		this.startPosX = oEvent.clientX;
+		document.onmousemove = function(ev){
+			var oEvent = ev || event;
+			oUl.style.left = (oUl.currentLeft + oEvent.clientX - oUl.startPosX) + 'px';
+			
+		};
+		document.onmouseup = function(){
+			document.onmousemove = null;
+			document.onmouseup = null;
+			oUl.currentLeft = parseInt(oUl.style.left);
+			oUl.iSpeed = 0;
+			var flag = Math.abs(oUl.currentLeft%oUl.liWidth) < oUl.liWidth/2;
+			var num = (oUl.currentLeft/oUl.liWidth).toFixed(2);
+			var iTarget = flag? Math.ceil(num): Math.floor(num);
+			iTarget = iTarget>0? 0: iTarget;
+			iTarget = iTarget<-(oUl.liNum-1)? -(oUl.liNum-1): iTarget;
+			iTarget *= oUl.liWidth;
+			startMove(oUl, iTarget);
+		};
+	};
+}
+
+function startMove(obj, iTarget){
+	clearInterval(obj.timer);
+	obj.timer = setInterval(function(){
+		doMove(obj, iTarget);
+	}, 30);
+}
+
+function doMove(obj, iTarget){
+	var iCur = parseInt(obj.style.left);
+	obj.iSpeed += (iTarget-iCur)/10;
+	obj.iSpeed *= 0.8;
+	//obj.iSpeed = obj.iSpeed>0?Math.ceil(obj.iSpeed): Math.floor(obj.iSpeed);
+	obj.style.left = (iCur+obj.iSpeed) + 'px';
+}
+
+function getStyle(obj, attr){
+	return obj.currentStyle? obj.currentStyle[attr]: getComputedStyle(obj, false)[attr];
+}
+</script>
+</head>
+<body>
+<div id="iphone">
+	<div id="wrap">
+		<ul>
+			<li style="background:url(images/pic1.png);" title="妙味课堂"></li>
+			<li style="background:url(images/pic2.png);" title="妙味课堂"></li>
+			<li style="background:url(images/pic3.png);" title="妙味课堂"></li>
+			<li style="background:url(images/pic4.png);" title="妙味课堂"></li>
+		</ul>
+	</div>
+</div>
+</body>
+</html>

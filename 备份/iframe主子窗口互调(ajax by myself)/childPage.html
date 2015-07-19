@@ -1,0 +1,15 @@
+<html>
+<head>
+<script>
+window.onload = function(){
+	if(typeof top.buildFrameWindowGetter == 'function'){
+		//iframe下子调父用top比opener稳妥
+		top.getFrameWindow = top.buildFrameWindowGetter(window);
+	}
+}
+</script>
+</head>
+<body>
+	abc
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>tree</title>
+<script type="text/javascript" src="js/data.js"></script>
+<script type="text/javascript" src="js/tree.js"></script>
+<style type="text/css">
+.ltree {
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #666;
+	white-space: nowrap;
+}
+.ltree img {
+	border: 0px;
+	vertical-align: middle;
+}
+.ltree a {
+	color: #333;
+	text-decoration: none;
+}
+</style>
+</head>
+<body>
+	<div class="ltree" id="d">
+		<script type="text/javascript">
+		//window.onload = function(){
+			var dd = new lTree('dd');
+			for(i = 0;i<data.length;i++){
+				var dt = data[i];
+				dd.add(dt.id,dt.pid,dt.name,dt.url,dt.frameName);
+			}
+			//alert(dd+"=======")
+			document.write(dd);
+			//document.getElementById("d").innerText = dd;
+		//}
+		</script>
+		<br>
+		<br>
+	</div>
+		<a href="javascript:dd.openAll()">openAll</a>
+		<a href="javascript:dd.closeAll()">closeAll</a>
+</body>
+</html>

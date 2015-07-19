@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+* {margin:0px; padding:0px;}
+#outsideDiv {width:680px; left:50%; margin-left:-340px; top:200px;position:absolute;}
+#outsideDiv div {float:left; margin:10px; -webkit-border-radius:10px; -moz-border-radius:10px; overflow:hidden;}
+.figureImg {width:150px;}
+</style>
+<script type="text/javascript">
+window.onload = function(){
+	var oOutsideDiv = document.getElementById('outsideDiv');
+	var oFigureDivArr = oOutsideDiv.getElementsByTagName('div');
+	/*for(i=0; i<oFigureDivArr.length; i++){
+		oFigureDivArr[i].style.left = oFigureDivArr[i].offsetLeft + 'px';
+		oFigureDivArr[i].style.top = oFigureDivArr[i].offsetTop + 'px';
+	}
+	for(var i=0; i<oFigureDivArr.length; i++){
+		oFigureDivArr[i].style.position = 'absolute';
+		oFigureDivArr[i].style.margin = '0px';
+		oFigureDivArr[i].style.borderStyle = 'solid';
+		oFigureDivArr[i].style.borderWidth = '2px';
+		oFigureDivArr[i].style.borderColor = '#999';
+	}*/
+	//translateLayoutToAbsolute(oOutsideDiv);
+	translateLayoutToAbsolute(oFigureDivArr, {
+		borderStyle: 'solid',
+		borderWidth: '2px',
+		borderColor: '#999'
+	})
+}
+
+function translateLayoutToAbsolute(obj, borderAttrs){
+	if(typeof obj != 'object'){
+		return;
+	}
+	if(!obj.length){
+		obj = [obj];
+	}
+	for(var i=0; i<obj.length; i++){
+		obj[i].style.left = obj[i].offsetLeft + 'px';
+		obj[i].style.top = obj[i].offsetTop + 'px';
+	}
+	for(var i=0; i<obj.length; i++){
+		obj[i].style.position = 'absolute';
+		obj[i].style.maring = '0px';
+		if(borderAttrs){
+			for(var attr in borderAttrs){
+				obj[i].style[attr] = borderAttrs[attr];
+			}
+		}
+	}
+}
+
+function isArray(obj) { 
+	return Object.prototype.toString.call(obj) === '[object Array]'; 
+}
+</script>
+<title>无标题文档</title>
+</head>
+
+<body>
+</body>
+<div id="outsideDiv">
+<div><img class="figureImg" src="images/01d.jpg"/></div>
+<div><img class="figureImg" src="images/01f.jpg"/></div>
+<div><img class="figureImg" src="images/02d.jpg"/></div>
+<div><img class="figureImg" src="images/02f.jpg"/></div>
+<div><img class="figureImg" src="images/03d.jpg"/></div>
+<div><img class="figureImg" src="images/03f.jpg"/></div>
+<div><img class="figureImg" src="images/04d.jpg"/></div>
+<div><img class="figureImg" src="images/04f.jpg"/></div>
+</div>
+</html>

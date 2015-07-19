@@ -1,0 +1,133 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>New Web Project</title>
+<style>
+* {
+	margin: 0px; 
+	padding: 0px;
+}
+#div1 {width: 100px; height: 100px; background: red; position: absolute;
+	left: 0px; 
+	top: 50px;
+	opacity: 1;
+	filter: alpha(opacity: 100);
+}
+
+#div2 {width: 100px; height: 100px; background: blue; position: absolute;
+	left: 0px; 
+	top: 200px;
+	opacity: 1;
+	filter: alpha(opacity: 100);
+}
+
+</style>
+<script>
+window.onload = function(){
+	var oDiv1 = document.getElementById('div1');
+	var oDiv2 = document.getElementById('div2');
+	var oBtn1 = document.getElementById('btn1');
+	oBtn1.onclick = function(){
+		move(oDiv1, [{attr: 'left',iTarget: 400,iSpeed: 5},{attr: 'opacity',iTarget: 20,iSpeed: 1}])
+		.move(oDiv1, [{attr: 'left',iTarget: 0,iSpeed: 10},{attr: 'opacity',iTarget: 100,iSpeed: 2}])
+		.move(oDiv2, [{attr: 'left',iTarget: 400,iSpeed: 10},{attr: 'opacity',iTarget: 20,iSpeed: 2}])
+		.move(oDiv2, [{attr: 'left',iTarget: 0,iSpeed: 5},{attr: 'opacity',iTarget: 100,iSpeed: 1}])
+		.move(oDiv1, [{attr: 'left',iTarget: 400,iSpeed: 5},{attr: 'opacity',iTarget: 20,iSpeed: 1}])
+		.move(oDiv1, [{attr: 'left',iTarget: 0,iSpeed: 10},{attr: 'opacity',iTarget: 100,iSpeed: 2}]);
+	};
+}
+
+function move(obj, paramArr, fn){	//attr iTarget
+	paramArr.obj = obj;
+	paramArr.fn = fn;
+	if(this == window){
+		obj.move = move;
+		obj.moveArr = [paramArr];
+		obj.doMove = function(){
+			var _this = this;
+			var paramArr = _this.moveArr[0];
+			var currentObj = paramArr.obj;
+			clearInterval(_this.timer);
+			_this.timer = setInterval(function(){
+				var isFinished = true;
+				for(var i=0; i<paramArr.length; i++){
+					var attr = paramArr[i].attr;
+					var iTarget = paramArr[i].iTarget;
+					var iCurrent = getStyleInt(currentObj, attr);
+					var iSpeed = paramArr[i].iSpeed;
+					if(typeof iSpeed != 'number'){
+						iSpeed = 5;
+					}
+					var iSign = iTarget > iCurrent? 1: -1
+			
+					var iNew = iCurrent + iSpeed * iSign;
+					if(Math.abs(iTarget - iCurrent) <= iSpeed){
+						iNew = iTarget;
+					}else{
+						isFinished = false;	//任意一个属性的运动没有完成，isFinished都会被设为false
+					}
+					setStyleInt(currentObj, attr, iNew);
+				}
+				if(isFinished){
+					clearInterval(_this.timer);
+					_this.moveArr.shift();
+					if(typeof paramArr.fn == 'function'){
+						paramArr.fn();
+					}
+					if(_this.moveArr.length > 0){
+						_this.doMove();
+					}else{
+						_this.destroyMove();
+					}
+				}
+			}, 15);
+		};
+		obj.destroyMove = function(){
+			delete this.move;	
+			delete this.moveArr;
+			delete this.doMove;
+			delete this.destroyMove;
+		}
+		obj.doMove();
+	}else{
+		this.moveArr.push(paramArr);
+	}
+	return window == this? obj: this;
+}
+
+function setStyleInt(obj, attr, value){
+	if(attr == 'opacity'){
+		obj.style.opacity = value / 100;
+		obj.style.filter = 'alpha(opacity:' + value + ')';
+	}else{
+		obj.style[attr] = value + 'px'
+	}
+}
+
+function getStyleInt(obj, attr){
+	return parseInt(getStyle(obj, attr));
+}
+
+function getStyle(obj, attr){
+	var result = '';
+	if(obj.currentStyle){
+		result = obj.currentStyle[attr];
+	}else{
+		result = window.getComputedStyle(obj, false)[attr];
+	}
+	if(attr == 'opacity'){
+		result = parseFloat(result) * 100;
+		result = Math.round(result);
+	}
+	return result;
+}
+</script>
+</head>
+<body>
+<input type="button" value="链式运动" id="btn1"/>
+<div id="div1"></div>
+<div id="div2"></div>
+</body>
+</html>

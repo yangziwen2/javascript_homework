@@ -1,0 +1,60 @@
+@charset "utf-8";
+/*=============================  Reset start =====================================*/
+body,ul,ol,li,p,div,dl,dt,dd,img,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,blockquote,th,td {margin:0;padding:0;}
+body{font-size:13px; font-family: "SimSun","Arial Narrow"; color:#000000; background-color:#ffffff; line-height:22px;text-align:center;}  
+address, caption, cite, code, dfn, em, i, th, var{font-style: normal;font-weight: normal;}
+a{text-decoration:none;color:#7fc0e5}
+a:hover{text-decoration:underline;color:#7fc0e5}
+table {border-collapse:collapse; border-spacing:0;}
+fieldset,img {border:0;}
+ol,ul{list-style:none;}
+caption,th{text-align:left;}
+select,input,img,select{vertical-align: middle; }
+input,textarea{outline: none; word-wrap: break-word;}
+textarea{resize:none;outline-style:none;}
+.clearfix:after{content:".";display:block;height:0;visibility:hidden;clear:both;}
+.clearfix{zoom:1;}
+.clearit{clear:both; height:0; font-size:0; overflow:hidden;}
+.mimg{vertical-align: middle;}
+.bold{font-weight:bold;}
+.left{float:left;}
+.right{float:right;}
+.font14{font-size:14px;}
+.w_vline{color:#dddddd;}
+.arial{font-family:Arial;}
+.blue{color:#0082cb;}
+/*============================= top bar start =====================================*/
+.wb_topBar{padding:18px 0 10px;position:relative;}
+.wb_topBar .top_nav{margin:2px 61px 0 0;line-height:24px;white-space: nowrap;color:#323232;}
+.wb_topBar .top_nav a{color:#000000;}
+.wb_topBar .top_nav a:hover{color:#790000;}
+.wb_topBar .top_nav span{color:#d6d6d6;margin:0 8px;}
+.wb_topBar .search{}
+.wb_topBar .searchInput{margin:1px 10px 0 0;width:272px;height:21px;border:2px solid #ff5a01;}
+.wb_topBar .searchInput .wb_inp{margin-top:1px;padding:0 5px;width:244px;height:20px;line-height:20px;color:#a1a0a0;border:0 none;background:none;}
+.wb_topBar .searchInput .wb_inp_an{margin-top:1px;padding:0 5px;width:244px;height:20px;line-height:20px;color:#000000;border:0 none;background:none;}
+.wb_topBar .searchInput a{display:inline-block;width:18px;height:21px;background:url(../images/icon_us.gif) no-repeat 0 0;}
+.wb_topBar .search .btn{float:left;margin-right:8px;display:inline-block;width:80px;height:26px;line-height:26px;background:url(../images/wb_btn.gif) no-repeat 0 -26px;color:#ffffff;text-align:center;cursor:pointer;text-decoration:none;}
+.wb_topBar .notice{position:absolute;left:651px;top:30px;line-height:14px;color:#89bf05;}
+.wb_topBar .login{padding-top:4px;}
+.wb_topBar .login .btn1{margin-right:4px;display:inline-block;width:61px;height:22px;line-height:22px;background:url(../images/wb_btn.gif) no-repeat 0 0;text-align:center;color:#ffffff;text-decoration:none;}
+.wb_topBar .login .btn2{display:inline-block;width:66px;height:22px;line-height:22px;background:url(../images/wb_btn.gif) no-repeat -65px 0;text-align:center;color:#5b5b5b;text-decoration:none;}
+/*============================= header start =====================================*/
+.global_header{margin-bottom:8px;border-top:1px solid #eaeaea;border-bottom:5px solid #353541;overflow:hidden;}
+.global_header .hl{display:inline-block;width:218px;height:95px}
+.global_header .logo{padding:7px 0 15px 0;_padding:7px 0 8px 0;width:211px;height:40px;}
+.global_header .logo .logo_pic{float:left;display:inline;width:131px;height:40px;}
+.global_header .logo span{display:inline;padding-top:26px;padding-left:7px;line-height:14px;color:#a1a0a0;}
+.global_header .logo span a,.global_header .logo span a:hover{color:#a1a0a0;}
+.global_header .logo span i{margin:0 7px;}
+.global_header h2{padding:8px 0 0 29px;width:189px;height:25px;background-color:#2f2f2f;}
+.global_header h2 span{display:block;width:160px;height:20px;background:url(../images/wb_tit.jpg) no-repeat 0 0;text-indent:-9999px;}
+.global_header .ads{display:inline;padding-top:3px;width:728px;height:90px;}
+/*============================= footer start =====================================*/
+.footer {background:url(../images/wb_gx_32.gif) repeat-x scroll 0 0 transparent;height: 60px;width: 100%;}
+.footer p {color: #333333;height: 30px;line-height: 30px;text-align: center;}
+.footer .line_01 a {color: #999999 !important;}
+.footer .line_02 {color: #CCCCCC;}
+/*============================= button =====================================*/
+
+

@@ -1,0 +1,39 @@
+<html>
+<head>
+<style>
+#chinamap {width:560px; height:470px; border: 1px solid #333; margin:20px auto 0;}
+</style>
+<script type="text/javascript" src="js/raphael-min.js"></script>
+<script type="text/javascript" src="js/chinamap.js"></script>
+<script type="text/javascript">
+window.onload = function(){
+	var oChina = chinamap.init('chinaMap', 560, 470, {
+		fill: '#f5f5f5',
+		stroke: '#999',
+		'stroke-width': 1,
+		'stroke-linejoin': 'round'
+	});
+	var currentState = null;
+	for(var state in oChina){
+		(function(st, state){
+			st[0].style.cursor = 'pointer';
+			st[0].onmouseover = function(){
+				currentState && oChina[currentState].animate({fill:'#f5f5f5', stroke:'#999'},300);
+				st.animate({fill:'#1598d7', stroke:'#ddd'},300);
+				st.toFront();
+			}
+			st[0].onmouseout = function(){
+				st.animate({fill:'#f5f5f5', stroke:'#999'},300);
+			}
+			st[0].onclick = function(){
+				alert(oChina[state].name);
+			}
+		})(oChina[state].path, state);
+	}
+}
+</script>
+</head>
+<body>
+<div id="chinaMap" ></div>
+</body>
+</html>

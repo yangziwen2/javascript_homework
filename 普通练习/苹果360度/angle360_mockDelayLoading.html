@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+* {margin:0px; padding:0px;}
+#canvas {width:600px;height:378px; border:2px solid #333; margin:50px auto 0px; position:relative; overflow:hidden;}
+#mask img {width:150px; height:150px; left:300px;; margin-left:-75px; position:absolute; top:189px; margin-top:-75px;}
+#currentImg {width:640px; height:378px;}
+#mask .progress {left:300px; top:189px;; width:72px; height:32px; margin-left:-32px; margin-top:-22px; text-align:center; font-size:24px; font-weight:bord; color:#36F; font-family:'Arial Black', Gadget, sans-serif;position:absolute; z-index:100}
+</style>
+<script>
+window.onload = function(){
+	var oCurrentImg = document.getElementById('currentImg');
+	var oMask = document.getElementById('mask');
+	var oProgress = document.getElementById('progress');
+	var oProgressShadow = document.getElementById('progressShadow');
+	var imgSrcArr = [];
+	for(var i=1; i<=72; i++){
+		var index = i>=10? '': '0';
+		index += i;
+		imgSrcArr.push("Seq_v04_640x378_"+ index +".jpg")	
+	}
+	var imgArr = [];
+	imgArr.imgLoadCount = 0;	//当前已加载的图片数
+	imgArr.currentIndex = 0;	//当前图片的序数
+	imgArr.currentPicShift = 0;	//当前鼠标滑动所对应的图片偏移量
+	imgArr.speed = 0;
+	oProgressShadow.innerHTML = oProgress.innerHTML = 0 + '%';
+	for(var i=0; i<imgSrcArr.length; i++){
+		var oImg = new Image();
+		oImg.onload = function(){
+			imgArr.imgLoadCount++;
+			oProgressShadow.innerHTML = oProgress.innerHTML = Math.floor(imgArr.imgLoadCount/imgSrcArr.length*100) + '%';
+		}
+		imgArr.push(oImg);
+		//图片加载的假延迟
+		(function(index){
+			var localTimer = setTimeout(function(){
+				clearTimeout(localTimer);
+				imgArr[index].src = 'images/' + imgSrcArr[index];
+			}, Math.random() * 3000);
+		})(i)
+		//oImg.src = 'images/' + imgSrcArr[i];
+	}
+	oCurrentImg.src = imgArr[0].src;
+	oCurrentImg.onmousedown = function(event){
+		if(imgArr.imgLoadCount < imgArr.length){
+			return;	
+		}
+		event = event || window.event;
+		clearTimeout(imgArr.timer);
+		var newIndex = imgArr.currentIndex;
+		var startX = event.clientX;
+		var lastX = currentX = event.clientX;
+		document.onmousemove = function(event){
+			event = event || window.event;
+			var disX = event.clientX - startX;
+			imgArr.currentPicShift = Math.round(disX/500*36);
+			newIndex = (imgArr.currentIndex - imgArr.currentPicShift + imgArr.length)%imgArr.length;
+			oCurrentImg.src = imgArr[newIndex].src;
+			lastX = currentX;
+			currentX = event.clientX;
+			setTimeout(function(){
+				if(currentX == event.clientX){
+					lastX = currentX;	
+				}
+			}, 50);
+			return false;
+		};
+		document.onmouseup = function(event){
+			event = event || window.event;
+			this.onmouseup = this.onmousemove = null;
+			imgArr.currentIndex = newIndex;
+			imgArr.currentPicShift = 0;
+			if(Math.abs(currentX - startX) > 50){
+				imgArr.speed = (currentX - lastX)/1000*36;
+				startMove();
+			}
+			return false;
+		}
+		return false;
+	};
+	var initTimer = null;
+	(function(){
+		clearTimeout(initTimer);
+		if(imgArr.imgLoadCount < imgArr.length){
+			initTimer = setTimeout(arguments.callee, 50);	
+		}else{
+			oMask.parentNode.removeChild(oMask);
+			imgArr.speed = -0.8;
+			startMove();	
+		}
+	})();
+	function startMove(){
+		clearTimeout(imgArr.timer);
+		doMove();
+	}
+	function doMove(){
+		clearTimeout(imgArr.timer);
+		var interval = Math.ceil(Math.abs(1/imgArr.speed));
+		if(interval > 45){
+			return;	
+		}
+		imgArr.currentIndex -= imgArr.speed>0? Math.ceil(imgArr.speed): Math.floor(imgArr.speed);
+		imgArr.currentIndex = (imgArr.currentIndex + imgArr.length) % imgArr.length;
+		oCurrentImg.src = imgArr[imgArr.currentIndex].src;
+		imgArr.speed *= 0.95;
+		imgArr.timer = setTimeout(arguments.callee, interval);
+	}
+}
+
+</script>
+</head>
+<body>
+<div id="canvas">
+<img id="currentImg"/>
+<div id="mask" style="width:600px; height:378px; position:absolute; left:0px; top:0px; z-index:200px; background:#fff;">
+	<img src="images/loading.gif"/>
+    <div id="progress" class="progress"></div>
+    <div id="progressShadow" class="progress" style="margin-top:-17px;opacity:0.3; filter:alpha(opacity:30)"></div>
+</div>
+</div>
+</body>
+</html>

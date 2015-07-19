@@ -1,0 +1,141 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<link type="text/css" rel="stylesheet" href="/dean/ext/css/ext-all.css"/>
+<script type="text/javascript" src="/dean/ext/js/ext-base.js"></script>
+<script type="text/javascript" src="/dean/ext/js/ext-all.js"></script>
+<script type="text/javascript" src="/dean/ext/js/ext-lang-zh_CN.js"></script>
+<script>
+Ext.onReady(function(){
+	var Student = Ext.data.Record.create([
+		'id',
+		'studentNum',
+		'name',
+		{
+			name: 'sex',
+			type: 'string',
+			convert: function(value, rawData){
+				return value === 1? '男': '女';
+			}
+		},
+		{
+			name: 'majorId', type:'int'
+		},
+		{
+			name: 'graduateDate', type: 'date', dateFormat: 'Y-m-d'
+		},
+		{
+			name: 'enrollDate', type:'date', dateFormat: 'Y-m-d'
+		},
+		{
+			name: 'birthDate', type: 'date', dateFormat: 'Y-m-d'
+		},
+		{
+			name: 'updateTime', type: 'date', dateFormat: 'Y-m-d H:i:s'
+		},
+		{
+			name: 'createTime', type: 'date', dateFormat: 'Y-m-d H:i:s'
+		}
+	]);
+	var studentStore = new Ext.data.Store({
+		url: '/dean/student/listData.htm',
+		reader: new Ext.data.JsonReader({
+			root: 'result',
+			idProperty: 'id',
+			totalProperty: 'totalItemNum'
+		}, Student),
+		autoLoad: false
+	});
+	
+	var studentGrid = new Ext.grid.GridPanel({
+		renderTo: Ext.getBody(),
+		frame: true,
+		title: '学生管理',
+		width: 800,
+		autoHeight: true,
+		draggable: true,
+		store: studentStore,
+		bbar: new Ext.PagingToolbar({
+			pageSize: 5,
+			store: studentStore,
+			displayInfo: true,
+			items: [
+				'-',
+				new Ext.app.SearchField({store: studentStore})
+			]
+		}),
+		colModel: new Ext.grid.ColumnModel({
+			defaultSortable: false,
+			columns: [
+			    {header: 'ID', dataIndex: 'id', width:40},
+				{header: '学号', dataIndex: 'studentNum', width: 80, sortable: true},
+				{
+					header: '姓名', 
+					dataIndex: 'name',
+					width: 60
+				},
+				{ header: '性别', dataIndex: 'sex', width: 40},
+				{
+					header: '出生日期',
+					dataIndex: 'birthDate',
+					xtype: 'datecolumn',
+					format: 'Y-m-d',
+					width: 80
+				},
+				{
+					header: '专业', 
+					dataIndex: 'majorId',
+					width: 40,
+					renderer: function(value){
+						switch(value){
+							case 4:
+								return '物理';
+							default:
+								return '待定';
+						}
+					}	
+				},
+				{
+					header: '入学日期', 
+					dataIndex: 'enrollDate',
+					width: 80,
+					xtype: 'datecolumn',
+					format: 'Y-m-d H:i:s'
+				},
+				{
+					header: '毕业日期', 
+					dataIndex: 'graduateDate',
+					width: 80,
+					xtype: 'datecolumn',
+					format: 'Y-m-d'
+					
+				},
+				{
+					header: '更新时间', 
+					dataIndex: 'updateTime',
+					width: 140,
+					xtype: 'datecolumn',
+					format: 'Y-m-d H:i:s'
+				},
+				{
+					header: '创建时间',
+					dateIndex: 'createTime',
+					width: 140,
+					xtype: 'datecolumn',
+					format: 'Y-m-d H:i:s'
+				}
+			]
+		})
+	});
+	studentGrid.getBottomToolbar().changePage(1);
+});
+</script>
+</head>
+<body>
+</body>
+</html>

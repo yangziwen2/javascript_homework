@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>淘宝幻灯滑入滑出效果 —— www.miaov.com —— 妙味课堂</title>
+<link href="miaov_style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+
+window.autoSwitchTimer = null;
+
+window.onload = function(){
+	var oPlayDiv = document.getElementById('play');
+	var oOl = oPlayDiv.getElementsByTagName('ol')[0];
+	var oUl = oPlayDiv.getElementsByTagName('ul')[0];
+	var oLiBtnArr = oOl.getElementsByTagName('li');
+	var oLiPicArr = oUl.getElementsByTagName('li');
+	window.iPicHeight = oLiPicArr[0].offsetHeight;
+	window.iPicNum = oLiPicArr.length;
+	window.currentPicIndex = 0;
+	oUl.timeSpan = 5;
+	for(var i=0; i<oLiBtnArr.length; i++){
+		oLiBtnArr[i].index = i;
+		oLiBtnArr[i].onclick = function(){
+			switchPic(oLiBtnArr, oUl, this.index);
+			autoSwitch(oLiBtnArr, oUl, (this.index+1)%oLiBtnArr.length);
+		};
+		oLiPicArr[i].onmouseover = function(){
+			clearInterval(autoSwitchTimer);	
+		};
+		oLiPicArr[i].onmouseout = function(){
+			autoSwitch(oLiBtnArr, oUl, (currentPicIndex+1)%oLiBtnArr.length);	
+		};
+	}
+	autoSwitch(oLiBtnArr, oUl, 1);
+}
+
+function autoSwitch(oLiBtnArr, oUl, startIndex){
+	clearInterval(autoSwitchTimer);
+	autoSwitchTimer = setInterval(function(){
+		switchPic(oLiBtnArr, oUl, (startIndex++%oLiBtnArr.length));
+	}, 3000);
+}
+
+function switchPic(oLiBtnArr, oUl, targetIndex){
+	var iTargetTop = calculateNewTop(targetIndex);
+	slidePic(oUl, iTargetTop);
+	oLiBtnArr[currentPicIndex].className = '';
+	oLiBtnArr[targetIndex].className = 'active';
+	currentPicIndex = targetIndex;
+}
+
+function calculateNewTop(targetIndex){
+	return -(targetIndex%iPicNum)*iPicHeight;
+}
+
+function slidePic(obj, iTargetTop){
+	var attrs = {
+		timer: 'timer0',
+		top: iTargetTop
+	};
+	startMove(obj, attrs);
+}
+
+function startMove(obj, attrs){
+	clearInterval(obj[attrs.timer]);
+	obj[attrs.timer] = setInterval(function(){
+		doMove(obj, attrs);
+	}, 30);
+}
+
+function doMove(obj, attrs){
+	var isFinished = true;
+	for(var attr in attrs){
+		if(attr == 'id' || attr == 'tagName' || attr == 'tagIndex'){
+			continue;	
+		}
+		if(attr == 'timer'){
+			continue;	
+		}
+		if(typeof attrs[attr] == 'object'){
+			var subAttrs = attrs[attr];
+			var subObj = subAttrs.id? obj.getElementById(subAttrs.id): obj.getElementsByTagName(subAttrs.tagName)[subAttrs.tagIndex];
+			subObj.timeSpan = obj.timeSpan;
+			doMove(subObj, subAttrs);
+			continue;
+		}
+		var iTarget = attrs[attr];
+		var iCur=0;
+		if(attr=='opacity'){
+			iCur=parseInt(parseFloat(getStyle(obj, 'opacity'))*100);
+		}else{
+			iCur = parseInt(getStyle(obj, attr));
+		}
+		var iSpeed=(iTarget-iCur)/obj.timeSpan;
+		iSpeed=iSpeed>0?Math.ceil(iSpeed):Math.floor(iSpeed);
+		if(attr=='opacity'){
+			obj.style.filter="alpha(opacity:"+(iCur+iSpeed)+")";
+			obj.style.opacity=(iCur+iSpeed)/100;
+		}else{
+			obj.style[attr]=iCur+iSpeed+'px';
+		}
+		isFinished = isFinished && (iCur == iTarget);
+	}
+	if(isFinished){
+		clearInterval(obj[attr.timer]);
+	}
+}
+
+function getStyle(obj, attr){
+	if(obj.currentStyle){
+		return obj.currentStyle[attr];
+	}else{
+		return getComputedStyle(obj, false)[attr];	
+	}
+}
+</script>
+</head>
+
+<body>
+
+<div id="play">
+	<div class="packet"><!-- 为了消除offsetXXX的兼容性问题 -->
+	    <ol>
+	    	<li class="active">1</li>
+	        <li>2</li>
+	        <li>3</li>
+	        <li>4</li>
+	        <li>5</li>
+	    </ol>
+		<ul>
+			<li><a href="http://www.miaov.com/"><img src="images/1.jpg" alt="广告一" /></a></li>
+		  <li><a href="http://www.miaov.com/"><img src="images/2.jpg" alt="广告二" /></a></li>
+		  <li><a href="http://www.miaov.com/"><img src="images/3.jpg" alt="广告三" /></a></li>
+		  <li><a href="http://www.miaov.com/"><img src="images/4.jpg" alt="广告四" /></a></li>
+			<li><a href="http://www.miaov.com/"><img src="images/5.jpg" alt="广告五" /></a></li>
+		</ul>
+	</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<script>
+(function(){
+	var eventFnList = [];
+	window.addEvent = function(obj, eventName, fn){
+		var wrapFn = function(event){
+			var execDefaultFlag = fn.call(obj, event || window.event);	
+			if(execDefaultFlag === false){
+				preventDefault(event);
+			}
+		}
+		if(obj.addEventListener){
+			obj.addEventListener(eventName, wrapFn, false);	
+		}else if(obj.attachEvent){
+			obj.attachEvent('on' + eventName, wrapFn);
+		}
+		eventFnList.push({obj: obj, fn: fn, wrapFn: wrapFn, eventName: eventName});
+	}
+	window.removeEvent = function(obj, eventName, fn){
+		for(var i=0; i<eventFnList.length; i++){
+			var eventFnObj = eventFnList[i];
+			if(eventFnObj.fn != fn || eventFnObj.eventName != eventName 
+			   || eventFnObj.obj != obj){
+				continue;
+			}
+			if(obj.removeEventListener){
+				obj.removeEventListener(eventName, eventFnObj.wrapFn, false);
+			}else if(obj.detachEvent){
+				obj.detachEvent('on' + eventName, eventFnObj.wrapFn);
+			}
+			eventFnList.splice(i, 1);
+			return;
+		}
+	}
+	window.preventDefault = function(event){
+		if(!event){
+			return;	
+		}
+		if(event.preventDefault){
+			event.preventDefault();	
+		}else {
+			event.returnValue = false;
+		}
+	}
+})();
+
+window.onload = function(){
+	initDrag(document.getElementById('div1'));
+	initDrag(document.getElementById('div2'));
+}
+
+function initDrag(oDiv){
+	addEvent(oDiv, 'mousedown', function(event){
+		var disY = event.clientY - this.offsetTop;
+		addEvent(document, 'mousemove', mouseMoveHandler);
+		addEvent(document, 'mouseup', mouseUpHandler);
+		return false;
+		function mouseMoveHandler(event){
+			oDiv.style.top = event.clientY - disY + 'px';
+			return false;
+		}
+		function mouseUpHandler(event){
+			removeEvent(document, 'mousemove', mouseMoveHandler);
+			removeEvent(document, 'mouseup', mouseUpHandler);
+			return false;
+		}
+	});
+}
+
+</script>
+</head>
+
+<body>
+<p style="width:200px">
+　新浪科技讯 北京时间12月22日消息，216日下午，美国阿拉巴马州的伯明翰上空出现怪异的波状云，好似海浪一样在空中翻滚。随着极具超现实色彩的云浪出现，所有人的目光都投向天空，有人还用带有照相功能的手机拍下这罕见的景象。
+
+　　波状云被称之为“开尔文-亥姆霍兹不稳定性现象”，通常在广阔的平原地区出现，当地的风速快速变化，形成湍流。快速移动且密度较低的云层在速度较慢且密度更高的云层上方移动，形成云浪。离奇的云浪出现后，当地居民拍摄了照片和录像，而后发给当地气象站，询问“这种在天空中出现的海啸到底是什么？”
+
+　　赏云协会解释了这种怪异的天气现象。云浪是一层卷云内部出现湍流的结果，卷云内的气流速度和方向存在差异，导致云朵形成好似在水上翻滚的景象。“开尔文-亥姆霍兹不稳定性”这个名字来源于苏格兰男爵开尔文和德国物理学家赫尔曼-亥姆霍兹，他们对这一怪异的现象进行了解释。(孝文)
+<div style="width:10px; height:40px; background:red; position:absolute; top:100px; left:40px;" id="div1"></div>
+<div style="width:10px; height:40px; background:blue; position:absolute; top:100px; left:100px;" id="div2"></div>
+</p>
+
+</body>
+</html>

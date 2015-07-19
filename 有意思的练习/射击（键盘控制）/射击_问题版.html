@@ -1,0 +1,236 @@
+<html>
+<head>
+<style>
+#playerDiv {position:absolute; width:32px; height:48px; left:200px; top:100px; background: url(images/lingmeng.png) 0px 0px; z-index:100;}
+#playerDiv.shiftLeft {background-position: -225px -48px;}
+#playerDiv.shiftRight {background-position: -225px -96px;}
+.bullet {width:14px; height:64px; position: absolute; background: url(images/bullet.png) -32px 0}
+</style>
+<script type="text/javascript">
+window.onload = function(){
+	window.dispSpan = document.getElementById('dispSpan');
+	window.dispSpan.innerHTML = '子弹数:0';
+	var oPlayerDiv = document.getElementById('playerDiv');
+	oPlayerDiv.style.left = parseInt((oPlayerDiv.parentNode.offsetWidth-2-oPlayerDiv.offsetWidth)/2) + 'px';
+	oPlayerDiv.style.top = oPlayerDiv.parentNode.offsetHeight-70;
+	oPlayerDiv.distSpan = 4;
+	addKeyListener(oPlayerDiv, moveDiv);
+}
+
+function addKeyListener(obj, moveFn){
+	obj.directStatus = 0;
+	if(!obj.attachEvent){	//这个地方比较讨厌，ie绑定事件的执行顺序是反的。
+		bindKeyDownAndUpEvent(function(event){
+			if(event.keyCode >=37 && event.keyCode<=40){
+				processDirection(event, obj);
+			}
+		});
+	}
+	bindKeyDownAndUpEvent(function(event){
+		if(event.keyCode >=37 && event.keyCode<=40){
+			if(event.type == 'keydown'){
+				unbindEvent(document, 'keydown', arguments.callee);
+			}else if(event.type == 'keyup'){
+				bindEvent(document, 'keydown', arguments.callee);
+			}
+			processMove(obj, moveFn);
+		}
+	});
+	if(obj.attachEvent){
+		bindKeyDownAndUpEvent(function(event){
+			if(event.keyCode >=37 && event.keyCode<=40){
+				processDirection(event, obj);
+			}
+		});
+	}
+	bindKeyDownAndUpEvent(function(event){
+		processSpecialKey(event, obj);
+	});
+	bindKeyDownAndUpEvent(function(event){
+		if(event.keyCode != 'Z'.charCodeAt(0)){
+			return;
+		}
+		if(event.type == 'keydown'){
+			unbindEvent(document, 'keydown', arguments.callee);
+		}else if(event.type == 'keyup'){
+			bindEvent(document, 'keydown', arguments.callee);
+		}
+		processFireKey(event, obj);
+	});
+}
+
+function processFireKey(event, obj){
+	var keyCode = event.keyCode;
+	if(keyCode != 'Z'.charCodeAt(0)){
+		return;
+	}
+	if(event.type == 'keydown'){
+		obj.shooting = true;
+	}else if(event.type == 'keyup'){
+		obj.shooting = false;
+	}
+	clearInterval(obj.shootingTimer)
+	if(obj.shooting){
+		obj.shootingTimer = setInterval(function(){
+			shoot(obj);
+		}, 100)
+	}
+}
+
+function processSpecialKey(event, obj){
+	if(event.shiftKey){
+		obj.distSpan = 2;
+	}else{
+		obj.distSpan = 4;
+	}
+}
+
+function processDirection(event, obj){
+	var keyStatus = [1, 2, 4, 8]; // left, top, right, down
+	var keyIndex = event.keyCode - 37;
+	if(keyIndex > 3 || keyIndex < 0){
+		return;
+	}
+	if(event.type == 'keydown'){
+		obj.directStatus = obj.directStatus | keyStatus[keyIndex];
+	}else if(event.type == 'keyup'){
+		obj.directStatus = obj.directStatus & (~keyStatus[keyIndex]);
+	}
+}
+
+function processMove(obj, moveFn){
+	if(obj.directStatus){
+		clearInterval(obj.moveTimer);
+		obj.moveTimer = setInterval(function(){
+			moveFn.call(obj);
+		}, 10);
+	}
+}
+
+function moveDiv(){
+	var distSpan = this.distSpan || 4;
+	var xSpan = (((this.directStatus & 4)>>2) - (this.directStatus & 1)) * distSpan;
+	var ySpan = (((this.directStatus & 8)>>3) - ((this.directStatus & 2)>>1)) * distSpan;
+	if(xSpan>0){
+		this.className = 'shiftRight';
+	}else if(xSpan<0){
+		this.className = 'shiftLeft';
+	}else{
+		this.className = '';
+	}
+	var currentLeft = getStyleInt(this, 'left');
+	var currentTop = getStyleInt(this, 'top');
+	var parentDiv = this.parentNode;
+	if(currentLeft+xSpan >= parentDiv.offsetWidth-this.offsetWidth-2){
+		xSpan = parentDiv.offsetWidth-this.offsetWidth-2-currentLeft;
+	}else if(currentLeft+xSpan<=0){
+		xSpan = -currentLeft;
+	}
+	if(currentTop+ySpan >= parentDiv.offsetHeight-this.offsetHeight-2){
+		ySpan = parentDiv.offsetHeight-this.offsetHeight-2-currentTop;
+	}else if(currentTop+ySpan<=0){
+		ySpan = -currentTop;
+	}
+	this.style.left = getStyleInt(this, 'left') + xSpan + 'px';
+	this.style.top = getStyleInt(this, 'top') + ySpan + 'px';
+}
+
+function bindEvent(obj, eventName, fn){
+	if(obj.attachEvent){
+		obj.attachEvent('on' + eventName, function(){
+			if(!obj.eventList){
+				obj.eventList = [];
+			}
+			obj.eventList.push([eventName, fn, arguments.callee]);
+			fn.call(obj, window.event);
+		});
+	}else if(obj.addEventListener){
+		obj.addEventListener(eventName, fn, false);
+	}
+}
+
+function unbindEvent(obj, eventName, fn){
+	if(obj.detachEvent){
+		if(!obj.eventList){
+			return;
+		}
+		for(var i=0; i<obj.eventList.length; i++){
+			if(obj.eventList[i][0] == eventName && obj.eventList[i][1] == fn){
+				obj.detachEvent('on' + eventName, obj.eventList[i][2]);
+				obj.eventList.splice(i,1);
+				break;
+			}
+		}
+	}else if(obj.removeEventListener){
+		obj.removeEventListener(eventName, fn, false);
+	}
+}
+
+function bindKeyDownAndUpEvent(fn){
+	bindEvent(document, 'keydown', fn);
+	bindEvent(document, 'keyup', fn);
+}
+
+function getStyleInt(obj, attr){
+	return parseInt(getStyle(obj, attr));
+}
+
+function getStyle(obj, attr){
+	if(obj.currentStyle){
+		return obj.currentStyle[attr];
+	}else{
+		return getComputedStyle(obj, false)[attr];
+	}
+}
+
+function shoot(sourceObj){
+	var oBullet = document.createElement('div');
+	oBullet.className = 'bullet';
+	oBullet.style.top = getStyleInt(sourceObj, 'top') - 10 + 'px';
+	oBullet.style.left = getStyleInt(sourceObj, 'left') + 9 + 'px';
+	//document.body.appendChild(oBullet);
+	sourceObj.parentNode.appendChild(oBullet);
+	if(!sourceObj.bullets){
+		sourceObj.bullets = [];
+	}
+	sourceObj.bullets.push(oBullet);
+	startShootMove(sourceObj);
+}
+
+function startShootMove(obj){
+	clearInterval(obj.bulletTimer);
+	obj.bulletTimer = setInterval(function(){
+		doShootMove(obj);
+	}, 20);
+}
+
+function doShootMove(obj){
+	for(var i=obj.bullets.length-1; i>=0; i--){
+		var iTop = getStyleInt(obj.bullets[i], 'top');
+		if(iTop <= -64){
+			obj.parentNode.removeChild(obj.bullets[i]);
+			obj.bullets.splice(i,1);
+			continue;
+		}
+		obj.bullets[i].style.top = iTop - 10 + 'px';
+	}
+	window.dispSpan.innerHTML = '子弹数:' + obj.bullets.length;
+}
+</script>
+</head>
+<body>
+<ul style="position:absolute; left:0;">
+<li>shift:变速</li>
+<li>z:发射</li>
+<li><span id="dispSpan" sytle="width:200px; height:30px; border:1px solid #333;"></span></li>
+<li style="display:none;">
+<div style="background:url(images/bullet.png) -32px -128px; width:14px; height:64px; border:1px solid #333; float:left;"></div>
+<div style="background:url(images/bullet.png) -32px 0px; width:14px; height:64px; border:1px solid #333;float:left;"></div>
+<div style="background:url(images/bullet.png) -32px -64px; width:14px; height:64px; border:1px solid #333;float:left;"></div>
+</li>
+</ul>
+<div id="outsideDiv" style="width:400px; height:500px; margin-top: 5px; border:1px solid #333; position:relative; overflow:hidden; margin-left:50%; left:-200px;">
+<div id="playerDiv"></div>
+</div>
+</body>
+</html>

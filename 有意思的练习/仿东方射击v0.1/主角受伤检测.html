@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+#playArea {width:400px; height:500px; margin-top:5px; margin-left:50%; left: -200px; border:1px solid #333; position:relative; overflow:hidden;"}
+#life{margin:0; padding:0px; width:140px; height:28px; position:absolute; right:0}
+#life ul{margin:0; padding:0px;}
+#life li{margin:0; padding:0; width:28px;float:left;height:28px; background:url(images/star.gif) no-repeat 0 -28px; list-style:none;}
+</style>
+<script type="text/javascript" src="js/simpleAnimate.js"></script>
+<script type="text/javascript" src="js/template.js"></script>
+<script type="text/javascript" src="js/scenario.js"></script>
+<script type="text/javascript" src="js/player.js"></script>
+<script type="text/javascript" src="js/bullet.js"></script>
+<script type="text/javascript" src="js/enemy.js"></script>
+<script type="text/javascript" src="js/mainTimeAxis.js"></script>
+<script>
+
+window.onload = function(){
+	var playArea = document.getElementById('playArea');
+	mainTimeAxis.start(playArea);
+}
+</script>
+</head>
+<body>
+<div id="playArea">
+<div id="life">
+	<ul>
+    	<li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+</div>
+</div>
+</body>
+</html>

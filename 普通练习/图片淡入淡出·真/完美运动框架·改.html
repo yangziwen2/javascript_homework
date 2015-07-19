@@ -1,0 +1,304 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+* {margin:0px; padding:0px;}
+#div1 {width:100px; height:100px;position:absolute; background-color:#09F;}
+#btnDiv {position: absolute; left:310px; width:600px;}
+#endline {width:300px;top:400px; position:absolute; border:1px solid #333;}
+#rightEndLine {height:400px; left:300px; position:absolute; border:1px solid #333;}
+</style>
+<script type="text/javascript">
+window.onload = function(){
+	var oDiv = document.getElementById('div1');
+	oDiv.style.top = '0px';
+	oDiv.style.left = '0px';
+	oDiv.computedHeight = getStyleIntValue(oDiv,'height');
+	var oUniformMoveBtn = document.getElementById('uniformMoveBtn');
+	oUniformMoveBtn.onclick = function(){
+		oDiv.params = {
+			iTimeSpan: 10
+		};
+		oDiv.attrs = {
+			top: {
+				speedType: 'uniform',
+				iTargetValue: 400-oDiv.computedHeight,
+				iSpeed: 15
+			},
+			left: {
+				speedType: 'uniform',
+				iTargetValue: 200,
+				iSpeed: 10
+			},
+			opacity:{
+				speedType: 	'uniform',
+				iTargetValue: 30,
+				iSpeed: -5
+			}
+		};
+		startMove(oDiv, 30);
+	}
+	var oBufferedMoveBtn = document.getElementById('bufferedMoveBtn');
+	oBufferedMoveBtn.onclick = function(){
+		oDiv.params = {
+			iTimeSpan: 10
+		};
+		oDiv.attrs = {
+			top: {
+				speedType: 'buffered',
+				iTargetValue:400-oDiv.computedHeight
+			},
+			left: {
+				speedType: 'buffered',
+				iTargetValue: 200	
+			},
+			opacity:{
+				speedType: 'buffered',
+				iTargetValue: 30	
+			}
+		};
+		startMove(oDiv, 30);
+	};
+	var oElasticMoveBtn = document.getElementById('elasticMoveBtn');
+	oElasticMoveBtn.onclick = function(){
+		oDiv.params = {
+			iTimeSpan: 10
+		};
+		oDiv.attrs = {
+			top: {
+				speedType: 'elastic',
+				iTargetValue: 400-oDiv.computedHeight,
+				iSpeed: 0,
+				fFrictionFactor: 0.8
+			},
+			left: {
+				speedType: 'elastic',
+				iTargetValue: 200,
+				iSpeed: 0,
+				fFrictionFactor: 0.8
+			},
+			opacity: {
+				speedType: 'elastic',
+				iTargetValue: 30,
+				iSpeed: 0,
+				fFrictionFactor: 0.8
+			}
+		};
+		startMove(oDiv, 30);
+	};
+	var oAccelerateReboundMoveBtn = document.getElementById('acceleratedReboundBtn');
+	oAccelerateReboundMoveBtn.onclick = function(){
+		oDiv.params = {
+			iTimeSpan: 10
+		};
+		oDiv.attrs = {
+			top: {
+				speedType: 'acceleratedRebound',
+				iTargetValue: 400-oDiv.computedHeight,
+				iSpeed: 0,
+				bOriginPosFlag: true,
+				iAcceleration: 7,
+				fReboundFactor: 0.7
+			},
+			opacity:{
+				speedType: 'acceleratedRebound',
+				iTargetValue: 30,
+				iSpeed: 0,
+				bOriginPosFlag: false,
+				iAcceleration: -3,
+				fReboundFactor: 0.7
+			},
+			left: {
+				speedType: 'acceleratedRebound',
+				iTargetValue: 200,
+				iSpeed: 0,
+				bOriginPosFlag: true,
+				iAcceleration:3,
+				fReboundFactor: 0.5
+			}
+		};
+		startMove(oDiv, 30);
+	};
+	var oResetBtn = document.getElementById('resetBtn');
+	oResetBtn.onclick = function(){
+		clearInterval(oDiv.timer);
+		setStyle(oDiv, 'top', 0);
+		setStyle(oDiv, 'left', 0);
+		setStyle(oDiv, 'opacity', 100);
+	};
+}
+
+function startMove(obj, timeInterval){
+	clearInterval(obj.timer);
+	obj.timer = setInterval(function(){
+		doMove(obj, obj.timer);							 
+	}, timeInterval);
+}
+
+function doMove(obj, timer){
+	var aObjArr = null;
+	if(isArray(obj)){
+		aObjArr = obj;	
+	}else{
+		aObjArr = [];
+		aObjArr.push(obj);
+	}
+	var isFinished = true;
+	for(var i=0; i<aObjArr.length; i++){
+		var currentObj = aObjArr[i];
+		var attrs = currentObj.attrs;
+		for(var attr in attrs){
+			if(typeof currentObj.dependentMove == 'function'){
+				currentObj.dependentMove(aObjArr, attr);
+			}else{
+				currentObj.params.speedType = attrs[attr].speedType;
+				currentObj.params.iTargetValue = attrs[attr].iTargetValue;
+				currentObj.params.iSpeed = attrs[attr].iSpeed;
+				currentObj.params.bOriginPosFlag = attrs[attr].bOriginPosFlag;
+				currentObj.params.iAcceleration = attrs[attr].iAcceleration;
+				currentObj.params.fReboundFactor = attrs[attr].fReboundFactor;
+				currentObj.params.fFrictionFactor = attrs[attr].fFrictionFactor;
+				currentObj.params.iCurrentValue = getCurrentStyleIntValue(currentObj, attr);
+				var iSpeed = getSpeedByType(currentObj.params.speedType, currentObj.params);
+				var currentStepValue = getCurrentStepValue(currentObj.params, iSpeed);
+				setStyle(currentObj, attr, currentStepValue);
+				attrs[attr].iSpeed = iSpeed;
+				isFinished = isFinished && (Math.abs(currentObj.params.iCurrentValue - currentObj.params.iTargetValue) < 3 && Math.abs(iSpeed) < 1);
+			}
+		}
+	}
+	if(isFinished){
+		clearInterval(timer);
+		for(var i=0; i<aObjArr.length; i++){
+			var currentObj = aObjArr[i];
+			var attrs = currentObj.attrs;
+			for(var attr in attrs){
+				setStyle(currentObj, attr, attrs[attr].iTargetValue);
+			}
+		}
+	}
+}
+
+function getCurrentStepValue(params, iSpeed){
+	return params.isFallback? params.iTargetValue: params.iCurrentValue + iSpeed;
+}
+
+function setStyle(obj, attr, value){
+	if('opacity' == attr){
+		obj.style.filter = 'alpha(opacity:' + value + ')';
+		obj.style.opacity = value / 100;
+	}else{
+		obj.style[attr] = value + 'px';	
+	}
+}
+
+function getSpeedByType(speedType, params){
+	var iSpeed = NaN;
+	if('buffered' == speedType){
+		iSpeed = getBufferedSpeed(params);
+	}else if('elastic' == speedType){
+		iSpeed = getElasticSpeed(params);	
+	}else if('acceleratedRebound' == speedType){
+		iSpeed = getAcceleratedReboundSpeed(params);	
+	}else if('uniform' == speedType){
+		iSpeed = getUniformSpeed(params);
+	}
+	return iSpeed;
+}
+
+function getUniformSpeed(params){
+	var iPosFlag = (params.iTargetValue > params.iCurrentValue? 1:-1)
+	iPosFlag = params.iTargetValue == params.iCurrentValue? 0: iPosFlag;
+	var iSpeed =  iPosFlag * Math.abs(params.iSpeed);
+	if((params.iTargetValue - iSpeed - params.iCurrentValue) * iPosFlag <= 0){
+		iSpeed = Math.abs(params.iTargetValue - params.iCurrentValue) * iPosFlag;	
+	}
+	return iSpeed;	
+}
+
+function getBufferedSpeed(params){
+	var iSpeed = (params.iTargetValue - params.iCurrentValue) / params.iTimeSpan;
+	return iSpeed > 0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);
+}
+
+function getElasticSpeed(params){
+	var iSpeed = params.iSpeed;
+	iSpeed += (params.iTargetValue - params.iCurrentValue) / params.iTimeSpan;
+	return iSpeed * params.fFrictionFactor;
+}
+
+function getAcceleratedReboundSpeed(params){
+	params.isFallback = false;
+	var iSpeed = params.iSpeed;
+	iSpeed += params.iAcceleration;
+	if(params.bOriginPosFlag){
+		params.isFallback = params.iCurrentValue + iSpeed > params.iTargetValue;
+		iSpeed = params.isFallback? -iSpeed*params.fReboundFactor: iSpeed;
+	}else{
+		params.isFallback = params.iCurrentValue + iSpeed < params.iTargetValue;
+		iSpeed = params.isFallback? -iSpeed*params.fReboundFactor: iSpeed;
+	}
+	return iSpeed;
+}
+
+function getCurrentStyleIntValue(obj, attr){
+	if('opacity' == attr){
+		return parseInt(getStyleFloatValue(obj, attr)*100);
+	}else{
+		return getStyleIntValue(obj, attr);
+	}
+}
+
+function getStyle(obj, attr){
+	if(obj.currentStyle){
+		if('opacity' == attr){
+			var opacityDegree = obj.currentStyle.filter;
+			var index = opacityDegree.indexOf('opacity:') + 'opacity'.length + 1;
+			var opacityValue = parseInt(opacityDegree.substring(index));
+			return isNaN(opacityValue)? 1: (opacityValue/100).toFixed(2);
+		}
+		return obj.currentStyle[attr];
+	}else{
+		return getComputedStyle(obj, false)[attr];	
+	}
+}
+
+function getStyleFloatValue(obj, attr){
+	var result =  parseFloat(getStyle(obj, attr));
+	if(isNaN(result)){
+		var offsetResult = getOffsetStyleValue(obj, attr);
+		return offsetResult? offsetResult: result;
+	}
+	return result;
+}
+
+function getStyleIntValue(obj, attr){
+	return parseInt(getStyleFloatValue(obj, attr));	
+}
+
+function getOffsetStyleValue(obj, attr){
+	var offsetAttr = 'offset'+attr.substring(0,1).toUpperCase() + attr.substring(1);
+	return obj[offsetAttr];
+}
+
+function isArray(obj) { 
+	return Object.prototype.toString.call(obj) === '[object Array]'; 
+}
+</script>
+<title>无标题文档</title>
+</head>
+<div id="div1">
+</div>
+<div id="btnDiv">
+	<input type="button" id="uniformMoveBtn" value="匀速运动" />
+    <input type="button" id="bufferedMoveBtn" value="缓冲运动" />
+    <input type="button" id="elasticMoveBtn" value="弹性运动"/>
+    <input type="button" id="acceleratedReboundBtn" value="加速度&反弹运动"/>
+    <input type="button" id="resetBtn" value="复位"/>
+</div>
+<div id="endline"></div>
+<div id="rightEndLine"></div>
+<body>
+</body>
+</html>

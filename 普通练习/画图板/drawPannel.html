@@ -1,0 +1,190 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+* {margin:0px; padding:0px; overflow:hidden}
+li {list-style:none;}
+div#drawPannel {width:800px; height:500px; border:1px solid #333; position:absolute; left:5px; top:5px; cursor:default;}
+div#drawPannel div {position:absolute; cursor:default;}
+div#colorPannel {width:140px; height:325px;border:1px solid #333; position:absolute; left:810px; top:5px;}
+div#colorPannel li {width:50px; height:50px; float:left; margin:10px 0px 0px 14px; cursor:pointer; border:1px solid #000;}
+div#colorPannel #forwardColor {width:90px; height:35px; border:1px solid #333; position:absolute; top:260px; left:15px; z-index:2}
+div#colorPannel #backgroundColor {width:90px; height:35px; border:1px dashed #333; position:absolute; top:275px; left:35px; z-index:1}
+div#borderPannel {width:140px; height:70px; border:1px solid #333; position:absolute; left:810px; top:335px;}
+div#borderPannel li {width:100px; height:0px; margin:15px; cursor:pointer; border:0px; border-top:3px; border-color:#ccc;}
+div#stylePannel {width:140px; height:95px; border:1px solid #333; position:absolute; left:810px; top:410px;}
+div#stylePannel li {width:30px; height:60px; float:left; margin-left:10px; margin-top:15px; cursor:pointer; opacity:0.5;}
+input#cleanBtn {width:40px; height:25px; left:960px; top:5px; position:absolute;}
+</style>
+<script type="text/javascript">
+function getAttribute(obj, attr){
+	if(obj.currentStyle){
+		return obj.currentStyle[attr];	
+	}else{
+		return getComputedStyle(obj,false)[attr];	
+	}
+}
+window.onload = function(){
+	//select color//
+	var oColorPannel = document.getElementById('colorPannel');
+	var oColorArr = oColorPannel.getElementsByTagName('li');
+	var oForwardColor = document.getElementById('forwardColor');
+	var oBackgroundColor = document.getElementById('backgroundColor');
+	oColorPannel.oncontextmenu=function ()
+	{
+		return false;
+	};
+	for(var i=0; i<oColorArr.length; i++){
+		oColorArr[i].index = i;
+		oColorArr[i].onclick = function(){
+			oForwardColor.style.backgroundColor = this.style.backgroundColor;
+		};
+		oColorArr[i].onmousedown = function(ev){
+			var oEvent = ev || event;
+			if (oEvent.button == 2){
+				oBackgroundColor.style.backgroundColor = this.style.backgroundColor;	
+			}
+			return false;
+		};
+	}
+	//select color end//
+	//select border//
+	var oBorderPannel = document.getElementById('borderPannel');
+	var oBorderArr = oBorderPannel.getElementsByTagName('li');
+	var currentBorderIndex = 0;
+	oBorderPannel.oncontextmenu=function ()
+	{
+		return false;
+	};
+	oBorderArr[currentBorderIndex].style.borderColor='#333';
+	for(var i=0; i<oBorderArr.length; i++){
+		oBorderArr[i].index = i;
+		oBorderArr[i].onclick = function(){
+			oBorderArr[currentBorderIndex].style.borderColor='';
+			currentBorderIndex = this.index;
+			this.style.borderColor = '#333';
+		};
+	}
+	//select border end//
+	//select style//
+	var oStylePannel = document.getElementById('stylePannel');
+	var oStyleArr = oStylePannel.getElementsByTagName('li');
+	var currentStyleIndex = 0;
+	oStylePannel.oncontextmenu=function ()
+	{
+		return false;
+	};
+	oStyleArr[currentStyleIndex].style.opacity = '1';
+	for(var i=0; i<oStyleArr.length; i++){
+		oStyleArr[i].index = i;
+		oStyleArr[i].onclick = function(){
+			oStyleArr[currentStyleIndex].style.opacity='';
+			currentStyleIndex = this.index;	
+			this.style.opacity='1';
+		};
+	}
+	//select style end//
+	//draw pannel//
+	var oDrawPannel = document.getElementById('drawPannel');
+	var leftOffset = parseInt(getAttribute(oDrawPannel,'left')) + parseInt(getAttribute(oDrawPannel,'borderTopWidth'));
+	var topOffset = parseInt(getAttribute(oDrawPannel, 'top')) + parseInt(getAttribute(oDrawPannel, 'borderLeftWidth'));
+	var maxWidth = parseInt(getAttribute(oDrawPannel, 'width'));
+	var maxHeight = parseInt(getAttribute(oDrawPannel, 'height'));
+	var startLeftPos = 0;
+	var startTopPos = 0;
+	var divWidth = 0;
+	var divHeight = 0;
+	var newDiv = null;
+	oDrawPannel.oncontextmenu = function(){
+		return false;	
+	}
+	oDrawPannel.onmousedown = function(ev){
+		var oEvent = ev || event;
+		if(oEvent.button == 2){
+			return;	
+		}
+		newDiv = document.createElement('div');
+		newDiv.style.backgroundColor = oBackgroundColor.style.backgroundColor;
+		newDiv.style.borderColor = oForwardColor.style.backgroundColor;
+		newDiv.style.borderStyle = oBorderArr[currentBorderIndex].style.borderStyle;
+		if(currentStyleIndex == 1){
+			newDiv.style.backgroundColor = 'transparent';	
+		}else if(currentStyleIndex == 2){
+			newDiv.style.borderColor = oBackgroundColor.style.backgroundColor;
+		}
+		startLeftPos = oEvent.clientX - leftOffset;
+		startTopPos = oEvent.clientY - topOffset;
+		newDiv.style.left = startLeftPos + 'px';
+		newDiv.style.top = startTopPos + 'px';
+		newDiv.style.width = 0 + 'px';
+		newDiv.style.height = 0 + 'px';
+		oDrawPannel.appendChild(newDiv);
+		oDrawPannel.onmousemove = function(ev){
+			var oEvent2 = ev || event;
+			var xPos = oEvent2.clientX - leftOffset;
+			var yPos = oEvent2.clientY - topOffset;
+			var newLeft = Math.min(Math.max(xPos,0), startLeftPos);
+			var newTop = Math.min(Math.max(yPos,0), startTopPos);
+			var drawPosX = xPos>startLeftPos? Math.min(xPos, maxWidth-5): Math.max(xPos, 0);
+			var drawPosY = yPos>startTopPos? Math.min(yPos, maxHeight-5): Math.max(yPos, 0);
+			var newWidth = Math.abs(drawPosX - startLeftPos);
+			var newHeight = Math.abs(drawPosY - startTopPos);
+			newDiv.style.left = newLeft + 'px';
+			newDiv.style.top = newTop + 'px';
+			newDiv.style.width = newWidth + 'px';
+			newDiv.style.height = newHeight + 'px';
+		};
+		oDrawPannel.onmouseup = function(){
+			this.onmousemove = null;
+			this.onmouseup = null;
+		};
+	}
+}
+function cleanDrawPannel(){
+	var oDrawPannel = document.getElementById('drawPannel');
+	var oDivArr = oDrawPannel.getElementsByTagName('div');
+	for(var i=oDivArr.length; i>0; i--){
+		oDrawPannel.removeChild(oDivArr[i-1]);
+	}
+}
+</script>
+</head>
+
+<body>
+<div id	="drawPannel">
+
+</div>
+<div id="colorPannel">
+<ul>
+	<li style="background:#000"></li>
+    <li style="background:#FFF"></li>
+    <li style="background:#666"></li>
+    <li style="background:#CCC"></li>
+    <li style="background:#F00"></li>
+    <li style="background:#FF0"></li>
+    <li style="background:#0F0"></li>
+    <li style="background:#00F"></li>
+</ul>
+<div id="forwardColor" style="background:#000"></div>
+<div id="backgroundColor" style="background:#FFF"></div>
+</div>
+<div id="borderPannel">
+<ul>
+	<li style="border-style:solid"></li>
+    <li style="border-style:dashed"></li>
+    <li style="border-style:dotted"></li>
+</ul>
+</div>
+<div id="stylePannel">
+<ul>
+	<li style="border:1px solid #333; background:#999;"></li>
+    <li style="border:1px solid #333; background:#fff;"></li>
+    <li style="background:#999"></li>
+</ul>
+</div>
+<input type="button" value="clean" onclick="cleanDrawPannel()" id="cleanBtn"/>
+<div>
+</body>
+</html>

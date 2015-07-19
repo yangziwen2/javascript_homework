@@ -1,0 +1,24 @@
+<html>
+<head>
+<script>
+window.onload = function(){
+	var btnArr = document.getElementsByTagName('input');
+	for(var i=0; i<btnArr.length; i++){
+		btnArr[i].onclick = (function(index){
+			return function(){
+				alert(index);
+			}
+		})(i);
+	}
+}
+</script>
+</head>
+<body>
+<input type="button" value="1"/>
+<input type="button" value="2"/>
+<input type="button" value="3"/>
+<input type="button" value="4"/>
+<input type="button" value="5"/>
+<input type="button" value="6"/>
+</body>
+</html>

@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+* {padding:0px; margin:0px;}
+li {list-style:none;}
+.outsideDiv {position:relative; width:500px; margin:30px auto;}
+.showPannel {position:relative; }
+.title li {width:98px; height:30px; background:#999; border:1px solid #CCC; float:left; cursor:pointer; text-align:center; color:#FFF; line-height:30px;}
+.title .select {background:#09C; cursor:default; border:1px solid #999; color:#FF9; font-weight:bold;}
+.content {width:500px; height:277;}
+.content li {width:500px; height:277px; float:left; overflow:hidden; display:none}
+.content .show {display:block}
+</style>
+<script>
+window.onload = function(){
+	new Tab('tab1');
+	new Tab('tab2');
+};
+
+function Tab(idStr){
+	var $this = this;
+	this.pannelDiv = document.getElementById(idStr);
+	var oDetailDivs = this.pannelDiv.getElementsByTagName('div');
+	this.titleDiv = oDetailDivs[0];
+	this.contentDiv = oDetailDivs[1];
+	this.titleLis = this.titleDiv.getElementsByTagName('li');
+	this.contentLis = this.contentDiv.getElementsByTagName('li');
+	this.currentSelectedIndex = 0;
+	for(var i=0; i<this.titleLis.length; i++){
+		this.titleLis[i].index = i;
+		this.titleLis[i].onmouseover = function(){
+			$this.tab(this);
+		}
+	}
+}
+
+Tab.prototype.tab = function(currentTitle){
+	this.titleLis[this.currentSelectedIndex].className = '';
+	this.contentLis[this.currentSelectedIndex].className = '';
+	this.currentSelectedIndex = currentTitle.index;
+	this.titleLis[this.currentSelectedIndex].className = 'select';
+	this.contentLis[this.currentSelectedIndex].className = 'show';
+}
+</script>
+</head>
+
+<body>
+<div class="outsideDiv">
+<div class="showPannel" id="tab1">
+	<div class="title" id="title">
+    	<ul>
+        	<li class="select">织田信长</li>
+            <li>德川家康</li>
+            <li>丰臣秀吉</li>
+            <li>武田信玄</li>
+            <li>上衫谦信</li>
+        </ul>
+    </div>
+    <div class="content" id="content">
+    	<ul>
+        	<li class="show"><img src="images/zhitianxinchang.jpg" /></li>
+            <li><img src="images/dechuanjiakang.jpg"/></li>
+            <li><img src="images/fengchenxiuji.jpg"/></li>
+            <li><img src="images/wutianxinxuan.jpg"/></li>
+            <li><img src="images/shangshanqianxin.jpg"/></li>
+        </ul>
+    </div>
+</div>
+</div>
+<br />
+<div class="outsideDiv">
+<div class="showPannel" id="tab2">
+	<div class="title" id="title">
+    	<ul>
+        	<li class="select">织田信长</li>
+            <li>德川家康</li>
+            <li>丰臣秀吉</li>
+            <li>武田信玄</li>
+            <li>上衫谦信</li>
+        </ul>
+    </div>
+    <div class="content" id="content">
+    	<ul>
+        	<li class="show"><img src="images/zhitianxinchang.jpg" /></li>
+            <li><img src="images/dechuanjiakang.jpg"/></li>
+            <li><img src="images/fengchenxiuji.jpg"/></li>
+            <li><img src="images/wutianxinxuan.jpg"/></li>
+            <li><img src="images/shangshanqianxin.jpg"/></li>
+        </ul>
+    </div>
+</div>
+</div>
+</body>
+</html>

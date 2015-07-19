@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//h2D XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/h2D/xhtml1-transitional.h2d">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>淘宝商品排序 - 妙味课堂 - www.miaov.com</title>
+<link href="miaov_style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+var sortBtnClassName = 'btn';
+var sortBtnAscClassName = 'btn_active';
+var sortBtnDescClassName = 'btn_down';
+window.onload = function(){
+	var oTable = document.getElementById('taobao_table');
+	var oHead = oTable.getElementsByTagName('tHead')[0];
+	var oFoot = oTable.getElementsByTagName('tFoot')[0];
+	var oBodyRows = oTable.tBodies[0].rows;
+	var totalPriceSpan = oFoot.getElementsByTagName('span')[0];
+	var selectAllCheckbox = oHead.getElementsByTagName('input')[0];
+	selectAllCheckbox.checkedCount = 0;
+	var oHeadCells = oHead.getElementsByTagName('th');
+	//sort btns
+	var aSortBtnArr = [];
+	for(var i=0; i<oHeadCells.length; i++){
+		var oSortBtns = getElementsByClassName(oHeadCells[i],'btn');
+		if(oSortBtns.length>0){
+			oSortBtns[0].index = i;
+			oSortBtns[0].isAsc = false;
+			aSortBtnArr.push(oSortBtns[0]);
+		}
+	}
+	var aRowArr = []
+	//初始化
+	for(var i=0; i<oBodyRows.length; i++){
+		oBodyRows[i].index = i;
+		aRowArr[i] = oBodyRows[i];
+		var priceSpan = aRowArr[i].cells[2].getElementsByTagName('span')[0];
+		aRowArr[i].priceValue = Number(priceSpan.innerHTML.substring(1));
+		aRowArr[i].checkbox = aRowArr[i].cells[0].getElementsByTagName('input')[0];
+		setRowColor(aRowArr[i]);
+	}
+	for(var i=0; i<aRowArr.length; i++){
+		//删除行
+		var removeBtn = aRowArr[i].cells[4].getElementsByTagName('input')[0];
+		removeBtn.onclick = function(){
+			removeRow(this, aRowArr, oTable, totalPriceSpan, selectAllCheckbox);
+		}
+		//checkbox click
+		var checkbox = aRowArr[i].cells[0].getElementsByTagName('input')[0];
+		checkbox.onclick = function(){
+			checkboxClickOperation(this, aRowArr, totalPriceSpan, selectAllCheckbox);
+		}
+	}
+	selectAllCheckbox.onclick = function(){
+		selectAllClickOperation(aRowArr, totalPriceSpan, this);
+	}
+	for(var i=0; i<aSortBtnArr.length; i++){
+		aSortBtnArr[i].onclick = function(){
+			sortRows(this, aSortBtnArr, aRowArr, oTable);
+		}
+	}
+};
+
+function setRowColor(currentRow){
+	currentRow.style.backgroundColor = currentRow.index%2?'#f6f6f6':'';
+}
+
+function sortRows(currentSortBtn, aSortBtnArr, aRowArr, oTable){
+	for(var i=0; i<aSortBtnArr.length; i++){
+		if(aSortBtnArr[i] == currentSortBtn){
+			continue;
+		}
+		aSortBtnArr[i].className = sortBtnClassName;
+		aSortBtnArr[i].isAsc = false;
+	}
+	currentSortBtn.isAsc = !currentSortBtn.isAsc;
+	currentSortBtn.className = currentSortBtn.isAsc? sortBtnAscClassName: sortBtnDescClassName;
+	aRowArr.sort(function(rowA, rowB){
+		var cellA = rowA.cells[currentSortBtn.index];
+		var cellB = rowB.cells[currentSortBtn.index];
+		var result = compareFuncArr[currentSortBtn.index](cellA, cellB);
+		result = currentSortBtn.isAsc? result: -1*result;
+		return result;
+	});
+	for(var i=0; i<aRowArr.length; i++){
+		aRowArr[i].index = i;
+		oTable.tBodies[0].appendChild(aRowArr[i]);
+		setRowColor(aRowArr[i]);
+	}
+}
+
+function comparePrice(cellA, cellB){
+	var priceA = Number(cellA.getElementsByTagName('span')[0].innerHTML.substring(1));
+	var priceB = Number(cellB.getElementsByTagName('span')[0].innerHTML.substring(1));
+	return priceA - priceB;
+}
+
+function compareArea(cellA, cellB){
+	var areaA = cellA.innerHTML;
+	var areaB = cellB.innerHTML;
+	return areaA.localeCompare(areaB);
+}
+
+var compareFuncArr = [];
+compareFuncArr[2] = comparePrice;
+compareFuncArr[3] = compareArea;
+
+//select all
+function selectAllClickOperation(aRowArr, totalPriceSpan, selectAllCheckbox){
+	for(var i=0; i<aRowArr.length; i++){
+		aRowArr[i].checkbox.checked = selectAllCheckbox.checked;
+	}
+	selectAllCheckbox.checkedCount = selectAllCheckbox.checked? aRowArr.length: 0;
+	countTotalPrice(aRowArr, totalPriceSpan);
+}
+
+//checkbox click
+function checkboxClickOperation(currentCheckbox, aRowArr, totalPriceSpan, selectAllCheckbox){
+	selectAllCheckbox.checkedCount += currentCheckbox.checked?1:-1;
+	selectAllCheckbox.checked = selectAllCheckbox.checkedCount == aRowArr.length?true:false;
+	countTotalPrice(aRowArr, totalPriceSpan);
+}
+
+function countTotalPrice(aRowArr, totalPriceSpan){
+	var totalFee = 0;
+	for(var i=0; i<aRowArr.length; i++){
+		if(aRowArr[i].checkbox.checked){
+			totalFee += aRowArr[i].priceValue;	
+		}
+	}
+	totalPriceSpan.innerHTML = '￥'+totalFee.toFixed(2);
+}
+
+function removeRow(removeBtn, aRowArr, oTable, totalPriceSpan, selectAllCheckbox){
+	var currentRow = removeBtn.parentNode.parentNode;
+	oTable.tBodies[0].removeChild(currentRow);
+	aRowArr.splice(currentRow.index,1);
+	for(var i=currentRow.index; i<aRowArr.length; i++){
+		aRowArr[i].index = i;
+		setRowColor(aRowArr[i]);
+	}
+	if(currentRow.checkbox.checked){
+		selectAllCheckbox.checkedCount--;	
+	}
+	countTotalPrice(aRowArr, totalPriceSpan);
+}
+
+function getElementsByClassName(oParent, className){
+	var oChildren = oParent.getElementsByTagName('*');
+	var aResult = [];
+	for(var i=0; i<oChildren.length; i++){
+		if(oChildren[i].className == className){
+			aResult.push(oChildren[i]);	
+		}
+	}
+	return aResult;
+}
+</script>
+</head>
+<body>
+<table id="taobao_table">
+    <thead>
+        <tr>
+            <th><label><input type="checkbox" /> 全选</label></th>
+            <th>商品名</th>
+            <th width="70"><a class="btn" href="#">价格</a></th>
+            <th width="70"><a class="btn" href="#">地区</a></th>
+            <th>功能</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td align="center" width="60"><input type="checkbox" /></td>
+            <td align="center"><img src="images/1.jpg" alt="商品一" longdesc="http://www.miaov.com" /><a href="http://www.miaov.com/">果绿后背钩花蝴蝶镂空长袖针织衫开衫小披肩韩国气质薄2010秋新</a></td>
+            <td align="center"><span>&yen;59.00</span></td>
+            <td align="center">北京</td>
+            <td align="center"><input type="button" value="删除" /></td>
+        </tr>
+        <tr>
+            <td align="center"><input type="checkbox" /></td>
+            <td align="center"><img src="images/2.jpg" alt="商品二" longdesc="http://www.miaov.com" /><a href="http://www.miaov.com/">2010秋装新款韩版女装淑女花苞波西米亚条纹连衣裙Q0070</a></td>
+            <td align="center"><span>&yen;98.00</span></td>
+            <td align="center">广东</td>
+            <td align="center"><input type="button" value="删除" /></td>
+        </tr>
+        <tr>
+            <td align="center"><input type="checkbox" /></td>
+            <td align="center"><img src="images/3.jpg" alt="商品三" longdesc="http://www.miaov.com" /><a href="http://www.miaov.com/">随意美妙 O.SA欧莎热卖女装2010秋新韩版纯棉短袖T恤女ST00401</a></td>
+            <td align="center"><span>&yen;33.00</span></td>
+            <td align="center">上海</td>
+            <td align="center"><input type="button" value="删除" /></td>
+        </tr>
+        <tr>
+            <td align="center"><input type="checkbox" /></td>
+            <td align="center"><img src="images/2.jpg" alt="商品二" longdesc="http://www.miaov.com" /><a href="http://www.miaov.com/">2010秋装新款韩版女装淑女花苞波西米亚条纹连衣裙Q0070</a></td>
+            <td align="center"><span>&yen;198.00</span></td>
+            <td align="center">广东</td>
+            <td align="center"><input type="button" value="删除" /></td>
+        </tr>
+        <tr>
+            <td align="center" width="60"><input type="checkbox" /></td>
+            <td align="center"><img src="images/1.jpg" alt="商品一" longdesc="http://www.miaov.com" /><a href="http://www.miaov.com/">果绿后背钩花蝴蝶镂空长袖针织衫开衫小披肩韩国气质薄2010秋新</a></td>
+            <td align="center"><span>&yen;29.00</span></td>
+            <td align="center">北京</td>
+            <td align="center"><input type="button" value="删除" /></td>
+        </tr>
+        <tr>
+            <td align="center"><input type="checkbox" /></td>
+            <td align="center"><img src="images/3.jpg" alt="商品三" longdesc="http://www.miaov.com" /><a href="http://www.miaov.com/">随意美妙 O.SA欧莎热卖女装2010秋新韩版纯棉短袖T恤女ST00401</a></td>
+            <td align="center"><span>&yen;44.00</span></td>
+            <td align="center">上海</td>
+            <td align="center"><input type="button" value="删除" /></td>
+        </tr>
+    </tbody>
+    <tfoot>
+    	<tr>
+        	<th colspan="5">选中的商品总价是：<span>&yen;0.00元</span></th>
+        </tr>
+    </tfoot>
+</table>
+</body>
+</html>

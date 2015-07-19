@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+* {margin:0; padding:0; list-style:none;}
+#wrap a:link {text-decoration:none; color:#000;}
+#wrap a:visited {text-decoration:none; color:#000;}
+#wrap a:hover {text-decoration:none; color:#000;}
+#wrap a:active {text-decoration:none; color:#000;}
+#wrap {margin:100px auto 0; width:333px; height:212px;position:relative;}
+#wrap .banners {width:60px; height:216px; border:1px solid #A91118;margin-left:-1px; margin-top:-1px; float:left; font-size:14px; line-height:29px;}
+#wrap .banners li {width:60px; height:30px; border:1px solid #A91118; margin-left:-1px; margin-top:-1px; text-align:center;}
+#wrap .banners li.over {background-color:#A91118; cursor:pointer; color:#FFF}
+#wrap .banners li.over a{color:#FFF}
+#adpic {width:210px; height:216px; border:1px solid #A91118; float:left; margin-left:-1px; margin-top:-1px;}
+#adpic li {position:absolute; display:none;}
+#adpic li img {width:210px; height:216px; border:0px none;}
+</style>
+<script type="text/javascript">
+window.onload = function(){
+	var oWrap = document.getElementById('wrap');
+	var oLeftBanners = document.getElementById('bannersLeft');
+	var oRightBanners = document.getElementById('bannersRight');
+	var oAdpic = document.getElementById('adpic');
+	var aBtnsLeft = oLeftBanners.getElementsByTagName('li');
+	var aBtnsRight = oRightBanners.getElementsByTagName('li');
+	var aAs = oWrap.getElementsByTagName('a');
+	for(var i=0; i<aAs.length; i++){
+		aAs[i].target = '_blanck';	
+	}
+	var aBtns = [];
+	for(var i=0; i<aBtnsLeft.length; i++){
+		aBtns.push(aBtnsLeft[i]);
+	}
+	for(var i=0; i<aBtnsRight.length; i++){
+		aBtns.push(aBtnsRight[i]);
+	}
+	var aImgLis = oAdpic.getElementsByTagName('li');
+	var currentIndex=0;
+	for(var i=0; i<aBtns.length; i++){
+		aBtns[i].index = i;
+		aBtns[i].onmouseover = function(){
+			aBtns[currentIndex].className = '';
+			aImgLis[currentIndex].style.display = 'none';
+			currentIndex = this.index;
+			aBtns[this.index].className = 'over';
+			aImgLis[this.index].style.display = 'block';
+		}
+	}
+	oWrap.onmouseover = function(){
+		clearInterval(aBtns.timer);
+	}
+	oWrap.onmouseout = function(){
+		initTimer();
+	}
+	clearInterval(aBtns.timer);
+	initTimer();
+	function initTimer(){
+		aBtns.timer = setInterval(function(){
+			aBtns[(currentIndex+1) % aBtns.length].onmouseover();
+		}, 2000);
+	}
+}
+</script>
+</head>
+<body>
+<div id="wrap">
+<div>
+	<ul class="banners" id="bannersLeft">
+    	<li class="over"><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=34&">开衫</a></li>
+    	<li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=34&">外套</a></li>
+        <li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=62&">毛衣</a></li>
+        <li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=55&">长裙</a></li>
+        <li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=37&">牛仔裤</a></li>
+        <li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=75&">休闲套装</a></li>
+        <li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=26&">短袖T恤</a></li>
+    </ul>
+    <ul id="adpic">
+    	<li style="display:block;"><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=34&"><img src="images/开衫.jpg"/></a></li>
+        <li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=34&"><img src="images/外套.jpg"/></a></li>
+        <li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=62&"><img src="images/毛衣.jpg"/></a></li>
+        <li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=55&"><img src="images/长裙.jpg"/></a></li>
+        <li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=37&"><img src="images/牛仔裤.jpg"/></a></li>
+        <li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=75&"><img src="images/休闲套装.jpg"/></a></li>
+        <li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=26&"><img src="images/短袖T恤.jpg"/></a></li>
+        <li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=11&"><img src="images/吊带裙.jpg"/></a></li>
+        <li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=65&"><img src="images/风衣.jpg"/></a></li>
+        <li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=67&"><img src="images/西装.jpg"/></a></li>
+        <li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=69&"><img src="images/夹克.jpg"/></a></li>
+        <li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=35&"><img src="images/罩衫.jpg"/></a></li>
+        <li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=47&"><img src="images/连身裤.jpg"/></a></li>
+        <li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=27&"><img src="images/长袖T恤.jpg"/></a></li>
+    </ul>
+    <ul class="banners" id="bannersRight">
+    	<li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=11&">吊带裙</a></li>
+    	<li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=65&">风衣</a></li>
+        <li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=67&">西装</a></li>
+        <li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=69&">夹克</a></li>
+        <li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=35&">罩衫</a></li>
+        <li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=47&">连身裤</a></li>
+        <li><a href="http://www.buystep.com/home/1?price_from=&price_to=&term=27&">长袖T恤</a></li>
+    </ul>
+</div>
+
+</div>
+</body>
+</html>

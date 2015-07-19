@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+#mockSelector ul{margin:0; padding:0; width:120px; position:absolute; top:20px; list-style:none; color:}
+</style>
+<script>
+window.onload = function(){
+	var oTxt = document.getElementById('txt');
+	var oSelect = document.getElementById('select1');
+	var oUl = document.getElementById('ul1');
+	oTxt.value = oSelect.options[oSelect.selectedIndex].innerHTML;
+	oTxt.onkeyup = function(){
+		for(var i=oUl.children.length - 1; i>=0; i--){
+			oUl.removeChild(oUl.children[i]);	
+		}
+		if(this.value == ''){
+			return;	
+		}
+		var resultArr = [];
+		var aOptions = oSelect.options;
+		for(var i=0; i<aOptions.length; i++){
+			if(aOptions[i].innerHTML.indexOf(this.value)>=0){
+				resultArr.push({index: i, value: aOptions[i].innerHTML});	
+			}
+		}
+		var oFrag = document.createDocumentFragment();
+		for(var i=0; i<resultArr.length; i++){
+			var oLi = document.createElement('li');
+			oLi.oriColor = oLi.style.background = i%2? '#39f': '#ff9';
+			oLi.style.cursor = 'pointer';
+			oLi.innerHTML = resultArr[i].value;
+			oLi.optionIndex = resultArr[i].index;
+			oLi.onclick = function(){
+				oSelect.selectedIndex = this.optionIndex;
+				for(var i=oUl.children.length - 1; i>=0; i--){
+					oUl.removeChild(oUl.children[i]);	
+				}
+				oTxt.value = aOptions[oSelect.selectedIndex].innerHTML
+				oUl.style.border = '';
+			}
+			oLi.onmouseover = function(){
+				this.style.background = '#ccc';	
+			}
+			oLi.onmouseout = function(){
+				this.style.background = this.oriColor;
+			}
+			oFrag.appendChild(oLi);
+		}
+		oUl.appendChild(oFrag);
+	}
+	oSelect.onchange = function(){
+		oTxt.value = this.options[this.selectedIndex].innerHTML;	
+	}
+}
+</script>
+</head>
+
+<body>
+<div style="position:relative; width:125px; display:inline-block;" id="mockSelector">
+<input type="text" id="txt" style="z-index:100; width:100px; height:14px; margin-top:2px;"/>
+<span style="z-index:10;overflow:hidden; position:absolute; display:inline-block; width:20px; margin-left:-8px; width:123px;left:113px; top:2px;">
+<select id="select1" style="width:123px; margin-left:-104px;">
+	<option value="0">第0行</option>
+	<option value="1">第1行</option>
+	<option value="2">第2行</option>
+	<option value="3">第3行</option>
+</select>
+</span>
+<ul id="ul1">
+</ul>
+</div>
+</body>
+</html>

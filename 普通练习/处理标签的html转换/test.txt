@@ -1,0 +1,14 @@
+<div id="div1">
+	<a href="http: www.baidu.com">adfssssssssssssssssssssssssssss 
+             <a href="baidu.com"> 15268200</a>我是个好人，大好人
+        </a><br />
+    <p>为什么要用正则表达式判断,如果用js查找所有div对象下的 A</p>
+    <p>为什么要用正则表、
+       <a href="#"><span>
+           <a href="baidu.com">关</a>键字</span>
+       </a>达,如果用js查找所有div对象下的 </p>
+    <p>为什么要用正则表字,如果用js查<span>关键字</span>找所有div对象下的 </p>
+    <p>为什么要用正则,如果<span>关键字</span>用js查找所有div对象下的 </p>
+    <p><a href="#">142545</a>,如果用js查找所有div对象下的 </p>
+    <p><a href="#"><span>关键字</span>1256257874120587</a>,如果用js查找所有div对象下的 </p>
+</div>

@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>New Web Project</title>
+<script>
+window.onload = function(){
+	// var ifobj=document.createElement('iframe');
+	var ifobj=document.getElementById('contentFrame');
+	ifobj.style.width = '600px';
+	ifobj.style.height = '400px';
+	document.body.insertBefore(ifobj, document.body.firstChild);
+	var ifbody = null;
+	var oReadBtn = document.getElementById('readBtn');
+	oReadBtn.disabled = true;
+	oReadBtn.onclick = function(){
+		alert(ifbody.innerHTML);
+	}
+	setTimeout(function(){
+		var ifdoc = ifobj.contentWindow.document || ifobj.contentWindow.Document;
+		ifbody = ifdoc.body || ifdoc.getElementsByTagName('body')[0];
+		if(!ifbody){
+			setTimeout(arguments.callee, 10);
+		}
+		ifbody.contentEditable = true;
+		ifobj.style.width = '600px';
+		ifobj.style.height = '400px';
+		oReadBtn.disabled = false;
+	}, 10);
+}
+</script>
+</head>
+<body>
+<br/>
+<iframe id="contentFrame"></iframe>
+<input type="button" value="获取内容" id="readBtn" disabled="true">
+</body>
+</html>

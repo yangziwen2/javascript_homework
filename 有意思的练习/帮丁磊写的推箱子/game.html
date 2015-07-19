@@ -1,0 +1,285 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>game</title>
+<style type="text/css">
+*{ margin:0;padding:0;}
+body{background:url(images/za.gif);}
+_body{background: #ccc}
+#wrap{ position:relative; margin:40px auto;width: 480px; height:200px;}
+#game{ height:200px;width: 480px;}
+#game li{ width:40px; height: 40px; float: left; list-style:none;background:url(images/lu.gif) no-repeat;}
+#boss{width: 40px;height:40px; background:url(images/rboss.gif) no-repeat; position:absolute; left:0; top:0;}
+#game .barrier{background:url(images/za.gif) no-repeat;}
+#game .target{width: 40px; height: 40px; background:url(images/target.gif) no-repeat}
+.box{width: 40px;height:40px; background:url(images/box.png) no-repeat; position:absolute;}
+#wrap .r{background:url(images/rboss.gif) no-repeat;}
+#wrap .l{background:url(images/lboss.gif) no-repeat;}
+</style>
+<script type="text/javascript">
+(function(){
+	var objArr = [],
+		minLeft = 0,
+		maxLeft = 440,
+		minTop = 0,
+		maxTop = 160,
+		boxSize = 40;
+	window.Box = function(obj){
+		Obj.call(this, obj);
+		objArr.push(this);
+	}
+	window.Box.prototype = {
+		setX: setX,
+		setY: setY,
+		isPushed: function(direct){
+			var shift;
+			var newX = this.x + (Math.abs((shift = direct-38)) == 1? shift: 0)*boxSize;
+			var newY = this.y + (Math.abs((shift = direct-39)) == 1? shift: 0)*boxSize;
+			if(newX < minLeft || newX > maxLeft || newY < minTop || newY > maxTop){
+				return false;
+			}
+			for(var i=0; i<objArr.length; i++){
+				if(this == objArr[i]){
+					continue;
+				}
+				if(newX == objArr[i].x && newY == objArr[i].y){
+					return false;
+				}
+			}
+			this.setX(newX);
+			this.setY(newY);
+			return true;
+		}
+	}
+	window.Barrier = function(obj){
+		Obj.call(this, obj);
+		objArr.push(this);
+	};
+	window.Barrier.prototype = {
+		isPushed: function(){
+			return false;
+		}
+	};
+	window.Boss = function(obj, targetArr, successCallback){
+		Obj.call(this, obj);
+		this.targetArr = targetArr || [];
+		this.successCallback = successCallback || function(){};
+	};
+	window.Boss.prototype = {
+		setX: setX,
+		setY: setY,
+		push: function(direct){
+			var shift;
+			var newX = this.x + (Math.abs((shift = direct-38)) == 1? shift: 0) * boxSize;
+			shift == 1 && this.obj.className != 'r'
+				&& (this.obj.className = 'r');
+			shift == -1 && this.obj.className != 'l'
+				&& (this.obj.className = 'l');
+			var newY = this.y + (Math.abs((shift = direct-39)) == 1? shift: 0) * boxSize;
+			if(newX < minLeft || newX > maxLeft || newY < minTop || newY > maxTop){
+				return;
+			}
+			for(var i=0; i<objArr.length; i++){
+				if(newX == objArr[i].x && newY == objArr[i].y && objArr[i] && !objArr[i].isPushed(direct)){
+					return;
+				}
+			}
+			this.setX(newX);
+			this.setY(newY);
+			if(this.isFinished()){
+				var _this = this;
+				setTimeout(function(){
+					_this.successCallback();
+					_this.successCallback = function(){};
+				}, 1);
+			}
+		},
+		isFinished: function(){
+			var count = 0;
+			for(var i=0, l=objArr.length; i<l; i++){
+				if(!objArr[i] instanceof Box){
+					continue;
+				}
+				for(var j=0; j<this.targetArr.length; j++){
+					if(objArr[i].x == this.targetArr[j].x*boxSize && objArr[i].y == this.targetArr[j].y*boxSize){
+						count++;
+						break;
+					}
+				}
+			}
+			if(count == this.targetArr.length){
+				lockBox();
+				return true;
+			}
+			return false;
+		}
+	};
+	function setX(newX){
+		if(this.x == newX){
+			return;
+		}
+		this.x = newX;
+		this.obj.style.left = newX + 'px';
+	}
+	function setY(newY){
+		if(this.y == newY){
+			return;
+		}
+		this.y = newY;
+		this.obj.style.top = newY + 'px';
+	}
+	function Obj(obj){
+		this.obj = obj;
+		this.x = obj.offsetLeft;
+		this.y = obj.offsetTop;
+	}
+	function lockBox(){
+		for(var i=0, l=objArr.length; i<l; i++){
+			if(! objArr[i] instanceof Box){
+				continue;
+			}
+			objArr[i].isPushed = function(){return false};
+		}
+	}
+	window.getTargetArr = function(wrap){
+		var targetArr = getElementsByClassName('target', wrap);
+		var luArr = wrap.getElementsByTagName('li');
+		var posArr = [];
+		for(var i=0, l=targetArr.length; i<l; i++){
+			var index =  -1;
+			if(Array.prototype.indexOf){
+				index = Array.prototype.indexOf.call(luArr, targetArr[i].parentNode);
+			}else{
+				for(var j=0; j<luArr.length; j++){
+					if(luArr[j] == targetArr[i].parentNode){
+						index = j;
+						break;
+					}
+				}
+			}
+			if(index == -1){
+				continue;
+			}
+			posArr.push({
+				x: index%12,
+				y: Math.floor(index/12)
+			})
+		}
+		return posArr;
+	}
+})();
+
+window.onload = function(){
+	var wrap = document.getElementById('wrap');
+	var targetArr = getTargetArr(wrap);
+	var boss = new Boss(document.getElementById('boss'), targetArr , function(){
+		alert('恭喜过关！');
+	});
+	var boxArr = getElementsByClassName('box', wrap);
+	var barrierArr = getElementsByClassName('barrier', wrap);
+	for(var i=0; i<boxArr.length; i++){
+		new Box(boxArr[i]);
+	}
+	for(var i=0; i<barrierArr.length; i++){
+		new Barrier(barrierArr[i]);
+	}
+	document.onkeydown = function(event){
+		event = event || window.event;
+		boss.push(event.keyCode);
+	}
+}
+
+function getElementsByClassName(className, parentNode){
+	parentNode || (parentNode = document.body);
+	if(parentNode.getElementsByClassName){
+		return parentNode.getElementsByClassName(className);
+	}
+	var resultArr = [];
+	var tagArr = parentNode.getElementsByTagName('*');
+	for(var i=0; i<tagArr.length; i++){
+		var classNameArr = tagArr[i].className.split(' ');
+		for(var j=0; j<classNameArr.length; j++){
+			if(classNameArr[j] == className){
+				resultArr.push(tagArr[i]);
+				break;
+			}
+		}
+		
+	}
+	return resultArr;
+}
+</script>
+</head>
+<body>
+<div id="wrap">
+	<div id="boss"></div>
+	<div class="box" style="left: 40px; top: 40px;"></div>
+	<div class="box" style="left: 80px; top: 80px;"></div>
+	<div class="box" style="left: 160px; top: 80px;"></div>
+	<ul id="game">
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li class="barrier"></li>
+		<li class="barrier"></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li class="barrier"></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li class="barrier"></li>
+		<li class="barrier"></li>
+		<li></li>
+		<li><div class="target"></div></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li class="barrier"></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li><div class="target"></div></li>
+		<li></li>
+		<li></li>
+		<li class="barrier"></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li class="barrier"></li>
+		<li></li>
+		<li></li>
+		<li><div class="target"></div></li>
+		<li></li>
+		<li></li>
+	</ul>
+</div>
+</body>
+</html>

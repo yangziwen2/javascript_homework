@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="js/Oak3D_v_0_4_9.js"></script>
+<script type = "text/javascript">
+var textureMappingXml = '<OakShader><Common>varying vec2 pixel_coord;</Common><Vertex>attribute vec3 position;attribute vec2 vertex_coord;uniform mat4 matWorld, matProj;void main(void) {gl_Position = matProj * matWorld * vec4(position, 1.0);pixel_coord = vertex_coord;}</Vertex><Fragment>uniform sampler2D tex;void main(void) {gl_FragColor = texture2D(tex, pixel_coord);}</Fragment></OakShader>';
+var CANVAS_WIDTH = 512;
+var CANVAS_HEIGHT = 512; 
+var rc;
+var canvas;
+var vs, fs, program;
+var tex;
+var posBuf, coordBuf;
+var fRotAngl = 0.0;
+var image = new Image();
+
+function initScene() {
+    rc.clearColor(1.0, 1.0, 1.0, 1);
+    rc.clearDepth(1.0);
+    rc.enable(OAK.DEPTH_TEST);
+    rc.depthFunc(OAK.LEQUAL);
+
+    var posArray = [1.2, 0.5, 0.0,
+                   -1.2, 0.5, 0.0,
+                    1.2, -0.5, 0.0,
+                   -1.2, -0.5, 0.0];
+    
+    var coordArray = [1.0, 0.0,
+                      0.0, 0.0,
+                      1.0, 1.0,
+                      0.0, 1.0];
+
+    posBuf = new okArrayBuffer(rc);
+    posBuf.createBuffer(OAK.ARRAY_BUFFER, OAK.FLOAT, OAK.STATIC_DRAW, posArray);
+    coordBuf = new okArrayBuffer(rc);
+    coordBuf.createBuffer(OAK.ARRAY_BUFFER, OAK.FLOAT, OAK.STATIC_DRAW, coordArray);
+    vs = new okShader(rc, OAK.VERTEX_SHADER);
+    fs = new okShader(rc, OAK.FRAGMENT_SHADER);
+    okResourceParser.loadShaderSource(OAK.RESDOCTYPE_XML, vs, fs, textureMappingXml);
+    vs.compile();
+    fs.compile();     
+    program = new okProgram(rc);
+    program.attachVertexShader(vs);
+    program.attachFragmentShader(fs);
+    program.link();
+        tex = new okTexture(rc);
+        tex.createTexture(OAK.TEXTURE_2D, 233, 85, OAK.RGB, OAK.UNSIGNED_BYTE, image);
+}
+
+function renderScene() {
+    rc.viewport(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    rc.clear(OAK.COLOR_BUFFER_BIT | OAK.DEPTH_BUFFER_BIT);
+    program.bind();
+    program.setAttribute("position", posBuf, 3);
+    program.setAttribute("vertex_coord", coordBuf, 2);
+    var matWorld = okMat4Mul(okMat4Trans(0, 0, -2.0), okMat4RotX(fRotAngl));
+    program.setUniformMat4("matWorld", matWorld);
+    fRotAngl += 3.0;
+    if(fRotAngl > 360.0)
+        fRotAngl -= 360.0;
+    var matProj = okMat4Proj(90, canvas.width / canvas.height, 0.1, 20.0);
+    program.setUniformMat4("matProj", matProj);
+    program.setTexture("tex", tex, OAK.CLAMP_TO_EDGE, OAK.LINEAR, OAK.LINEAR);
+    rc.drawArrays(OAK.TRIANGLE_STRIP, 0, 4);
+}
+
+window.onload = function() {
+    image.onload = function() {
+	    canvas = okGenCanvas(CANVAS_WIDTH, CANVAS_HEIGHT, document.getElementById("renderArea"));
+	    try {
+	        rc = canvas.getContext("experimental-webgl");
+	    }
+	    catch (e) {
+	    }
+	    if (rc == null)
+	        alert("当前浏览器不支持webGL!");
+	    initScene();
+	    setInterval(renderScene, 30);
+    }
+    image.src = "image/miaov.jpg";
+}
+</script>
+</head>
+
+<body>
+    <div id="page">
+        <div id="canvas_part">   
+            <div id = "renderArea" align = "center"></div>
+        </div>
+    </div>
+</body>
+</html>

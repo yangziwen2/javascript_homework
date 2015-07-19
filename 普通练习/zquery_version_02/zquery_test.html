@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+div {float:left;}
+</style>
+<script type="text/javascript" src="./js/zquery.js"></script>
+<script type="text/javascript">
+$(function(){
+	$('#div3').css({
+		width:'200px', 
+		height:'200px', 
+		opacity:30
+	}).toggle(function(){
+		this.style.backgroundColor = '#ccc';
+		}, function(){
+		this.style.backgroundColor = '#0c6';
+	}).startMove({height:100}, 2).startMove({width:100}, 30).startMove({opacity:100});
+	$('.box').css({
+		width:'200px', 
+		height:'200px',
+		opacity:100
+	}).each(function(){
+		alert(this.style.backgroundColor);
+	}).hover(function(){
+		this.oriBackgroundColor = this.style.backgroundColor;
+		this.style.backgroundColor = '#333';
+		}, function(){
+		this.style.backgroundColor = this.oriBackgroundColor? this.oriBackgroundColor: '';
+	}).startMove({width:100}, 30).startMove({height:100},2).startMove({opacity:30});
+});
+</script>
+</head>
+<div>
+    <div id="div1" class="box" style="width:100px; height:100px; background-color:#06C"></div>
+    <div id="div2" class="box" style="width:100px; height:100px; background-color:#F00;"></div>
+    <div id="div3" style="width:100px; height:100px; background-color:#0C3; cursor:pointer;"></div>
+</div>
+<body>
+</body>
+</html>

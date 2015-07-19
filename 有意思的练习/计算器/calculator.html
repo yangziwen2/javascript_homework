@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+#wrap {width:410px; height:380px; border: 1px solid #333; text-align:center; margin: 50px auto 0px;}
+#inputVal {width:95%; height: 40px; font-size: 32px; text-align:right; margin-top:10px;}
+#keyWrap input {width:60px; height:60px; font-size: 26px; margin: 5px;}
+#numKeys { margin-top: 10px; display: inline-block;}
+#symbols {display: inline-block}
+#operators {display: inline-block}
+</style>
+<script>
+window.onload = function(){
+	var oInputVal = document.getElementById('inputVal');
+	var oNumKeysDiv = document.getElementById('numKeys');
+	var oNumKeys = oNumKeysDiv.getElementsByTagName('input');
+	var oSymbolsDiv = document.getElementById('symbols');
+	var oSymbols = oSymbolsDiv.getElementsByTagName('input');
+	var oOperatorsDiv = document.getElementById('operators');
+	var oOperators = oOperatorsDiv.getElementsByTagName('input');
+	
+	oInputVal.value = 0;
+	var result = 0,
+		symbol = '',
+		symbolFlag = false;
+	for(var i=0; i<oNumKeys.length; i++){
+		oNumKeys[i].onclick = function(){
+			if(oInputVal.value == 0){
+				oInputVal.value = this.value;
+				return;
+			}
+			if(this.value == '.'){
+				if(oInputVal.value.indexOf('.')>=0){
+					return;	
+				}
+			}
+			if(this.value == '+/-'){
+				if(oInputVal.value.indexOf('-') == 0){
+					oInputVal.value = oInputVal.value.substring(1);
+				}else{
+					oInputVal.value = '-' + oInputVal.value;	
+				}
+				return;
+			}
+			if(symbolFlag){
+				result = oInputVal.value;
+				oInputVal.value = this.value;
+				symbolFlag = false;
+				return;
+			}
+			oInputVal.value += this.value;
+		}
+	}
+	for(var i=0; i<oSymbols.length; i++){
+		oSymbols[i].onclick = function(){
+			if(!symbolFlag){
+				if(symbol){
+					result = cal(result, oInputVal.value, symbol);
+					oInputVal.value = result;
+				}else{
+					result = oInputVal.value;
+				}
+			}
+			symbol = this.value;
+			symbolFlag = true;
+		}
+	}
+	for(var i=0; i<oOperators.length; i++){
+		oOperators[i].onclick = function(){
+			switch(this.value){
+				case '=':
+					if(!symbol){
+						return;
+					}
+					if(oInputVal.value == 0){
+						alert('除数不能为0');
+						return;
+					}
+					result = cal(result, oInputVal.value, symbol);
+					symbol = '';
+					oInputVal.value = result;
+					return;
+				case '退格':
+					oInputVal.value = backspace(oInputVal.value);
+					return;
+				case 'CE':
+					oInputVal.value = 0;
+					return;
+				case 'C':
+					result = 0;
+					symbol = '';
+					symbolFlag = false;
+					inputVal.value = 0;
+					return;
+			}
+		}
+	}
+}
+function cal(num1, num2, symbol){
+	num1 = parseFloat(num1);
+	num2 = parseFloat(num2);
+	switch(symbol){
+		case '+':
+			return num1 + num2;
+		case '-':
+			return num1 - num2;
+		case '*':
+			return num1 * num2;
+		case '/':
+			return num1 / num2;
+	}
+	return NaN;
+}
+function backspace(value){
+	if(value == 0){
+		return 0;	
+	}
+	value = value + '';
+	var endIndex = value.length - 1;
+	if(value[endIndex-1] == '.'){
+		endIndex--;	
+	}
+	var result = value.substring(0, endIndex);
+	return isNaN(parseFloat(result))? 0: result;
+}
+</script>
+</head>
+
+<body>
+<div id="wrap">
+    <input type="text" id="inputVal" />
+    <div id="keyWrap">
+        <div id="numKeys">
+            <input type="button" value="7"/>
+            <input type="button" value="8"/>
+            <input type="button" value="9"/>
+            <br />
+            <input type="button" value="4"/>
+            <input type="button" value="5"/>
+            <input type="button" value="6"/>
+            <br />
+            <input type="button" value="1"/>
+            <input type="button" value="2"/>
+            <input type="button" value="3"/>
+            <br />
+            <input type="button" value="0"/>
+            <input type="button" value="+/-"/>
+            <input type="button" value="."/>
+            <br />
+        </div>
+        <div id="symbols">
+            <input type="button" value="/" /><br />
+            <input type="button" value="*" /><br />
+            <input type="button" value="-" /><br />
+            <input type="button" value="+" />
+        </div>
+        <div id="operators">
+            <input type="button" value="CE" /><br />
+            <input type="button" value="C" /><br />
+            <input type="button" value="退格"/><br />
+            <input type="button" value="=" />
+        </div>
+    </div>
+    </div>
+</div>
+</body>
+</html>

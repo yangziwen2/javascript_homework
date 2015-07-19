@@ -1,0 +1,157 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style type="text/css">
+*{ margin:0; padding:0;}
+#imglist{ width:732px; height:122px; margin:30px auto; position:relative;}
+#imglist span{ position:absolute; display:block; width:20px; cursor:pointer; height:122px; background:#eee; line-height:122px; text-align:center; top:0; font-weight:normal; font-family:"宋体";}
+#imglist .leftBtn{ left:0;}
+#imglist .rightBtn{ right:0;}
+.wrapDiv{ margin:0 auto; position:relative; width:688px; overflow:hidden; height:122px;}
+.wrapDiv ul{ position:absolute; overflow:hidden;}
+.wrapDiv li{ list-style:none; width:150px; height:120px; margin:0 10px; border:1px solid #ddd; background:#eee; float:left; text-align:center; line-height:120px;}
+</style>
+<script type="text/javascript">
+(function(){
+	window.SlideX = function(outsideId){
+		var _this = this;
+		this.outsideDiv = document.getElementById(outsideId);
+		this.leftBtn = this.getElementsByClass('leftBtn', this.outsideDiv, 'span')[0];
+		this.rightBtn = this.getElementsByClass('rightBtn', this.outsideDiv, 'span')[0];
+		this.wrapDiv = this.getElementsByClass('wrapDiv', this.outsideDiv, 'div')[0];
+		this.ul = this.wrapDiv.getElementsByTagName('ul')[0];
+		this.ul.style.width = '2000px';
+		var oLiArr = this.ul.getElementsByTagName('li');
+		this.liArr = [];
+		for(var i=0; i<oLiArr.length; i++){
+			this.liArr.push(oLiArr[i]);
+		}
+		this.liWidth = this.liArr[0].offsetWidth + 20;
+		this.xSpan = 5;
+		this.rightBtn.onclick = function(){
+			_this.slideLeft();
+			return false;
+		}
+		this.leftBtn.onclick = function(){
+			_this.slideRight();
+			return false;
+		}
+		this.outsideDiv.onmouseover = function(){
+			_this.autoSlideStop();
+		}
+		this.outsideDiv.onmouseout = function(){
+			if(_this.isContinued){
+				_this.autoSlideStart(_this.directionFlag, _this.isContinued);
+			}
+		}
+	}
+	window.SlideX.prototype = {
+		slideLeft: function(){
+			this.rightBtn.onclick = null;
+			var _this = this;
+			var targetLeft = - this.liWidth;
+			var newLastLi = document.createElement('li');
+			this.liArr.push(newLastLi);
+			newLastLi.innerHTML = this.liArr[0].innerHTML;
+			this.ul.appendChild(newLastLi);
+			this.move(targetLeft, function(){
+				this.ul.removeChild(this.liArr[0]);
+				this.liArr.shift();
+				this.ul.style.left = '0px';
+				this.rightBtn.onclick = function(){
+					_this.slideLeft();
+				}
+			});
+		},
+		slideRight: function(){
+			this.leftBtn.onclick = null;
+			var _this = this;
+			var targetLeft = 0;
+			var newFirstLi = document.createElement('li');
+			newFirstLi.innerHTML = this.liArr[this.liArr.length-1].innerHTML;
+			this.ul.insertBefore(newFirstLi, this.liArr[0]);
+			this.liArr.unshift(newFirstLi);
+			this.ul.style.left = -this.liWidth + 'px';
+			this.move(targetLeft, function(){
+				this.ul.removeChild(this.liArr[this.liArr.length-1]);
+				this.liArr.pop();
+				this.leftBtn.onclick = function(){
+					_this.slideRight();
+				}
+			});
+		},
+		move: function(targetLeft, callbackFn){
+			var _this = this;
+			clearInterval(this.ul.timer);
+			this.ul.timer = setInterval(function(){
+				var flag = _this.ul.offsetLeft>targetLeft? -1: 1;
+				if(Math.abs(_this.ul.offsetLeft - targetLeft)<_this.xSpan){
+					_this.ul.style.left = targetLeft+'px';
+					clearInterval(_this.ul.timer);
+					if(typeof callbackFn == 'function'){
+						callbackFn.call(_this);
+					}
+				}else{
+					_this.ul.style.left = (_this.ul.offsetLeft + _this.xSpan*flag) + 'px';
+				}
+			}, 10);
+		},
+		autoSlideStart: function(directionFlag, isContinued){
+			var _this = this;
+			if(isContinued){
+				this.isContinued = true;
+			}
+			this.directionFlag = directionFlag || this.directionFlag || 'left';
+			clearInterval(this.autoSlideTimer);
+			this.autoSlideTimer = setInterval(function(){
+				if('left' == directionFlag){
+					_this.slideLeft();
+				}else if ('right' == directionFlag){
+					_this.slideRight();
+				}
+			}, 2000);
+		},
+		autoSlideStop: function(){
+			clearInterval(this.autoSlideTimer);
+		},
+		getElementsByClass : function(className, element, tagName){
+			element = element || body;
+			tagName = tagName || '*';
+			if(!Element){
+				return [];
+			}
+			var oElements = element.getElementsByTagName(tagName);
+			var aElements = [];
+			for(var i=0; i<oElements.length; i++){
+				if(oElements[i].className == className){
+					aElements.push(oElements[i]);
+				}
+			}
+			return aElements;
+		}
+	}
+})();
+window.onload = function(){
+	var slider = new SlideX('imglist');
+	slider.autoSlideStart('left', true);
+}
+</script>
+</head>
+
+<body>
+<div id="imglist">
+<span class="leftBtn">&lt;&lt;</span>
+ <div class="wrapDiv">
+  <ul>
+   <li>1</li>
+   <li>2</li>
+   <li>3</li>
+   <li>4</li>
+  </ul>
+ </div>
+<span class="rightBtn">&gt;&gt;</span>
+</div>
+</body>
+</html>

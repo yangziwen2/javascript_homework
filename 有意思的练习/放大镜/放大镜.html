@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+* {margin:0px; padding:0px;}
+#picDiv {border:2px solid #333; position:absolute; width:296px; height:450px; left:10px; top:10px;}
+#dispDiv {border:2px solid #333; position:absolute; left:320px; top:10px; width:296px; height:450px; overflow:hidden}
+#probeDiv {border:1px solid #333; position:absolute; width:100px; height:152px; display:none; cursor:move;}
+</style>
+<script type="text/javascript">
+window.onload = function(){
+	var oPicDiv = document.getElementById('picDiv');
+	var oProbeDiv = document.getElementById('probeDiv');
+	var oDispDiv = document.getElementById('dispDiv');
+	var oDispPic = document.getElementById('dispPic');
+	oPicDiv.onmouseover = function(ev){
+		var oEvent = ev || event;
+		var disX = oEvent.clientX - getStyleIntValue(oPicDiv, 'left');
+		var disY = oEvent.clientY - getStyleIntValue(oPicDiv, 'top');
+		var leftPos = restrictPosition(disX-getStyleIntValue(oProbeDiv, 'width')/2, 0, getStyleIntValue(oPicDiv, 'width')-oProbeDiv.offsetWidth);
+		var topPos = restrictPosition(disY-getStyleIntValue(oProbeDiv, 'height')/2, 0, getStyleIntValue(oPicDiv, 'height')-oProbeDiv.offsetHeight);
+		oProbeDiv.style.left = leftPos + 'px';
+		oProbeDiv.style.top = topPos + 'px';
+		posDispPic(oEvent, oDispPic, oProbeDiv, oPicDiv);
+		oProbeDiv.style.display = 'block';
+		oPicDiv.onmousemove = function(ev){
+			var oEvent = ev || event;
+			disX = oEvent.clientX - getStyleIntValue(oPicDiv, 'left');
+			disY = oEvent.clientY - getStyleIntValue(oPicDiv, 'top');
+			leftPos = restrictPosition(disX-getStyleIntValue(oProbeDiv, 'width')/2, 0, getStyleIntValue(oPicDiv, 'width')-oProbeDiv.offsetWidth);
+			topPos = restrictPosition(disY-getStyleIntValue(oProbeDiv, 'height')/2, 0, getStyleIntValue(oPicDiv, 'height')-oProbeDiv.offsetHeight);
+			oProbeDiv.style.left = leftPos + 'px';
+			oProbeDiv.style.top = topPos + 'px';
+			posDispPic(oEvent, oDispPic, oProbeDiv, oPicDiv);
+		}
+		oPicDiv.onmouseout = function(){
+			oPicDiv.onmousemove = null;
+			oPicDiv.onmouseout = null;
+			oProbeDiv.style.display = '';
+		}
+	}
+}
+
+function restrictPosition(pos, minPos, maxPos){
+	pos = Math.max(pos, minPos);
+	pos = Math.min(pos, maxPos);
+	return pos;
+}
+
+function posDispPic(oEvent, oDispPic, oProbeDiv, oPicDiv){
+	var probeLeft = getStyleIntValue(oProbeDiv, 'left');
+	var probeTop =  getStyleIntValue(oProbeDiv, 'top');
+	var ratio = getStyleIntValue(oPicDiv, 'width')/getStyleIntValue(oProbeDiv, 'width');
+	oDispPic.style.left = -probeLeft*ratio + 'px';
+	oDispPic.style.top = -probeTop*ratio + 'px';
+}
+
+function getStyleIntValue(obj, attr){
+	return parseInt(getStyle(obj, attr));	
+}
+
+function getStyle(obj, attr){
+	if(obj.currentStyle){
+		return obj.currentStyle[attr];	
+	}else{
+		return getComputedStyle(obj, false)[attr];	
+	}
+}
+</script>
+</head>
+
+<body>
+<div id="picDiv">
+	<img src="images/08d.jpg" style="position:absolute"/>
+    <div id="probeDiv">
+    </div>
+</div>
+<div id="dispDiv">
+	<img id="dispPic" src="images/08d.jpg" style="width:876px; height=1332px; position:absolute;"/>
+</div>
+</body>
+</html>

@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+#shareTo {width:32px; height:40px; background:url(images/weiboIcon.gif) -87px -200px; position:absolute; display:none; cursor: pointer;}
+#div1 {border: 1px solid #333;}
+span.over {cursor: url('images/ok.gif'), auto;}
+</style>
+<script>
+window.onload = function(){
+	var oBtn = document.getElementById('btn');
+	var oDiv = document.getElementById('div1');
+	var aP = oDiv.getElementsByTagName('p');
+	var oShareTo = document.getElementById('shareTo');
+	
+	for(var i=0; i<aP.length; i++){
+		var oSpan = document.createElement('span');
+		var oTxt = aP[i].childNodes[0];
+		aP[i].appendChild(oSpan);
+		oSpan.appendChild(oTxt);
+		oSpan.className = 'over';
+		oSpan.ondblclick = function(){
+			var oSelection = getSelection();
+			var baseOffset = oSelection.baseOffset;
+			var extentOffset = oSelection.extentOffset;
+			var oTxt = this.childNodes[0];
+			var sContent = oTxt.textContent;
+			var ln = extentOffset - baseOffset;
+			if(ln>40){
+				var start = baseOffset;	
+			}else{
+				var start = baseOffset - 20 + parseInt(ln/2);
+				start = Math.max(start, 0);
+			}
+			alert(sContent.substring(start, start + 40));
+		}
+	}
+	
+	var content = '';
+	oBtn.onclick = function(){
+		alert(getSelectedContent());
+	}
+	oDiv.onmouseup = function(event){
+		event = event || window.event;
+		content = getSelectedContent();
+		if(!content){
+			return;	
+		}
+		with(oShareTo.style){
+			display = 'block';
+			left = event.clientX + 10 + 'px';
+			top = event.clientY + 10 + 'px';
+		}
+	}
+	oShareTo.onmousedown = function(){
+		content = getSelectedContent();
+		shareToSina(content);
+		oShareTo.style.display = 'none';
+	}
+	document.onmousedown = function(){
+		oShareTo.style.display = 'none';	
+	}
+}
+
+function getSelectedContent(){
+	if(document.selection){
+		return selection.createRange().text;	
+	}
+	if(document.getSelection){
+		var oSelection = document.getSelection();
+		if(!oSelection.rangeCount){
+			return '';	
+		}
+		var range = oSelection.getRangeAt(0);
+		return range.toString();
+	}
+	return '';
+}
+
+function getSelection(){
+	if(document.selection){
+		return selection;	
+	}
+	if(document.getSelection){
+		return document.getSelection();	
+	}
+	return null;
+}
+
+function shareToSina(content){
+	window.open('http://v.t.sina.com.cn/share/share.php?url=&content=&sourceUrl=&pic=&title=' + content);	
+}
+</script>
+</head>
+
+<body>
+<input type="button" value="选择" id="btn"/>
+<div id="div1">
+<p>其自传说其导师请他留下，直接给他副教授。美国研究型大学的副教授属于教授系列，该系列包括助理教授、副教授、正教授。一个博士毕业生留校，是不可能直接成为副教授的，甚至成为助理教授也很难，因为助理教授是要公开招聘、选拔、全系教授投票的，不能由某个教授说了算。某个教授说了算，留下来的通常是当博士后研究员、技术人员或研究系列的专职研究人员（所谓高级博士后）。研究系列（非终身教职轨道）的要转到教授系列（终身教职轨道）很难。</span></p>
+　　<p>李开复于1990年1月在IEEE Trans on Acoustics, Speech and Signal Process上发了一篇第一作者的论文，文后附有作者简介，其职称是Research Computer Scientist（直译为“研究计算机科学家”，简称RCS）。这是非终身教职轨道、研究系列的职称，专职从事科研，不教学不带研究生，不是任何级别的教授。李开复在微博上辩解说，论文是他在1988年写的，他当时的确只是RCS，但“不久”就变成Assistant Professor（助理教授）了。但是该论文在1989年3月做过修改，发表前约一个月，编辑部会把论文校样寄给作者校对、更新作者简介，由此可判定至少在1990年之前李开复的职称一直是RCS，不是助理教授。英文维基李开复条目正是根据这篇论文的作者简介认为李开复在卡内基·梅隆大学的职称从1988到1990都是RCS。</p>
+　　<p>但李开复本人写的英文简介则说他在1988～1990的职称都是助理教授，不提RCS。李开复在微博上辩解说，其导师答应他把当RCS的时间都算入助理教授的工龄，所以这么写。这显然是狡辩，什么时候正式成为助理教授，就应该从那个时候算是助理教授，而不应该把以前的其他职称一笔勾销。例如，Victor Lesser曾在卡内基·梅隆当过几年RCS，后来跳槽到麻省大学当了助理教授，第二年升为副教授，这显然是把他当RCS那几年也算入工龄了，但是Lesser并没有因此在其简历中说他在卡内基·梅隆当的是助理教授（李开复在微博上举了这个例子，但误导读者说Lesser由RCS直升副教授，其实Lesser先当了助理教授）。李开复还辩解说，他这种算法得到卡内基·梅隆大学的认可，根据是该校网站对他的介绍说他曾留校当助理教授。其实那是多年以后李开复当了谷歌中国总裁后的一篇报道，很可能是根据李开复本人提供的简介写的，不足为凭。</p>
+　　<p>所以可以认定李开复留校时的职称是RCS，不是助理教授，而且至少在一年多的时间内都是如此。至于他后来有没有转型成为助理教授，是什么时候转的，目前没有当时的证据可以证明。我几次问过李开复，他只含糊地说是在1988年4月他留校后“不久”转的（这显然与其论文的个人简介矛盾），却不愿告知具体的时间。他难道连转成助理教授这个人生重大事件的具体时间都忘了？要证明自己何时转型，最有力的证据是学校的聘用信，而不是多年后学校网站的报道或导师含糊的证明信件。如果李开复曾经当过卡内基梅隆大学的助理教授，那么必然有由学校给他的聘用信，能不能把这封信出示一下？</p>
+</div>
+<div id="shareTo" title="将选中内容分享到新浪微博"></div>
+</body>
+</html>

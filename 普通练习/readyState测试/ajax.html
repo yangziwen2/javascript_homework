@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<script>
+window.onload = function(){
+	var oBtn = document.getElementById('btn');
+	oBtn.onclick = function(){
+		ajaxGet('ext-all.txt', function(data){
+			alert(data.length)
+		}, function(status){
+			alert(status + '错误');	
+		});
+	}
+}
+
+function ajaxGet(url, successFn, failFn){
+	ajax('get', url, null, successFn, failFn);	
+}
+
+function ajaxPost(url, data, successFn, failFn){
+	ajax('post', url, data, successFn, failFn);	
+}
+
+function ajax(method, url, data, successFn, failFn){
+	var oAjax = null;
+	if(XMLHttpRequest){
+		oAjax = new XMLHttpRequest();	
+	}else{
+		oAjax = new ActiveXObject('Msxml2.XMLHTTP') || new ActiveXObject('Microsoft.XMLHTTP');	
+	}
+	oAjax.onreadystatechange = function(){
+		if(this.readyState != 4){
+			return;	
+		}
+		if(this.status != 200 && failFn){
+			failFn(this.status);
+			return;
+		}
+		if(this.status == 200 && successFn){
+			successFn(this.responseText);
+			return;
+		}
+	}
+	
+	//测试区域
+	var currentReadyState = -1;
+	var statusArr = [];
+	var flag = '未open';
+	var currentTime = new Date().getTime();
+	var timer = setInterval(function(){
+		if(currentReadyState == oAjax.readyState){
+			return;	
+		}
+		var newTime = new Date().getTime();
+		var diffTime = newTime - currentTime;
+		statusArr.push('readyState:' + oAjax.readyState + ', status:' + flag + ', spendTime:' + diffTime);
+		currentTime = newTime;
+		currentReadyState = oAjax.readyState;
+		if(currentReadyState == 4){
+			clearInterval(timer);	
+		}
+	}, 1);
+	//
+	
+	setTimeout(function(){
+		oAjax.open(method, url, true);
+		flag = '已open，未send';
+		setTimeout(function(){
+			oAjax.send(data);
+			flag = '已send';
+			setTimeout(function(){
+				alert(statusArr.join('\n'));
+			}, 100);
+		}, 100);
+	}, 100);
+}
+</script>
+</head>
+<body>
+<input type="button" value="按钮" id="btn"/>
+</body>
+</html>

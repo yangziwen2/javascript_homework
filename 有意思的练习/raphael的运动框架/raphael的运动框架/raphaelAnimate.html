@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Raphael的运动框架</title>
+<style>
+* {margin:0; padding:0}
+#wrap {width:400px; height:500px; position:relative; left:50%; margin-left:-200px; margin-top:40px; border:1px solid #333;}
+#wrap ul {list-style:none;margin:10px;}
+#wrap li {position:relative; height:60px;}
+#wrap li div {width:50px; height:50px; border:1px solid #333; position:absolute}
+</style>
+<script type="text/javascript" src="js/raphaelAnimation.js"></script>
+<script type="text/javascript">
+window.onload = function(){
+	var easingArr = ['linear', '>', '<', '<>', 'elastic', 'backIn', 'backOut', 'bounce'];
+	var colorArr = ['#f00', '#f80', '#ff0', '#0f0', '#0ff', '#00f', '#80f', '#666'];
+	var oWrapDiv = document.getElementById('wrap');
+	var aDivs = oWrapDiv.getElementsByTagName('div');
+	for(var i=0; i<aDivs.length; i++){
+		(function(i){
+			aDivs[i].style.background = colorArr[i];
+			aDivs[i].onclick = function(){
+				animate(this,{left: 330}, 2000, easingArr[i]);
+			}
+		})(i);
+	}
+}
+</script>
+</head>
+<body>
+<div id="wrap">
+    <ul>
+        <li>
+        	<div></div>
+        </li>
+        <li>
+        	<div></div>
+        </li>
+        <li>
+        	<div></div>
+        </li>
+        <li>
+        	<div></div>
+        </li>
+        <li>
+        	<div></div>
+        </li>
+        <li>
+        	<div></div>
+        </li>
+        <li>
+        	<div></div>
+        </li>
+        <li>
+        	<div></div>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,698 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>死神十三番队图鉴</title>
+<style>
+* {margin:0px; padding:0px;}
+#titleDiv {width:600px; top:50px; left:50%; margin-left:-300px; position:absolute;}
+#outsideDiv {width:840px; top:150px; left:50%; margin-left:-420px; position:absolute;}
+#outsideDiv div {float:left; margin:10px; -webkit-border-radius:10px; -moz-border-radius:10px; overflow:hidden; cursor:pointer;}
+.figureImg {width:120px;}
+</style>
+<script type="text/javascript" src="./js/perfectMove.js"></script>
+<script type="text/javascript">
+window.onload = function(){
+	window.oDispInput = document.getElementById('dispInput');
+	window.oOutsideDiv = document.getElementById('outsideDiv');
+	var oFigureDivArr = oOutsideDiv.getElementsByTagName('div');
+	translateLayoutToAbsolute(oFigureDivArr, {
+		borderStyle: 'solid',
+		borderWidth: '2px',
+		borderColor: '#999'
+	});
+	initDrag(oFigureDivArr, 
+		{
+			intercepterMap:{
+				mousedownBefore: [initBorderObj, initShadowObj],
+				mousemoveBefore: [judgeOverlap, getMaxOverlapIndex, showOverlapBorder],
+				mousemoveAfter: [limitPosition],
+				mouseupBefore: [destroyShadowObj, destroyBorderObj, doRecoverPosition],
+				mouseupAfter: [doExchangePosition,hideOverlapBorder]
+			},
+			doMouseup: function(){},
+			shadowProperty: {
+				opacity: 50
+			},
+			borderProperty: {
+				borderWidth: 4,
+				borderColor: '#ccc'
+			},
+			posLimit: {
+				left: function(){
+					var scrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft;
+					return parseInt((-document.documentElement.clientWidth+getStyleIntValue(oOutsideDiv, 'width'))/2) + scrollLeft;
+				},
+				right: function(){
+					var scrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft;
+					return parseInt((document.documentElement.clientWidth+getStyleIntValue(oOutsideDiv, 'width'))/2-4) + scrollLeft;
+				},
+				top: function() {
+					var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+					return -150 + scrollTop;
+				},
+				bottom: function(){
+					var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+					return document.documentElement.clientHeight - 150 - 4 + scrollTop;
+				}
+			},
+			positionExchangeType: 'motionExchange',
+			positionRecoverType: 'motionRecover',
+			magnifiedFactor: 2
+			//isPositionRecovered: true
+		});
+}
+
+function initDrag(obj, params){
+	if(typeof obj != 'object'){
+		return;
+	}
+	params = !params? {}: params;
+	params.intercepterMap = !params.intercepterMap? {}: params.intercepterMap;
+	var intercepterMap = params.intercepterMap;
+	var objArr = [];
+	if(obj.length){
+		for(var i=0; i<obj.length; i++){
+			objArr.push(obj[i]);
+		}
+	}else{
+		objArr.push(obj);
+	}
+	objArr.zIndex = 100;
+	for(var i=0; i<objArr.length; i++){
+		objArr[i].index = i;
+		objArr[i].originalLeft = getStyleIntValue(objArr[i], 'left');
+		objArr[i].originalTop = getStyleIntValue(objArr[i], 'top');
+		objArr[i].originalWidth = getStyleIntValue(objArr[i],'width');
+		objArr[i].originalHeight = getStyleIntValue(objArr[i],'height');
+		objArr[i].oImg = objArr[i].getElementsByTagName('img')[0];
+	}
+	for(var i=0; i<objArr.length; i++){
+		objArr[i].ondblclick = function(){
+			window.isFigureDoubleClicked = true;
+			objArr.$this = this;
+			var magnifiedFactor = params.magnifiedFactor? params.magnifiedFactor: 2;
+			var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+			this.params = {iTimeSpan: 10};
+			this.attrs = {
+				left: {
+					speedType: 'buffered',
+					iTargetValue: (getStyleIntValue(oOutsideDiv,'width') - this.originalWidth * magnifiedFactor)/2
+				},
+				width: {
+					speedType: 'buffered',
+					iTargetValue: this.originalWidth * magnifiedFactor
+				},
+				top: {
+					speedType: 'buffered',
+					iTargetValue: (getStyleIntValue(oOutsideDiv,'height') - this.originalHeight * magnifiedFactor)/2 
+						+ scrollTop + getStyleIntValue(oOutsideDiv, 'top')
+				},
+				height: {
+					speedType: 'buffered',
+					iTargetValue: this.originalHeight * magnifiedFactor
+				}
+			}
+			var oImg = this.oImg;
+			oImg.params = this.params;
+			oImg.attrs = {
+				reference: {
+					dependentMoveFunc: adjustImgSize
+				}
+			}
+			startMove([this, oImg], 30);
+			window.onscroll = window.onresize = function(){
+				var $this = objArr.$this;
+				$this.params = {iTimeSpan: 10};
+				var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+				var scrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft;
+				$this.attrs = {
+					left: {
+						speedType: 'buffered',
+						iTargetValue: scrollLeft + (getStyleIntValue(oOutsideDiv, 'width') - getStyleIntValue($this, 'width'))/2
+					},
+					top: {
+						speedType: 'buffered',
+						iTargetValue: (getStyleIntValue(oOutsideDiv,'height') - $this.originalHeight * magnifiedFactor)/2 
+							+ scrollTop + getStyleIntValue(oOutsideDiv, 'top')
+					}
+				}
+				startMove($this, 30);
+			}
+			document.onclick = function(){
+				document.onclick = null;
+				window.onscroll = window.onresize = null;
+				var $this = objArr.$this;
+				$this.params = {iTimeSpan:10};
+				$this.attrs = {
+					left: {
+						speedType:'buffered',
+						iTargetValue: $this.originalLeft
+					},
+					width:{
+						speedType: 'buffered',
+						iTargetValue: $this.originalWidth
+					},
+					top: {
+						speedType: 'buffered',
+						iTargetValue: $this.originalTop
+					},
+					height: {
+						speedType: 'buffered',
+						iTargetValue: $this.originalHeight
+					}
+				}
+				var oImg = $this.oImg;
+				oImg.params = $this.params;
+				oImg.attrs = {
+					reference: {
+						dependentMoveFunc: adjustImgSize
+					}
+				}
+				startMove([$this, oImg], 30);
+				window.isFigureDoubleClicked = false;
+			}
+		}
+		objArr[i].onmousedown = function(ev){
+			if(window.isFigureDoubleClicked){
+				return;
+			}
+			var oEvent = ev || event;
+			if(oEvent.button == 2){
+				return false;
+			}
+			if(!initMousedownPosition(this, oEvent)){
+				return false;
+			};
+			objArr.$this = this;
+			objArr.$this.style.zIndex = (objArr.zIndex+=2);
+			executeIntercepter(intercepterMap, 'mousedownBefore', objArr.$this, objArr, oEvent, params);
+			document.onmousemove = function(ev){
+				var oEvent = ev || event;
+				executeIntercepter(intercepterMap, 'mousemoveBefore', objArr.$this, objArr, oEvent, params);
+				doMousemove(objArr.$this, objArr, oEvent, params);
+				executeIntercepter(intercepterMap, 'mousemoveAfter', objArr.$this, objArr, oEvent, params);
+				return false;
+			}
+			document.onmouseup = function(ev){
+				var oEvent = ev || event;
+				document.onmousemove = null;
+				document.onmouseup = null;
+				executeIntercepter(intercepterMap, 'mouseupBefore', objArr.$this, objArr, oEvent, params);
+				doMouseup(objArr.$this, objArr, oEvent, params);
+				executeIntercepter(intercepterMap, 'mouseupAfter', objArr.$this, objArr, oEvent, params);
+				objArr.$this = null;
+			}
+			executeIntercepter(intercepterMap, 'mousedownAfter', objArr.$this, objArr, oEvent, params);
+			return false;
+		}
+	}
+}
+////////////
+function adjustImgSize(){
+	var aObjArr = arguments[0];
+	var attr = arguments[1];
+	var currentIndex = arguments[2];
+	var currentObj = aObjArr[currentIndex];
+	var referenceObj = aObjArr[0];
+	currentObj.style.width = getStyleIntValue(referenceObj, 'width') + 'px';
+	currentObj.style.height = getStyleIntValue(referenceObj, 'height') + 'px';
+}
+
+function limitPosition(obj, objArr, oEvent, params){
+	var posX = limitPosX(obj, getStyleIntValue(obj, 'left'), params.posLimit);
+	var posY = limitPosY(obj, getStyleIntValue(obj, 'top'), params.posLimit);
+	setStyle(obj, 'left', posX + 'px');
+	setStyle(obj, 'top', posY + 'px');
+}
+
+function limitPosX(obj, posX, posLimit){
+	if(!posLimit){
+		return posX;
+	}
+	if(typeof posLimit.left != 'undefined'){
+		posX = Math.max(posX, returnValue(posLimit.left));
+	}
+	if(typeof posLimit.right != 'undefined'){
+		posX = Math.min(posX, returnValue(posLimit.right) - getStyleIntValue(obj, 'width'));
+	}
+	return posX;
+}
+
+function limitPosY(obj, posY, posLimit){
+	if(!posLimit){
+		return posY;
+	}
+	if(typeof posLimit.top != 'undefined'){
+		posY = Math.max(posY, returnValue(posLimit.top));
+	}
+	if(typeof posLimit.bottom != 'undefined'){
+		posY = Math.min(posY, returnValue(posLimit.bottom) - getStyleIntValue(obj, 'height'));
+	}
+	return posY;
+}
+
+function doRecoverPosition(obj, objArr, oEvent, params){
+	if(obj.currentOverlapIndex < 0){
+		if('motionRecover' == params.positionRecoverType){
+			recoverToOriginalPositionWithMotion(obj);
+		}else{
+			recoverToOriginalPosition(obj);
+		}
+	}
+}
+
+function doExchangePosition(obj, objArr, oEvent, params){
+	if(obj.currentOverlapIndex >= 0){
+		if('motionExchange' == params.positionExchangeType){
+			exchangePositionWithMotion(obj, objArr[obj.currentOverlapIndex]);
+		}else{
+			exchangePosition(obj, objArr[obj.currentOverlapIndex]);
+		}
+	}
+}
+
+function exchangePositionWithMotion(currentObj, targetObj){
+	targetObj.style.zIndex = parseInt(currentObj.style.zIndex) -1;
+	currentObj.currentLeft = getStyleIntValue(currentObj,'left');
+	currentObj.currentTop = getStyleIntValue(currentObj, 'top');
+	currentObj.params = {};
+	currentObj.attrs = {
+		left: {
+			speedType: 'uniform',
+			iTargetValue: targetObj.originalLeft,
+			iSpeed: Math.round((targetObj.originalLeft - currentObj.currentLeft)*20/300)
+		},
+		top: {
+			speedType: 'uniform',
+			iTargetValue: targetObj.originalTop,
+			iSpeed: Math.round((targetObj.originalTop - currentObj.currentTop)*20/300)
+		}
+	};
+	if(Math.abs(currentObj.attrs.left.iSpeed)<1){//对于匀速运动，框架会自动判断速度的正负
+		currentObj.attrs.left.iSpeed = 1;
+	}
+	if(Math.abs(currentObj.attrs.top.iSpeed)<1){
+		currentObj.attrs.top.iSpeed = 1;
+	}
+	targetObj.params = {};
+	targetObj.attrs = {
+		left: {
+			speedType: 'uniform',
+			iTargetValue: currentObj.originalLeft,
+			iSpeed: Math.round((currentObj.originalLeft - targetObj.originalLeft)*20/300)
+		},
+		top: {
+			speedType: 'uniform',
+			iTargetValue: currentObj.originalTop,
+			iSpeed: Math.round((currentObj.originalTop - targetObj.originalTop)*20/300)
+		}
+	}
+	if(Math.abs(targetObj.attrs.left.iSpeed)<1){
+		targetObj.attrs.left.iSpeed = 1;
+	}
+	if(Math.abs(targetObj.attrs.top.iSpeed)<1){
+		targetObj.attrs.top.iSpeed = 1;
+	}
+	var aObjArr = [currentObj, targetObj];
+	startMove(aObjArr, 10);
+	exchangeOriginalPosition(currentObj, targetObj);
+}
+
+function exchangePosition(currentObj, targetObj){
+	setPosition(currentObj, targetObj.originalLeft, targetObj.originalTop);
+	setPosition(targetObj, currentObj.originalLeft, currentObj.originalTop);
+	exchangeOriginalPosition(currentObj, targetObj);
+}
+
+function exchangeOriginalPosition(currentObj, targetObj){
+	var currentLeft = currentObj.originalLeft;
+	var currentTop = currentObj.originalTop;
+	setOriginalPosition(currentObj, targetObj.originalLeft, targetObj.originalTop);
+	setOriginalPosition(targetObj, currentLeft, currentTop);
+}
+
+function showOverlapBorder(obj, objArr, oEvent, params){
+	if(typeof obj.currentOverlapIndex != 'number'){
+		return;
+	}
+	if(obj.currentOverlapIndex == -1){
+		if(objArr.currentOverlapBorderObj){
+			try{
+				obj.parentNode.removeChild(objArr.currentOverlapBorderObj);
+			}catch(error){};
+			//objArr.currentOverlapBorderObj = null;
+		}
+	}else if(typeof objArr.currentOverlapBorderObj != 'object'){
+		initBorderObj(objArr[obj.currentOverlapIndex], objArr, oEvent, params);
+		objArr.currentOverlapBorderObj = objArr[obj.currentOverlapIndex].borderObj;
+		objArr[obj.currentOverlapIndex].borderObj = null;
+	}else if(objArr.currentOverlapIndex != obj.currentOverlapIndex){
+		if(typeof objArr.currentOverlapIndex == 'number'){
+			var borderObj = objArr.currentOverlapBorderObj;
+			borderObj.style.display = 'none';
+			obj.parentNode.appendChild(borderObj);//为什么一定要append进去，才能取到border的值？
+			var borderWidth = getStyleIntValue(borderObj, 'borderLeftWidth', 0);
+			oDispInput.value = objArr[obj.currentOverlapIndex].offsetLeft + ',' + borderWidth;
+			setStyle(borderObj, 'left', objArr[obj.currentOverlapIndex].offsetLeft - borderWidth + 'px');
+			setStyle(borderObj, 'top', objArr[obj.currentOverlapIndex].offsetTop - borderWidth + 'px');
+			borderObj.style.display = 'block'
+		}
+	}
+	objArr.currentOverlapIndex = obj.currentOverlapIndex;
+}
+
+function hideOverlapBorder(obj, objArr, oEvent, params){
+	try{
+		obj.parentNode.removeChild(objArr.currentOverlapBorderObj);
+	}catch(error){};
+	//objArr.currentOverlapBorderObj = null;
+	obj.currentOverlapIndex = -1;
+	objArr.currentOverlapIndex = -1;
+}
+
+function judgeOverlap(obj, objArr, oEvent, params){
+	for(var i=0; i<objArr.length; i++){
+		if(objArr[i] == obj){
+			objArr[i].isOverlaped = false;	
+		}else{
+			objArr[i].isOverlaped = isOverlaped(obj, objArr[i]);
+		}
+	}
+}
+
+function getMaxOverlapIndex(obj, objArr, oEvent, params){
+	var maxOverlapArea = 0;
+	var index = -1;
+	for(var i=0; i<objArr.length; i++){
+		if(i == obj.index){
+			continue;	
+		}
+		objArr[i].overlapArea = objArr[i].isOverlaped? calOverlapArea(obj, objArr[i]): 0;
+		if(objArr[i].overlapArea>maxOverlapArea){
+			maxOverlapArea = objArr[i].overlapArea;
+			index = i;
+		}
+	}
+	obj.currentOverlapIndex = index;
+	//oDispInput.value = index;
+}
+
+function calOverlapArea(currentObj, targetObj){
+	var curCornerPos = getCornerPosition(currentObj);
+	var tarCornerPos = getCornerPosition(targetObj);
+	var xLength = curCornerPos.left > tarCornerPos.left? tarCornerPos.right - curCornerPos.left: curCornerPos.right - tarCornerPos.left;
+	var yLength = curCornerPos.top > tarCornerPos.top? tarCornerPos.bottom - curCornerPos.top: curCornerPos.bottom - tarCornerPos.top;
+	if(xLength<0 || yLength<0){
+		return 0;
+	}
+	return xLength*yLength;
+}
+
+function getCornerPosition(obj){
+	var cornerPos = {};
+	cornerPos.left = getStyleIntValue(obj, 'left');
+	cornerPos.right = cornerPos.left + getStyleIntValue(obj, 'width');
+	cornerPos.top = getStyleIntValue(obj, 'top');
+	cornerPos.bottom = cornerPos.top + getStyleIntValue(obj, 'height');
+	return cornerPos;
+}
+
+function initBorderObj(obj, objArr, oEvent, params){
+	var borderProperty = params.borderProperty || {};
+	var borderWidth = parseInt(borderProperty.borderWidth);
+	borderWidth = isNaN(borderWidth)? 0: borderWidth;
+	var borderColor = borderProperty.borderColor;
+	var defaultBorderWidth = 2;
+	if(!obj.borderObj){
+		obj.borderObj = document.createElement('div');
+		obj.borderObj.style.position = 'absolute';
+		obj.borderObj.style.margin = '0px';
+		obj.borderObj.style.width = obj.offsetWidth + 'px';
+		obj.borderObj.style.height = obj.offsetHeight + 'px';
+		setStyle(obj.borderObj, 'borderWidth', borderWidth + 'px');
+		if(borderColor){
+			setStyle(obj.borderObj, 'borderColor', borderColor);
+		}
+		setStyle(obj.borderObj, 'borderStyle', borderProperty.borderStyle || 'dashed');
+	}
+	setStyle(obj.borderObj, 'left', obj.offsetLeft - borderWidth + 'px');
+	setStyle(obj.borderObj, 'top', obj.offsetTop - borderWidth + 'px');
+	setStyle(obj.borderObj, 'zIndex', objArr.zIndex - 1);
+	obj.parentNode.appendChild(obj.borderObj);
+}
+
+function destroyBorderObj(obj, objArr, oEvent, params){
+	obj.parentNode.removeChild(obj.borderObj);
+	//obj.borderObj = null;
+}
+
+function initShadowObj(obj, objArr, oEvent, params){
+	if(!obj.shadowObj){
+		obj.shadowObj = document.createElement(obj.tagName);
+		obj.shadowObj.innerHTML = obj.innerHTML;
+		obj.shadowObj.style.position = 'absolute';
+		setStyle(obj.shadowObj, 'margin', '0px');
+	}
+	setStyle(obj.shadowObj, 'left', getStyleIntValue(obj, 'left') + getStyleIntValue(obj, 'borderLeftWidth', 0) + 'px');
+	setStyle(obj.shadowObj, 'top', getStyleIntValue(obj, 'top') + getStyleIntValue(obj, 'borderTopWidth', 0) + 'px');
+	setStyle(obj.shadowObj, 'zIndex', objArr.zIndex - 1);
+	if(typeof params.shadowProperty == 'object'){
+		for(var attr in params.shadowProperty){
+			setStyle(obj.shadowObj, attr, params.shadowProperty[attr]);
+		}
+	}
+	obj.parentNode.appendChild(obj.shadowObj);
+}
+
+function destroyShadowObj(obj, objArr, oEvent, params){
+	obj.parentNode.removeChild(obj.shadowObj);
+	//obj.shadowObj = null;
+}
+
+function recoverToOriginalPosition(obj){
+	setPosition(obj, obj.originalLeft, obj.originalTop);
+}
+
+function recoverToOriginalPositionWithMotion(obj){
+	obj.currentLeft = getStyleIntValue(obj,'left');
+	obj.currentTop = getStyleIntValue(obj, 'top');
+	obj.params = {};
+	obj.attrs = {
+		left: {
+			speedType: 'uniform',
+			iTargetValue: obj.originalLeft,
+			iSpeed: Math.round((obj.originalLeft - obj.currentLeft)*20/300)
+		},
+		top: {
+			speedType: 'uniform',
+			iTargetValue: obj.originalTop,
+			iSpeed: Math.round((obj.originalTop - obj.currentTop)*20/300)
+		}
+	};
+	if(Math.abs(obj.attrs.left.iSpeed)<1){
+		obj.attrs.left.iSpeed = 1;
+	}
+	if(Math.abs(obj.attrs.top.iSpeed)<1){
+		obj.attrs.top.iSpeed = 1;
+	}
+	startMove(obj, 10);
+}
+
+////////////////core///////////////////
+function doMousemove(obj, objArr, oEvent, params){
+	if(typeof params.doMousemove == 'function'){
+		params.doMousemove(obj, objArr, oEvent, params);
+		return;
+	}
+	var iTargetLeft = oEvent.clientX + obj.disX;
+	var iTargetTop = oEvent.clientY + obj.disY;
+	if(params.isShadowMove && obj.shadowObj){
+		setPosition(obj.shadowObj, iTargetLeft, iTargetTop)
+	}else{
+		setPosition(obj, iTargetLeft, iTargetTop);
+	}
+}
+
+function doMouseup(obj, objArr, oEvent, params){
+	if(typeof params.doMouseup == 'function'){
+		params.doMouseup(obj, objArr, oEvent, params);
+		return;
+	}
+	var newLeft = getStyleIntValue(obj, 'left');
+	var newTop = getStyleIntValue(obj, 'top');
+	setPosition(obj, newLeft, newTop);
+	setOriginalPosition(obj, newLeft, newTop);
+}
+
+function initMousedownPosition(obj, oEvent){
+	if(!obj){
+		return null;
+	}
+	obj.disX = obj.originalLeft - oEvent.clientX;
+	obj.disY = obj.originalTop - oEvent.clientY;
+	return obj;
+}
+
+function isOverlaped(currentObj, targetObj){
+	var l = targetObj.offsetLeft - currentObj.offsetWidth;
+	var r = targetObj.offsetLeft + targetObj.offsetWidth;
+	var t = targetObj.offsetTop - currentObj.offsetHeight;
+	var b = targetObj.offsetTop + targetObj.offsetHeight;
+	var dl = currentObj.offsetLeft;
+	var dt = currentObj.offsetTop;
+	if(dt>t && dt<b && dl>l && dl<r){
+		return true;
+	}
+	return false;
+}
+
+function executeIntercepter(intercepterMap, intercepterName, obj, objArr, oEvent, params){
+	if(!intercepterMap[intercepterName]){
+		return;
+	}
+	var intercepterArr = [];
+	if(isArray(intercepterMap[intercepterName])){
+		intercepterArr = intercepterMap[intercepterName];
+	}else{
+		intercepterArr.push(intercepterMap[intercepterName]);
+	}
+	for(var i=0; i<intercepterArr.length; i++){
+		if(typeof intercepterArr[i] == 'function'){
+			intercepterArr[i](obj, objArr, oEvent, params);
+		}
+	}
+}
+
+function translateLayoutToAbsolute(obj, borderAttrs){
+	if(typeof obj != 'object'){
+		return;
+	}
+	if(!obj.length){
+		obj = [obj];
+	}
+	for(var i=0; i<obj.length; i++){
+		obj[i].style.left = obj[i].offsetLeft + getStyleIntValue(obj[i], 'marginLeftWidth', 0) +  getStyleIntValue(obj[i], 'borderLeftWidth', 0) + 'px';
+		obj[i].style.top = obj[i].offsetTop + getStyleIntValue(obj[i], 'marginTopWidth', 0) + getStyleIntValue(obj[i], 'borderTopWidth', 0) + 'px';
+		obj[i].style.width = obj[i].offsetWidth - 2*getStyleIntValue(obj[i], 'marginWidth', 0) - 2*getStyleIntValue(obj[i], 'borderWidth', 0) + 'px';
+		obj[i].style.height = obj[i].offsetHeight - 2*getStyleIntValue(obj[i], 'marginWidth', 0) - 2*getStyleIntValue(obj[i], 'borderWdith',0) + 'px';
+	}
+	for(var i=0; i<obj.length; i++){
+		obj[i].style.position = 'absolute';
+		obj[i].style.margin = '0px';
+		if(borderAttrs){
+			for(var attr in borderAttrs){
+				obj[i].style[attr] = borderAttrs[attr];
+			}
+		}
+	}
+}
+
+function returnValue(input){
+	if(typeof input == 'function'){
+		return input();
+	}else{
+		return input;
+	}
+}
+
+function setPosition(obj, posLeft, posTop){
+	setStyle(obj, 'left', posLeft + 'px');
+	setStyle(obj, 'top', posTop + 'px');
+}
+
+function setOriginalPosition(obj, posLeft, posTop){
+	obj.originalLeft = posLeft;
+	obj.originalTop = posTop;
+}
+
+function setStyle(obj, attr, value){
+	if(attr == 'opacity'){
+		obj.style.opacity = value/100;
+		obj.style.filter = 'alpha(opacity:'+value+')';
+	}else{
+		obj.style[attr] = value;
+	}
+}
+
+function getCurrentStyleIntValue(obj, attr){
+	if('opacity' == attr){
+		return parseInt(getStyleFloatValue(obj, attr)*100);
+	}else{
+		return getStyleIntValue(obj, attr);
+	}
+}
+
+function getStyle(obj, attr){
+	if(obj.currentStyle){
+		if('opacity' == attr){
+			var opacityDegree = obj.currentStyle.filter;
+			var index = opacityDegree.indexOf('opacity:') + 'opacity'.length + 1;
+			var opacityValue = parseInt(opacityDegree.substring(index));
+			return isNaN(opacityValue)? 1: (opacityValue/100).toFixed(2);
+		}
+		return obj.currentStyle[attr];
+	}else{
+		return getComputedStyle(obj, false)[attr];	
+	}
+}
+
+function getStyleFloatValue(obj, attr, defaultValue){
+	var result =  parseFloat(getStyle(obj, attr));
+	if(isNaN(result) && typeof(defaultValue) != 'undefined'){
+		result = defaultValue;
+	}
+	return result;
+}
+
+function getStyleIntValue(obj, attr, defaultValue){
+	return parseInt(getStyleFloatValue(obj, attr, defaultValue));	
+}
+
+function getOffsetStyleValue(obj, attr){
+	var offsetAttr = 'offset'+attr.substring(0,1).toUpperCase() + attr.substring(1);
+	return obj[offsetAttr];
+}
+
+function returnValue(input){
+	if(typeof input == 'function'){
+		return input();
+	}else{
+		return input;
+	}
+}
+
+function isArray(obj) { 
+	return Object.prototype.toString.call(obj) === '[object Array]'; 
+}
+</script>
+<title>无标题文档</title>
+</head>
+<body>
+<input type="text" id="dispInput" style="width:400px; display:none"/>
+<div id="titleDiv">
+<img src="images/title.jpg" style="width:600px"/>
+</div>
+<div id="outsideDiv">
+<div><img class="figureImg" src="images/01d.jpg"/></div>
+<div><img class="figureImg" src="images/01f.jpg"/></div>
+<div><img class="figureImg" src="images/02d.jpg"/></div>
+<div><img class="figureImg" src="images/02f.jpg"/></div>
+<div><img class="figureImg" src="images/03d.jpg"/></div>
+<div><img class="figureImg" src="images/03f.jpg"/></div>
+<div><img class="figureImg" src="images/04d.jpg"/></div>
+<div><img class="figureImg" src="images/04f.jpg"/></div>
+<div><img class="figureImg" src="images/047.jpg"/></div>
+<div><img class="figureImg" src="images/05d.jpg"/></div>
+<div><img class="figureImg" src="images/05f.jpg"/></div>
+<div><img class="figureImg" src="images/06d.jpg"/></div>
+<div><img class="figureImg" src="images/06f.jpg"/></div>
+<div><img class="figureImg" src="images/07d.jpg"/></div>
+<div><img class="figureImg" src="images/07f.jpg"/></div>
+<div><img class="figureImg" src="images/08d.jpg"/></div>
+<div><img class="figureImg" src="images/08f.jpg"/></div>
+<div><img class="figureImg" src="images/09d.jpg"/></div>
+
+</div>
+</body>
+</html>

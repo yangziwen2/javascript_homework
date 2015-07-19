@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+* {margin:0px; padding:0px;}
+#div1 {width:100px; height:100px;position:absolute; background-color:#09F;}
+#startMoveBtn {position: absolute; left:200px; width:80px;height:20px;}
+#resetBtn {position: absolute; left:300px; width:80px; height:20px;}
+#endline {width:100%;top:400px; position:absolute; border:1px solid #333;}
+</style>
+<script type="text/javascript">
+window.onload = function(){
+	var oDiv = document.getElementById('div1');
+	oDiv.style.top = '0px';
+	oDiv.computedHeight = parseInt(getStyle(oDiv,'height'));
+	//oDiv.speed = 5;
+	var oStartMoveBtn = document.getElementById('startMoveBtn');
+	oStartMoveBtn.onclick = function(){
+		oDiv.speed = 5;
+		startMove(oDiv);
+	}
+	var oResetBtn = document.getElementById('resetBtn');
+	oResetBtn.onclick = function(){
+		clearInterval(oDiv.timer);
+		oDiv.style.top = '0px';
+	}
+}
+
+function startMove(obj){
+	clearInterval(obj.timer);
+	obj.timer = setInterval(function(){
+		doMove(obj);								 
+	}, 30);
+}
+
+function doMove(obj){
+	var iBottomPos = parseInt(obj.style.top) + obj.computedHeight;
+	obj.speed = iBottomPos>=400?0:obj.speed;
+	obj.style.top = (parseInt(obj.style.top) + obj.speed) + 'px';
+}
+
+function getStyle(obj, attr){
+	if(obj.currentStyle){
+		return obj.currentStyle[attr];	
+	}else{
+		return getComputedStyle(obj, false)[attr];	
+	}
+}
+</script>
+<title>无标题文档</title>
+</head>
+<div id="div1">
+</div>
+<input type="button" id="startMoveBtn" value="start move" />
+<input type="button" id="resetBtn" value="reset"/>
+<div id="endline"></div>
+<body>
+</body>
+</html>

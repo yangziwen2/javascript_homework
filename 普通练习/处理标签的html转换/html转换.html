@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>New Web Project</title>
+<script>
+// var str = '<a href="abc">'
+		// + '		<span>adlk'
+		// + '		sfj'
+		// + '		<a href="abc">'
+		// + '			first tag'
+		// + '		</a>'
+		// + '		da</span>'
+		// + '		<div>sflk</div>jsdlkfj'
+		// + '		<a href="ttt">'
+		// + '			second tag'
+		// + '		</a>'
+		// + '</a>';
+
+function convert(htmlStr){
+	var re = /(<a[^>]*?>[\w\W]*?)(?:<a([^>]*?>[\w\W]*?<\/)a>)([\w\W]*?<\/a>)/g;
+	var matched = re.test(htmlStr);
+	if(matched){
+		var htmlStr = htmlStr.replace(re, function(){
+			matched = true;
+			if(arguments[1].indexOf('</a>') >=0){
+				return arguments[0];
+			}
+			var innerContent = arguments[2].replace(/^\s*?href=".*?"/, '');
+			var centerPart = '<span' +innerContent + 'span>';
+			return arguments[1] + centerPart + arguments[3];
+		});
+	}
+	// return [htmlStr, matched];
+	return htmlStr;
+}
+//暂时不要用这个
+// function convertAll(htmlStr){
+	// var result = htmlStr;
+	// var cur = [];
+	// while(true){
+		// cur = convert(result);
+		// if(cur[1]){
+			// result = cur[0];
+		// }else{
+			// break;
+		// }
+	// }
+	// return result;
+// }
+window.onload = function(){
+	var oTxt = document.getElementById('txt');
+	var oBtn = document.getElementById('btn');
+	oBtn.onclick = function(){
+		oTxt.value = convert(oTxt.value);
+	}
+}
+</script>
+</head>
+<body>
+<textarea id="txt" cols="100" rows="20">
+</textarea>
+<br/>
+<input type="button" value="转换" id="btn"/>
+</body>
+</html>

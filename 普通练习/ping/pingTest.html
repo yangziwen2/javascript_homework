@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>New Web Project</title>
+<script src="jquery-1.7.1.min.js"></script>
+<script>
+$.extend({
+	ping : function (option){
+		var  ping, requestTime, responseTime ;
+		var  getUrl =  function (url){ 
+			var  strReg= "^((https|http)?://){1}"
+			var  re= new  RegExp(strReg);
+			return  re.test(url)?url: "http://" +url;
+		}
+		$.ajax({
+			url: getUrl(option.url)+ '?pingTS=' + ( new  Date()).getTime(),
+			type:  'GET' ,
+			timeout: option.timeout || 10000,
+			beforeSend :  function (){
+				if (option.beforePing)
+					option.beforePing();
+				requestTime =  new  Date().getTime();
+			},
+			complete :  function (){
+				responseTime =  new  Date().getTime();
+				ping = Math.abs(requestTime - responseTime);
+				if (option.afterPing)
+					option.afterPing(ping);
+				}
+			});
+	
+		if (option.interval && option.interval > 0){
+			var  interval = option.interval * 1000;
+			setTimeout( function (){$.ping(option)}, interval);
+		}
+	}
+});
+</script>
+<script>
+$(function(){
+	$('#connTestBtn').click(function(){
+		var url = $('#urlInput').val();
+		if($.trim(url) == ''){
+			alert('请输入url');
+			return;
+		}
+		$.ping({
+			url : url, 
+			beforePing : function(){},
+			afterPing : function(ping){
+				var str = 'connect to ' + this.url + ' :';
+				if(ping>=this.timeout){
+					str += 'failure\n';
+				}else{
+					str += 'success\n';
+				}
+				alert(str + 'spend ' + ping + ' ms');
+			}, 
+			interval : 0,	//0代表只ping一次；大于0的整数标识反复去ping，每次间隔interval秒
+			timeout: 2000
+		});
+	});
+})
+</script>
+</head>
+<body>
+<input id="urlInput" />
+<input type="button" value="test connection" id="connTestBtn"/>
+</body>
+</html>

@@ -1,0 +1,19 @@
+.C{clear:both; height:0; line-height:0; overflow:hidden; _zoom:1}
+.outter .inner li{list-style-type:none; height:25px; line-height:25px; font-size:12px; font-weight:bold; color:#666}
+.outter{width:900px; margin:0 auto; padding:10px; background:#fac03d; -moz-border-radius:7px; -webkit-border-radius:7px;}
+.outter .inner{border:1px solid #886849; background:#fff; padding:10px;  -moz-border-radius:7px; -webkit-border-radius:7px;}
+.outter .inner .select_ph_list strong{color:#d40e1c; font-family:Arial}
+.outter .inner li input{vertical-align:middle; position:relative; top:-2px; margin-right:3px;}
+.outter .inner h2{color:red; font-size:12px; font-weight:normal;}
+.select_ph_list{float:left;width:30%; padding-left:3%; font-size:12px; font-weight:bold; color:#666}
+.select_ph_list h3{font-size:14px; font-weight:bold; text-align:center; color:#666}
+.ph_list_btn{padding-top:15px; height:30px;}
+.ph_list_tip{float:right;padding:10px 0 10px 25px; margin-right:20px; background:url(../images/selectPhone.png) -281px 5px no-repeat; font-size:12px; color:#d40e1c}
+.send_text{width:116px; border:none; background:none; vertical-align:middle; padding:2px;}
+.send_btn{background:url(../images/selectPhone.png); width:49px; height:22px; cursor:pointer; border:none;vertical-align:middle;}
+.send_ph_num{float:right; width:190px; height:30px; padding:3px 0 0 65px;  background:url(../images/selectPhone.png) 0 -42px no-repeat;}
+
+
+/*modiy*/
+.outter .inner h2{height:18px;text-align:center}
+.outter .inner li {white-space:nowrap}

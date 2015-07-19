@@ -1,0 +1,46 @@
+4323,Town hall,比勒陀利亚
+4332,Acropolis,雅典
+4333,Parthenon,雅典
+4334,The Erechtheion Temple,雅典
+4336,Olympic venues,雅典
+4337,Aegean Sea,雅典
+4339,Groundwater Palace,伊斯坦布尔
+4341,Topkapi Palace,伊斯坦布尔
+4342,Ka Pale market,伊斯坦布尔
+4346,Flower Clock,日内瓦
+4347,Palace of Nations,日内瓦
+4349,Lion Monument,卢塞恩
+4351,Stefan Cathedral,维也纳
+4353,State Opera,维也纳
+4355,Cathedral,萨尔茨堡
+4356,Grain Street,萨尔茨堡
+4357,Mozart's Birthplace Museum,萨尔茨堡
+4358,Mirabell Gardens,萨尔茨堡
+4359,Carl Johns Avenue,奥斯陆
+4360,Oslo Cathedral,奥斯陆
+4362,National Theater,奥斯陆
+4363,Oslo City Hall,奥斯陆
+4364,Viking Viking Ship Museum,奥斯陆
+4365,Amalienborg Palace,哥本哈根
+4366,Mermaid statue,哥本哈根
+4367,Tivoli,哥本哈根
+4368,Pedestrian Street,哥本哈根
+4604,Mount Fuji,东京
+4605,Liberty Bell,费城
+4615,The thousand islet lake,渥太华
+4616,Limestone City,金斯敦
+4617,Temple,坎昆
+4618,Independence Monument,布宜诺斯艾利斯
+4772,Navy Headquarters Building,圣彼得堡
+4773,Peter Temple,圣彼得堡
+4774,Pushkin,圣彼得堡
+4775,Old Town Square,布拉格
+4776,Gold Trail,布拉格
+4779,Charles Bridge,布拉格
+4781,St. Vitus Cathedral,布拉格
+4782,Vaduz stamp museum,瓦杜兹
+4784,Old Palace,华沙
+4785,Budavari palota,布达佩斯
+4786,St. Matthias Church,布达佩斯
+4788,Chain Bridge,布达佩斯
+4790,Republic Avenue,布达佩斯

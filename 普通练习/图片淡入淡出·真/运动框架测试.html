@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<script type="text/javascript">
+function startMove(obj, timer, timeInterval){
+	clearInterval(timer);
+	timer = setInterval(function(){
+		doMove(obj, timer);							 
+	}, timeInterval);
+}
+
+function doMove(obj, timer){
+	var aObjArr = null;
+	if(isArray(obj)){
+		aObjArr = obj;	
+	}else{
+		aObjArr = [];
+		aObjArr.push(obj);
+	}
+	var isFinished = true;
+	for(var i=0; i<aObjArr.length; i++){
+		var currentObj = aObjArr[i];
+		var attrs = currentObj.attrs;
+		for(var attr in attrs){
+			if(typeof currentObj.dependentMove == 'function'){
+				currentObj.dependentMove(aObjArr);
+			}else{
+				currentObj.params.iCurrentValue = getCurrentStyleIntValue(currentObj, attr);
+				var iSpeed = getSpeedByType(currentObj.params.speedType);
+				var currentStepValue = getCurrentStepValue(currentObj.params, iSpeed);
+				setStyle(currentObj, attr, currentStepValue);
+				currentObj.params.iSpeed = iSpeed;
+				isFinished = isFinished && (currentObj.params.iCurrentValue == currentObj.params.iTargetValue && Math.abs(iSpeed) < 1);
+			}
+		}
+	}
+	if(isFinished){
+		clearInterval(timer);	
+	}
+}
+
+function getCurrentStepValue(params, iSpeed){
+	return params.isFallback? params.iCurrentValue: params.iCurrentValue + iSpeed;
+}
+
+function setStyle(obj, attr, value){
+	if('opacity' == attr){
+		obj.style.filter = 'alpha(opacity:' + value + ')';
+		obj.style.opacity = value / 100;
+	}else{
+		obj.style[attr] = value + 'px';	
+	}
+}
+
+function getSpeedByType(speedType, params){
+	var iSpeed = NaN;
+	if('buffered' == speedType){
+		iSpeed = getBufferedSpeed(params);
+	}else if('elastic' == speedType){
+		iSpeed = getElasticSpeed(params);	
+	}else if('acceleratedRebound' == speedType){
+		iSpeed = getAcceleratedReboundSpeed(params);	
+	}
+	return iSpeed;
+}
+
+function getBufferedSpeed(params){
+	var iSpeed = (iTargetValue - iCurrentValue) / iTimeSpan;
+	return iSpeed > 0 ? Math.ceil(iSpeed) : Math.floor(iSpeed);
+}
+
+function getElasticSpeed(params){
+	var iSpeed = (params.iCurrentValue - params.iTargetValue) / params.iTimeSpan;
+	return iSpeed * params.fFrictionFactor;
+}
+
+function getAcceleratedReboundSpeed(params){
+	params.isFallback = false;
+	var iSpeed = params.iSpeed;
+	iSpeed += params.iAcceleration;
+	if(params.iTargetValue > params.iCurrentValue){
+		params.isFallback = params.iCurrentValue + iSpeed > params.iTargetValue;
+		iSpeed = params.isFallback? -iSpeed*params.fReboundFactor: iSpeed;
+	}else{
+		params.isFallback = params.iCurrentValue + iSpeed < params.iTargetValue;
+		iSpeed = params.isFallback? -iSpeed*params.fReboundFactor: iSpeed;
+	}
+	return iSpeed;
+}
+
+function getCurrentStyleIntValue(obj, attr){
+	if('opacity' == attr){
+		return parseInt(getStyleFloatValue(obj, attr)*100);
+	}else{
+		return getStyleIntValue(obj, attr);
+	}
+}
+
+function getStyle(obj, attr){
+	if(obj.currentStyle){
+		var result = obj.currentStyle[attr];
+	}else{
+		return getComputedStyle(obj, false)[attr];	
+	}
+}
+
+function getStyleFloatValue(obj, attr){
+	return parseFloat(getStyle(obj, attr));
+}
+
+function getStyleIntValue(obj, attr){
+	return parseInt(getStyleFloatValue(obj, attr));	
+}
+
+function getOffsetStyleValue(obj, attr){
+	var offsetAttr = 'offset'+attr.substring(0,1).toUpperCase() + attr.substring(1);
+	return obj[offsetAttr];
+}
+
+function isArray(obj) { 
+	return Object.prototype.toString.call(obj) === '[object Array]'; 
+}
+
+</script>
+</head>
+<body>
+</body>
+</html>

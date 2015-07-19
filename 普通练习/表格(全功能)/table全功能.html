@@ -1,0 +1,373 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style type="text/css">
+* {padding:0px; margin:0px;}
+div#frameDiv {width:800px; left:100px; margin:auto;}
+table#basicTable {width:100%; border:1px solid #39C; text-align:center; position:relative;}
+table#basicTable th {cursor:pointer}
+table#basicTable a { text-decoration:none }
+table#basicTable td,th {padding:2px; font-size:14px;}
+table#basicTable td b {background:#CCC}
+table#basicTable .head {background-color:#FBCB3E}
+table#basicTable .odd {background-color:#ADD8E6;}
+table#basicTable .even {background-color:#EEE685;}
+table#basicTable .selected {background-color:#FBCB3E}
+table#addNew {width:100%;}
+table#search {width:100%;}
+</style>
+<script type="text/javascript">
+String.prototype.trim=function()
+{
+     return this.replace(/(^\s*)(\s*$)/g,'');
+}
+var tblDataSource = [
+	{id:1, name:'肖申克的救赎',director:'弗兰克·达拉邦特', releasedTime:1994},
+	{id:2, name:'勇敢的心', director:'梅尔·吉布森', releasedTime:1995},
+	{id:3, name:'我是传奇', director:'法兰西斯·罗伦斯', releasedTime:2007},
+	{id:4, name:'盗梦空间', director:'克里斯托弗·诺兰', releasedTime:2010},
+	{id:5, name:'阿甘正传', director:'罗伯特·泽米吉斯', releasedTime:1993},
+	{id:6, name:'泰坦尼克号', director:'詹姆斯·卡梅隆', releasedTime:1997},
+	{id:7, name:'当幸福来敲门', director:'加布里尔·穆奇诺', releasedTime:2006},
+	{id:8, name:'阿凡达', director:'詹姆斯·卡梅隆', releasedTime:2009},
+	{id:9, name:'太极旗飘扬', director:'姜帝圭', releasedTime:2004},
+	{id:10, name:'天空之城', director:'宫崎骏', releasedTime:1986}
+];
+var oddClassName = 'odd';
+var evenClassName = 'even';
+var hoverClassName = 'head';
+var headClassName = 'head';
+var selectedClassName = 'selected';
+var ascSymbol = ' ↓';
+var descSymbol = ' ↑';
+
+var moveUpLink = '<a href="javascript:void(0);" class="moveUp">上移</a> ';
+var moveDownLink = '<a href="javascript:void(0);" class="moveDown">下移</a> ';
+var removeLink = '<a href="javascript:void(0);" class="remove">删除</a> ';
+window.onload = function(){
+	var oBasicTable = document.getElementById('basicTable');
+	var oHead = oBasicTable.getElementsByTagName('tr')[0];
+	oHead.className = headClassName;
+	var aRowArr = [];
+	//initiate table
+	initTable(aRowArr, oBasicTable);
+	//add new row
+	var oAddNewBtn = document.getElementById('addNewBtn');
+	oAddNewBtn.onclick = function(){
+		addNewRow(aRowArr, oBasicTable);
+	};
+	//initiate sort rows
+	oHead.sortColNum = 0;
+	oHead.isAsc = 'true';
+	initSortRows(aRowArr, oHead, oBasicTable);
+	//search
+	var oSearchBtn = document.getElementById('searchBtn');
+	oSearchBtn.onclick = function(){
+		searchOperation(aRowArr);
+	};
+};
+
+function initTable(aRowArr, oBasicTable){
+	for(var i=0; i< tblDataSource.length; i++){
+		var oTr = document.createElement('tr');
+		for(var p in tblDataSource[i]){
+			var oTd = document.createElement('td');
+			oTd.innerHTML = tblDataSource[i][p];
+			oTr.appendChild(oTd);
+		}
+		var oOperTd = document.createElement('td');
+		oOperTd.innerHTML = moveUpLink + moveDownLink + removeLink;
+		oTr.appendChild(oOperTd);
+		oTr.index = i;
+		initRow(oTr, aRowArr, oBasicTable);
+	}
+}
+
+function initRow(oRow, aRowArr, oTable){
+	//要在调init之前调整好新的row.index和aRowArr[i].index，他们之间不能重复或错乱
+	aRowArr.push(oRow);
+	aRowArr.sort(function(a, b){
+		return 	a.index - b.index;  
+	});
+	setRowColor(oRow);
+	oRow.onmouseover = function(){
+		setHoverColor(this);
+	};
+	oRow.onmouseout = function(){
+		setRowColor(this);	
+	};
+	oRow.onclick = function(){
+		setSelectedColor(this);	
+	};
+	var oMoveUp = getElementsByClassName(oRow, 'moveUp')[0];
+	oMoveUp.onclick = function(ev){
+		var oEvent = ev || event;
+		moveUpRow(this, aRowArr, oTable);
+		oEvent.cancelBubble = true;
+	}
+	var aMoveDown = getElementsByClassName(oRow, 'moveDown')[0];
+	aMoveDown.onclick = function(ev){
+		var oEvent = ev || event;
+		moveDownRow(this, aRowArr, oTable);
+		oEvent.cancelBubble = true;
+	}
+	var aRemove = getElementsByClassName(oRow, 'remove')[0];
+	aRemove.onclick = function(ev){
+		var oEvent = ev || event;
+		removeRow(this, aRowArr, oTable);
+		oEvent.cancelBubble = true;
+	}
+	if(oRow.index == aRowArr.length){
+		oTable.tBodies[0].appendChild(oRow);	
+	}else{
+		//这句很脆弱，目前还没有用到
+		//oTable.tBodies[0].insertBefore(oRow, aRowArr[oRow.index + 1]);
+		oTable.tBodies[0].appendChild(oRow);
+	}
+}
+
+function addNewRow(aRowArr, oBasicTable){
+	var oNewData = {};
+	oNewData.newId = document.getElementById('newId');
+	oNewData.newName = document.getElementById('newName');
+	oNewData.newDirector = document.getElementById('newDirector');
+	oNewData.newReleasedTime = document.getElementById('newReleasedTime');
+	var flag = true;
+	flag = flag && isValideNum(oNewData.newId.value);
+	flag = flag && oNewData.newName.value.length > 0;
+	flag = flag && oNewData.newDirector.value.length > 0;
+	flag = flag && isValideNum(newReleasedTime.value);
+	if(!flag){
+		alert('请正确填写所有数据!')
+		return;
+	}
+	var oNewTr = document.createElement('tr');
+	for(var p in oNewData){
+		var oNewTd = document.createElement('td');
+		oNewTd.innerHTML = oNewData[p].value;
+		oNewData[p].value = '';
+		oNewTr.appendChild(oNewTd);
+	}
+	var oOperTd = document.createElement('td');
+	oOperTd.innerHTML = moveUpLink + moveDownLink + removeLink;
+	oNewTr.appendChild(oOperTd);
+	oNewTr.index = aRowArr.length;
+	initRow(oNewTr, aRowArr, oBasicTable);
+}
+
+function initSortRows(aRowArr, oHead, oBasicTable){
+	var oThArr = oHead.getElementsByTagName('th');
+	for(var i=0; i<oThArr.length-1; i++){
+		oThArr[i].index = i;
+		oThArr[i].onclick = function(){
+			var title = '';
+			title = oThArr[oHead.sortColNum].innerHTML;
+			title = title.replace(ascSymbol, '');
+			title = title.replace(descSymbol, '');
+			oThArr[oHead.sortColNum].innerHTML = title;
+			oHead.isAsc = oHead.sortColNum == this.index? !oHead.isAsc: true;
+			oHead.sortColNum = this.index;
+			title = this.innerHTML;
+			title += oHead.isAsc? ascSymbol: descSymbol;
+			this.innerHTML = title;
+			aRowArr.sort(function(a, b){
+				var oColArr1 = a.getElementsByTagName('td');
+				var oColArr2 = b.getElementsByTagName('td');
+				var valueA = oColArr1[oHead.sortColNum].innerHTML;
+				var valueB = oColArr2[oHead.sortColNum].innerHTML;
+				var numA = Number(valueA);
+				var numB = Number(valueB);
+				if(isNaN(numA) || isNaN(numB)){
+					var diff = valueA.length-valueB.length;
+					return oHead.isAsc? diff: -1*diff;
+				}else{
+					var diff = numA - numB;
+					return oHead.isAsc? diff: -1*diff;
+				}
+			});
+			for(var j=0; j<aRowArr.length; j++){
+				aRowArr[j].index = j;
+				setRowColor(aRowArr[j]);
+				oBasicTable.tBodies[0].appendChild(aRowArr[j]);
+			}
+		}
+	}
+}
+
+function setHoverColor(oRow){
+	if(!oRow.selectedStatus){
+		oRow.className = hoverClassName;
+	}
+}
+
+function setRowColor(oRow){
+	if(!oRow.selectedStatus){
+		oRow.className = (oRow.index+1)%2? oddClassName: evenClassName;
+	}
+}
+
+function setSelectedColor(oRow){
+	if(oRow.selectedStatus){
+		setRowColor(oRow);
+		oRow.selectedStatus = false;
+	}else{
+		oRow.className = selectedClassName;
+		oRow.selectedStatus = true;
+	}
+}
+
+function moveUpRow(oA, aRowArr, oTable){
+	var currentRow = oA.parentNode.parentNode;
+	if(currentRow.index > 0){
+		var targetRow = aRowArr[currentRow.index-1];
+		targetRow.index = currentRow.index;
+		currentRow.index = currentRow.index - 1;
+		aRowArr.sort(function(a, b){
+			return a.index - b.index;					  
+		});
+		oTable.tBodies[0].removeChild(currentRow);
+		oTable.tBodies[0].insertBefore(currentRow, targetRow);
+		setRowColor(currentRow);
+		setRowColor(targetRow);
+	}
+}
+
+function moveDownRow(oA, aRowArr, oTable){
+	var currentRow = oA.parentNode.parentNode;
+	if(currentRow.index < aRowArr.length - 1){
+		var targetRow = aRowArr[currentRow.index + 1];
+		targetRow.index = currentRow.index;
+		currentRow.index = currentRow.index + 1;
+		aRowArr.sort(function(a, b){
+			return a.index - b.index;	
+		});
+		oTable.tBodies[0].removeChild(targetRow);
+		oTable.tBodies[0].insertBefore(targetRow, currentRow);
+		setRowColor(currentRow);
+		setRowColor(targetRow);
+	}
+}
+
+function removeRow(oA, aRowArr, oTable){
+	var currentRow = oA.parentNode.parentNode;
+	oTable.tBodies[0].removeChild(currentRow);
+	aRowArr.splice(currentRow.index, 1);
+	for(var i=currentRow.index; i<aRowArr.length; i++){
+		aRowArr[i].index = i;	
+	}
+}
+
+function searchOperation(aRowArr){
+	var searchInput = document.getElementById('searchInput');
+	var searchContent = searchInput.value.trim();
+	var aSearchContentArr = searchContent.split(/\s+/);
+	//为什么用了trim在chrome里面不起作用？
+	for(var i=0; i<aSearchContentArr.length; i++){
+		if(aSearchContentArr[i] == ''){
+			aSearchContentArr.splice(i,1);
+			i--;
+		}
+	}
+	//trim ? end
+	var aContentMatcherArr = [];
+	for(var j=0; j<aSearchContentArr.length; j++){
+		aContentMatcherArr[j] = new Function("var result = arguments[0].replace(/"+aSearchContentArr[j]+"/g,'<B>"+aSearchContentArr[j]+"</B>'); return result;");
+	}
+	var aTdArr = [];
+	for(var i=0; i<aRowArr.length; i++){
+		var oTdArr = aRowArr[i].getElementsByTagName('td');
+		for(j=0; j<oTdArr.length-1; j++){	//为什么修改了innerHTML之后，链接上绑定的函数就成null了？
+			aTdArr.push(oTdArr[j]);
+		}
+	}
+	for(var i=0; i<aTdArr.length; i++){
+		aTdArr[i].innerHTML = removeTagFunc(aTdArr[i].innerHTML);
+	}
+	if(searchContent.trim().length == 0){
+		return;	
+	}
+	for(var i=0; i<aTdArr.length; i++){
+		var flag = true;
+		var htmlContent = aTdArr[i].innerHTML;
+		for(var j=0; j<aSearchContentArr.length; j++){
+			if(htmlContent.search(aSearchContentArr[j])<0){
+				flag = false;
+				break;
+			}
+		}
+		if(!flag){
+			continue;	
+		}
+		for(var j=0; j<aSearchContentArr.length; j++){
+			htmlContent = aContentMatcherArr[j](htmlContent);
+		}
+		aTdArr[i].innerHTML = htmlContent;
+	}
+	function removeTagFunc(content){
+		content = content.replace(/<B>|<\/B>|<b>|<\/b>/g, '');
+		return content;
+	}	
+}
+
+function getElementsByClassName(oParent, className){
+	var oChildren = oParent.getElementsByTagName('*');
+	var aResult = [];
+	for(var i=0; i<oChildren.length; i++){
+		if(oChildren[i].className == className){
+			aResult.push(oChildren[i]);	
+		}
+	}
+	return aResult;
+}
+
+function isValideNum(param){
+	if(typeof param == 'number'){
+		return 	true;
+	}else if (typeof param == 'string'){
+		return /^\d+$/.test(param);
+	}else{
+		return false;	
+	}
+}
+
+</script>
+</head>
+<body>
+<div style="width:100%;position:absolute; top:100px;">
+<div id="frameDiv">
+<table id="search">
+	<tr>
+    	<td align="right" width="50%"><input id="searchInput"/></td>
+        <td align="left"><input id="searchBtn" type="button" style="width:100px; height:30px;" value="搜索"/></td>
+    </tr>
+</table>
+<table id="addNew">
+	<tr>
+    	<td>ID:</td>
+        <td><input id="newId"/></td>
+        <td>名称:</td>
+        <td><input id="newName"/></td>
+        <td rowspan="2"><input type="button" value="添加" style="width:100px; height:30px;" id="addNewBtn"/></td>
+    </tr>
+    <tr>
+    	<td>导演:</td>
+        <td><input id="newDirector"/></td>
+        <td>上映时间:</td>
+        <td><input id="newReleasedTime"/></td>
+    </tr>
+</table>
+<table id="basicTable" border="1" cellpadding="1" cellspacing="0">
+    <tr>
+        <th style="width:10%;">ID ↓</th>
+        <th style="width:20%;">名称</th>
+        <th style="width:20%;">导演</th>
+        <th style="width:20%;">上映时间</th>
+        <th style="width:30%;">操作</th>
+    </tr>
+</table>
+</div>
+</div>
+</body>
+</html>

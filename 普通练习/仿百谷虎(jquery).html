@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>New Web Project</title>
+<style>
+.searchArea {
+	height: 80px; 
+	width: 450px;
+	margin: 50px auto 0px;
+}
+.searchArea .queryTxt{
+	width: 350px;
+}
+.frameWrap {
+	margin: 0px;
+	padding: 0px;
+	width: 49%;
+	height: 500px;
+	display: inline-block
+}
+</style>
+<script src="jquery-1.7.1.js"></script>
+<script>
+$(function(){
+	var $frame1 = $('<iframe>').attr({
+		width: '100%',
+		height: '100%',
+		id: 'frame1',
+		loading: 1,
+		scrolling: 'auto',
+		frameborder: 1,
+		name: 'frame1',
+		href: 'http://www.baidu.com'
+	}).appendTo('#frameWrap1');
+	var $frame2 = $('<iframe>').attr({
+		width: '100%',
+		height: '100%',
+		id: 'frame1',
+		loading: 1,
+		scrolling: 'auto',
+		frameborder: 1,
+		name: 'frame2',
+		href: 'http://www.baidu.com'
+	}).appendTo('#frameWrap2');
+	var $queryTxt = $('#queryTxt').on('keydown', function(e){
+		if(e.keyCode == 13){
+			$queryBtn.click();
+		}
+	});
+	var $queryBtn = $('#queryBtn').on('click', function(){
+		var queryStr = encodeURIComponent($queryTxt.val());
+		var baiduSearch = 'http://www.baidu.com/s?wd=' + queryStr;
+		var sogouSearch = 'http://www.sogou.com/sogou?query=' + queryStr;
+		window.open(baiduSearch, 'frame1');
+		window.open(sogouSearch, 'frame2');
+	});
+});
+</script>
+</head>
+<body>
+<div class="searchArea">
+	<input id="queryTxt" class="queryTxt"/>
+	<input id="queryBtn" type="button" value="搜索"/>
+	<span id="dispSpan"></span>
+</div>
+<div class="frameWrap" id="frameWrap1"></div>
+<div class="frameWrap" id="frameWrap2"></div>
+</body>
+</html>

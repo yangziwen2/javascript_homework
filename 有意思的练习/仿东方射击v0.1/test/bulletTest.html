@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+#playArea {width:400px; height:500px; margin-top:5px; margin-left:50%; left: -200px; border:1px solid #333; position:relative; _overflow:hidden;"}
+.normalBullet {width:12px; height:12px; _border:1px solid #333; position:absolute; left:120px; top:110px; background:url(images/bulletsW.png) no-repeat -82px -242px;}
+.normalBulletBlue {width:12px; height:12px; _border:1px solid #333; position:absolute; left:120px; top:110px; background:url(images/bulletsW.png) no-repeat -98px -242px}
+</style>
+<script type="text/javascript" src="js/player-min.js"></script>
+<script type="text/javascript" src="js/simpleAnimate-min.js"></script>
+<script>
+bulletParams = [
+	{width: '12px', height:'12px', position: 'absolute', background: 'url(images/bulletsW.png) no-repeat -82px -242px', zIndex: 200},
+	{width: '12px', height:'12px', position: 'absolute', background: 'url(images/bulletsW.png) no-repeat -98px -242px', zIndex: 200}
+];
+window.onload = function(){
+	//var bulletArr = [];
+	var player = new Player('playArea');
+	//initNewBullet('normalBullet');
+	this.oPlayArea = document.getElementById('playArea');
+	var count = 0;
+	var timer = setInterval(function(){
+		var startAngle = Math.pow(count, 2) * 15;
+		(function(){
+			var bulletArr = [];
+			for(var i=0, oriLen = bulletArr.length; i<10; i++){
+				bulletArr[i+oriLen] = initNewBullet('normalBullet', bulletParams[0], {r:5	, theta: i*36 + startAngle, center:{x: 120, y: 110}}, 1);	
+			}
+			scatterBullet(bulletArr, startAngle, 1);
+		})();
+		(function(){
+			var bulletArr = [];
+			for(var i=0, oriLen = bulletArr.length; i<10; i++){
+				bulletArr[i+oriLen] = initNewBullet('normalBulletBlue', bulletParams[1], {r: 5, theta: i*36 + startAngle, center:{x: 280, y: 110}}, -1);	
+			}
+			scatterBullet(bulletArr, startAngle, -1);
+		})();
+		count++;
+		if(count>=20){
+			clearInterval(timer);	
+		}
+	}, 500);
+}
+
+function scatterBullet(bulletArr, startAngle, directFlag){
+	animate(bulletArr[0],{r: 600, _theta: directFlag * 360 + startAngle}, 25000, '>');
+	setTimeout(function(){
+		for(var i=1; i< bulletArr.length; i++){
+			relocatePolar(bulletArr[i], {r: bulletArr[0].r, _theta: bulletArr[0].theta + i*60});	
+		}
+		setTimeout(arguments.callee, 30);
+	}, 10);
+}
+
+function initNewBullet(bulletClass, bulletParam, initParam, directFlag){
+	var bullet = document.createElement('div');
+	bullet.className = bulletClass;
+	for(var attr in bulletParam){
+		bullet.style[attr] = bulletParam[attr];
+	}
+	window.oPlayArea.appendChild(bullet);
+	relocatePolar(bullet, initParam);
+	//animate(bullet, {r: 600, _theta: directFlag * 360 + initParam['theta']}, 25000, '>');
+	return bullet;
+}
+</script>
+</head>
+<body>
+<div id="playArea">
+<!--div class="normalBullet"></div-->
+</div>
+</body>
+</html>

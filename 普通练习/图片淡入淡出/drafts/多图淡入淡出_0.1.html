@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+* {margin:0px; padding:0px;}
+li {list-style:none;}
+body {background-color:#000;}
+#outsideDiv {width:656px; height:928px; border:1px solid #333; margin:0px auto; position:relative}
+#imgDiv {position:absolute; width:100%; left:0; top:0; opacity:0.6; filter:alpha(opacity=60);}
+#outsideDiv ul{position:absolute; left:0; top:0; width:100%; height:100%;}
+#outsideDiv li{position:absolute; opacity:0;filter:alpha(opacity=0);}
+</style>
+<script>
+window.onload = function(){
+	window.currentSelectedZIndex = 20;
+	var oFiguresUl = document.getElementById('figures');
+	var oLiArr=  document.getElementsByTagName('li');
+	for(var i=0; i<oLiArr.length; i++){
+		oLiArr[i].index = i;
+		oLiArr[i].oriLeft = parseInt(getStyle(oLiArr[i],'left'));
+		oLiArr[i].oriTop = parseInt(getStyle(oLiArr[i],'top'));
+		oLiArr[i].oriWidth = parseInt(getStyle(oLiArr[i],'width'));
+		oLiArr[i].oriHeight = parseInt(getStyle(oLiArr[i], 'height'));
+		//oLiArr[i].oriZIndex = oLiArr.style.zIndex;
+		oLiArr[i].timeSpan = 10;
+		oLiArr[i].onmouseover = function(){
+			if(this == window.currentSelectedLi){
+				return;	
+			}
+			this.style.cursor = 'pointer';
+			startMove(this, {opacity: 100, timer:'timer0'});	
+		}
+		oLiArr[i].onmouseout = function(){
+			if(this == window.currentSelectedLi){
+				return;	
+			}
+			this.style.cursor = '';
+			startMove(this, {opacity: 0, timer:'timer0'});
+		}
+		oLiArr[i].onclick = function(ev){
+			if(window.currentSelectedLi){
+				document.onclick();
+			}
+			window.currentSelectedLi = this;
+			var oEvent = ev || event;
+			this.style.zIndex = window.currentSelectedZIndex;
+			var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+			var iTargetX = Math.round((oFiguresUl.offsetWidth - this.offsetWidth)/2);
+			var iTargetY = Math.round(scrollTop + (document.documentElement.clientHeight - this.offsetHeight)/2);
+			var attrs = {left:iTargetX, top:iTargetY, timer:'timer1'};
+			startMove(this, attrs);
+		}
+		window.onresize = window.onscroll = function(){
+			if(!window.currentSelectedLi){
+				return;	
+			}
+			var $this = window.currentSelectedLi;
+			var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+			var iTargetX = Math.round((oFiguresUl.offsetWidth - $this.offsetWidth)/2);
+			var iTargetY = Math.round(scrollTop + (document.documentElement.clientHeight - $this.offsetHeight)/2);
+			var attrs = {left:iTargetX, top:iTargetY, timer:'timer1'};
+			startMove($this, attrs);
+		}
+		document.onclick = function(){
+			if(!window.currentSelectedLi){
+				return;	
+			}
+			var $this = window.currentSelectedLi;
+			if(parseInt($this.style.left) == $this.oriLeft){
+				return;	
+			}
+			var posResetAttrs = {left:$this.oriLeft, top:$this.oriTop, timer:'timer1'};
+			startMove($this, posResetAttrs);
+			var opacityResetAttrs = {opacity: 0, timer:'timer0'};
+			startMove($this, opacityResetAttrs);
+			window.currentSelectedLi = null;
+		};
+	}
+}
+
+function startMove(obj, attrs, iTarget){
+	clearInterval(obj[attrs.timer]);
+	obj[attrs.timer] = setInterval(function(){
+		doMove(obj, attrs);							 
+	}, 30);
+}
+
+function doMove(obj, attrs){
+	var isFinished = true;
+	for(var attr in attrs){
+		if(attr == 'timer'){
+			continue;	
+		}
+		var iTarget = attrs[attr];
+		var iCur=0;
+		if(attr=='opacity'){
+			iCur=parseInt(parseFloat(getStyle(obj, 'opacity'))*100);
+		}else{
+			iCur=parseInt(getStyle(obj, attr));
+		}
+		var iSpeed=(iTarget-iCur)/obj.timeSpan;
+		iSpeed=iSpeed>0?Math.ceil(iSpeed):Math.floor(iSpeed);
+		if(attr=='opacity'){
+			obj.style.filter="alpha(opacity:"+(iCur+iSpeed)+")";
+			obj.style.opacity=(iCur+iSpeed)/100;
+		}else{
+			obj.style[attr]=iCur+iSpeed+'px';
+		}
+		isFinished = isFinished && (iCur == iTarget);
+	}
+	if(isFinished){
+		clearInterval(obj[attr.timer]);	
+	}
+}
+
+function getStyle(obj, attr){
+	if(obj.currentStyle){
+		return obj.currentStyle[attr];
+	}else{
+		return getComputedStyle(obj, false)[attr];	
+	}
+}
+</script>
+</head>
+<body>
+<div id="outsideDiv">
+<div id="imgDiv">
+<img src="images/eva.jpg"/>
+</div>
+<ul id="figures">
+	<li style="left:18px; top:335px;">
+    	<img src="images/18_335.jpg"/>
+    </li>
+    <li style="left:151px; top:213px;">
+    	<img src="images/151_213.jpg"/>
+    </li>
+    <li style="left:74px; top:611px;">
+    	<img src="images/76_611.jpg"/>
+    </li>
+    <li style="left:257px; top:498px;">
+    	<img src="images/257_498.jpg"/>
+    </li>
+    <li style="left:374px; top:166px;">
+    	<img src="images/374_166.jpg"/>
+    </li>
+    <li style="left:443px; top:553px;">
+    	<img src="images/443_553.jpg"/>
+    </li>
+    <li style="left:471px; top:55px;">
+    	<img src="images/471_55.jpg"/>
+    </li>
+    <li style="left:173px; top:703px;">
+    	<img src="images/173_703.jpg"/>
+    </li>
+</ul>
+</div>
+</body>
+</html>

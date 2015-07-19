@@ -1,0 +1,54 @@
+﻿<html>
+<head>
+<script>
+window.onload = function(){
+	var oUl = document.getElementById('ul1');
+	var aCheckBox = oUl.getElementsByTagName('input');
+	var oSelectAll = document.getElementById('selectAll');
+	var oReverseBtn = document.getElementById('reverseBtn');
+	oSelectAll.onclick = function(){
+		for(var i=0; i<aCheckBox.length; i++){
+			aCheckBox[i].checked = this.checked;
+		}
+	};
+	for(var i=0; i<aCheckBox.length; i++){
+		aCheckBox[i].onclick = function(){
+			if(!this.checked){
+				oSelectAll.checked = false;
+			}else{
+				for(var j=0; j<aCheckBox.length; j++){
+					if(!aCheckBox[j].checked){
+						return;
+					}
+				}
+				oSelectAll.checked = true;
+			}
+		}
+	}
+	oReverseBtn.onclick = function(){
+		var flag = true;
+		for(var i=0; i<aCheckBox.length; i++){
+			aCheckBox[i].checked = !aCheckBox[i].checked;
+			if(flag){
+				flag = flag && aCheckBox[i].checked;
+			}
+		}
+		oSelectAll.checked = flag;
+	}
+}
+</script>
+</head>
+<body>
+<span>全选</span><input id="selectAll" type="checkbox"></input>
+<a id="reverseBtn" href="javascript:void(0)">反选</a>
+<ul id="ul1">
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+</ul>
+</body>
+</html>

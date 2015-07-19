@@ -1,0 +1,180 @@
+@charset "utf-8";
+/*============================= 首页 框架 start =====================================*/
+.wb_us_wrap{width:950px;margin:0 auto;text-align:left;}
+.wb_main{overflow:hidden}
+.blk_l{float:left;width:645px;overflow:hidden;}
+.blk_r{float:right;width:300px;overflow:hidden;}
+/*============================= 热门转发 标题 start =====================================*/
+.wb_feedBox .feedBox_tit{width:643px;height:28px;border-top:1px solid #dddddd;border-right:1px solid #dddddd;border-left:1px solid #dddddd;background:url(../images/title_bg.jpg) repeat-x 0 bottom;}
+.wb_feedBox .feedBox_tit li{float:left;display:inline-block;padding:0 16px 0 13px;line-height:28px;cursor:pointer;}
+.wb_feedBox .feedBox_tit li a{padding-left:28px;display:inline-block;background:url(../images/icon_us.gif) no-repeat 0 -21px;font-size:15px;color:#000000;}
+.wb_feedBox .feedBox_tit li a:hover{text-decoration:none;}
+.wb_feedBox .feedBox_tit .active{margin-left:-1px;background-color:#ffffff;border:solid #e6e6e6;border-width:0 1px;font-weight:bold}
+.wb_feedBox .feedBox_tit .more{float:right;display:inline-block;padding:2px 15px 0 0;color:#000000;}
+/*============================= 热门转发 列表 start =====================================*/
+.feed_lists{padding:15px 12px 0;}
+.le_list{margin:0 0 12px;padding:0 0 10px;background:url(../images/linedot.gif) repeat-x 0 bottom;}
+.le_list .list_face{padding:2px;width:50px;height:50px;border:1px solid #cccccc;}
+.le_list .le_c{margin-left:70px;line-height:20px;}
+.le_last{background:none}
+.send_hot{margin-bottom:20px;height:510px;overflow:hidden}
+/*============================= 热门话题 标题 start =====================================*/
+.wb_feedBox1 .title{width:645px;height:30px;background-color:#c6c6c6;}
+.wb_feedBox1 .title a{display:inline-block;padding:0 18px;line-height:32px;height:30px;background-color:#e90907;color:#ffffff;font-weight:bold;font-size:15px;}
+.wb_feedBox1 ul{margin-top:10px;height:26px;border:solid #e3e3e3;border-width:0 0 0 1px;background:url(../images/title_bg1.gif) repeat-x 0 bottom;}
+.wb_feedBox1 li{float:left;display:inline-block;border:solid #e3e3e3;border-width:1px 1px 0 0;color:#737272;}
+.wb_feedBox1 li a{display:inline-block;padding:0 10px;line-height:26px;height:25px;color:#737272;text-decoration:none;}
+.wb_feedBox1 li.active{font-weight:bold;background-color:#ffffff;}
+/*============================= 热门话题 列表 start =====================================*/
+.feed_lists1{padding:15px 27px 0 12px;}
+.le_list .date{margin: 0 10px 0 0;}
+.le_list .info{color:#707070;}
+.feed_lists1 .info{margin-top:16px;}
+.le_list .le_c .link{font-family:Arial;font-weight:bold;color:#0082cb;}
+.le_c .comment{position:relative;margin-top:18px;padding: 0 16px 14px;width:440px;border:1px solid #dddddd;border-radius:3px;color:#707070;background-color:#f6f6f6;}
+.le_c .comment .arrow{position:absolute;left:50px;top:14px;_top:16px;margin:-25px 0 0;width: 25px;height: 11px;overflow: hidden;}
+.le_c .comment .arrow *{display: block;font-size: 21px;height: 10px;overflow: hidden;}
+.le_c .comment .arrow span{margin: -9px 0 0;color: #F4F4F4;}
+.le_c .comment dt{margin:10px 0 0;}
+.le_c .comment .approve,.wb_focus .info .name .approve{display:inline-block;background:url(../images/ico.png) no-repeat 0 -207px;width:14px;height:12px;vertical-align: -1px;}
+.le_c .comment dt .w_vline{}
+.wb_arrline{color:#dddddd;}
+/*============================= 广告 start =====================================*/
+.wb_main .wb_ads{margin-bottom:12px;}
+.wb_main .wb_ads .ad1{margin-left:15px;}
+.wb_main .wb_ads .ad2{margin-left:11px;}
+.blk_r .ads{margin-bottom:6px;}
+.footer_ads{height:106px;background-color:#f9f9f9;text-align:center;vertical-align:middle;}
+.footer_ads a{display:block;padding:8px 0 0 109px;width:728px;}
+/*============================= 北美新浪 start =====================================*/
+.wb_focus{margin-bottom:6px;padding:9px 0 10px 10px;border:1px solid #e3e3e3;width:288px;}
+.wb_focus .face{padding:4px;border:1px solid #e3e3e3;width:102px;height:102px;}
+.wb_focus .add_focus{padding-left:3px;display:inline-block;overflow:hidden;height:22px;_height:24px;line-height:21px;background:url(../images/btn_focus.gif) no-repeat 0 0;vertical-align: middle;cursor:pointer;}
+.wb_focus .add_focus:hover{text-decoration:none}
+.wb_focus .add_focus em{display:inline-block;padding-right:4px;background:url(../images/btn_focus.gif) no-repeat right -24px;}
+.wb_focus .add_focus em span.addImg{display:inline-block;margin-left: 1px;margin-top: 1px;padding-left: 2px;vertical-align: -7px;background:url(../images/gray_icon.gif) no-repeat 0 0;height: 22px;width: 16px;}
+.wb_focus .add_focus em span.text{vertical-align: 1px;_vertical-align: -1px;color:#666666;}
+.wb_focus .btn_focus{margin:8px 0 0 28px;width:65px;}
+.wb_focus .info{margin:3px 0 0 118px;_margin-top:15px;color:#787777;}
+.wb_focus .info .name{font-size:15px;font-weight:bold;color:#4e4d4d;}
+.wb_focus .info .name .approve{background-position:0 -232px;}
+.wb_focus .info .addr{padding-left:20px;background:url(../images/ico.png) no-repeat 0 -536px;}
+.wb_focus .info p a{text-decoration:underline;}
+/*============================= 微博专题 start =====================================*/
+.wb_module,.send_wb{margin-bottom:5px;border:1px solid #e3e3e3;width:298px;}
+.wb_module .title,.send_wb .title{height:27px;line-height:27px;background-color:#c6c6c6;border-bottom:1px solid #e3e3e3;}
+.wb_module .title .name{float:left;display:inline-block;width:106px;height:27px;line-height:28px;text-align:center;font-size:15px;color:#ffffff;font-weight:bold;background-color:#ffc602;}
+.wb_module .title .more{float:right;display:inline;padding-right:11px;color:#ffffff;line-height:28px;width:40px}
+.wb_topic .content{padding:16px 11px 14px;}
+.wb_topic .content ul{padding:3px 0 3px 5px;background-color:#f9f9f9;}
+.wb_topic .content li{padding-left:13px;background:url(../images/dot.jpg) no-repeat 0 12px;line-height:24px;}
+.wb_topic .content li a{color:#4e4d4d;}
+/*============================= 热门话题榜 start =====================================*/
+.top_topic_list{padding: 0 17px;}
+.top_topic_list .num{background:url(../images/ico_rank.png) no-repeat scroll 0 -166px;color: #FFFFFF;float: left;font-size: 10px;height: 13px;line-height: 13px;margin: 10px 7px 10px 0;text-align: center;width: 28px;}
+.top_topic_list dt{background:url(../images/dot_01.gif) repeat-x scroll 0 bottom;height: 36px;overflow: hidden;padding: 9px 0 7px;width:264px;}
+.top_topic_list dd{background: url(../images/dot_01.gif) repeat-x scroll 0 bottom;height: auto;overflow: hidden;padding: 0;}
+.top_topic_list .top1, .top_topic_list .top2, .top_topic_list .top3{height: 28px;margin: 2px 11px 0 5px;overflow: hidden;text-indent: -9999px;width: 19px;}
+.top_topic_list .top1{background-position: -5px 0;}
+.top_topic_list .top2{background-position: -5px -50px;}
+.top_topic_list .top3{background-position: -5px -100px;}
+.top_topic_list .topic_list{display: block;float: left;overflow: hidden;width: 128px;}
+.top_topic_list dt .topic_list{height: 28px;margin-top: 8px;overflow: hidden;}
+.top_topic_list dd .topic_list{height: auto;margin: 5px 0 2px;overflow: hidden;position: relative;white-space: nowrap;}
+.top_topic_list .topic_list a{color:#0082cb}
+.top_topic_list .topic_list a:hover{text-decoration:underline}
+.top_topic_list .times_list{margin-right:18px;color: #595959;display: inline-block;float: right;padding: 10px 0;height:13px;}
+.downicon, .upicon, .keepicon{background:url(../images/ico.png) no-repeat scroll 0 0;display: inline-block;height: 12px;margin-top: -2px;overflow: hidden;vertical-align: middle;width: 13px;}
+.top_topic_list .times_list em{margin-left: 5px;background-position: 0 -477px;}
+.top_topic_list .times_list em.downicon{background-position: 0 -497px;}
+.top_topic_list dd.le_last{background:none;}
+/*============================= 活跃用户榜 start =====================================*/
+.top_topic_list .topic_list .pic{margin-right:10px;display:inline-block;padding:2px;border:1px solid #e3e3e3;}
+.top_topic_list .topic_list .pic img{width:30px;height:30px;}
+.activeUser .top_topic_list dt .topic_list{margin:0;height:36px;}
+.top_topic_list .country{float:right;padding-right:15px;line-height:36px;color:#595978}
+.top_topic_list .country1{line-height:33px;}
+/*============================= 企业微博 start =====================================*/
+.wb_qy .content ul{padding:0 0 24px 21px;}
+.wb_qy .content li{float:left;padding:24px 10px 0 0;display:inline-block;width:80px;text-align:center;}
+.wb_qy .content li .pic{display:block;margin:0 auto;padding:2px;border:1px solid #e3e3e3;width:50px;height:50px;}
+.wb_qy .content li a{display:block;color:#0082CB}
+.wb_qy .content li .name{display:block;width:80px;height:22px;overflow:hidden}
+/*============================= 留言区 start =====================================*/
+.send_wb .title a{display:block;padding-left:16px;line-height:30px;color:#ffffff;font-weight:bold;font-size:15px;}
+.send_wb .content{padding:16px 8px 13px 14px;width:276px;position:relative}
+.send_wb .ztips{height:30px;font-size:12px;color:#999999;text-align:right}
+.send_wb .ztips .left{padding-top:5px;width:50px;text-align:left;color:#666666}
+.send_wb .ztips .pipsLim{color:#333333;font-family:Constantia,Georgia;font-size:30px;font-weight:bold;vertical-align:-2px;}
+.send_wb .ztips .wordNumBg{display:inline-block;height:30px;*margin-top:-8px;*height:35px;*line-height:35px;}
+.send_wb .ztxtarea{position:relative;width:276px;height:156px;background:url(../images/popwininpbg.gif) no-repeat 0 0;}
+.send_wb .ztxtarea textarea{margin:6px 0 0 5px;padding:3px 2px 1px;width:262px;height:141px;border:0 none;outline:none;overflow-x:hidden;overflow-y:auto;line-height:18px}
+.send_wb .sendor{padding-left:16px;position:relative;width:260px;height:27px;background:url(../images/popwininpbg.gif) no-repeat 6px -156px;}
+.send_wb .sendor .left{padding-left:21px;margin:6px 15px 0 0;display:inline-block;height:14px;line-height:14px;_line-height:15px;background:url(../images/icon_us.gif) no-repeat 0 -49px;color:#616161;text-decoration:none}
+.send_wb .sendor .img{background-position:0 -71px;}
+.send_wb .sendor .send{position:absolute;display:block;left:170px;top:0;width:100px;height:30px;cursor:pointer;background:url(../images/wb_btn.gif) no-repeat 0 -116px;}
+.send_wb .sendor .send:hover{background-position:0 -86px;}
+/*============================= 登录浮层 start =====================================*/
+.mBlogLayer{text-align:left;font-family:Arial;font-size:12px}
+.mBlogLayer a,.mBlogLayer a:link,.mBlogLayer a:visited {color: #0082CB;}
+.mBlogLayer a:hover{color: #339900;}
+.mBlogLayer .top_r, .mBlogLayer .top_l, .mBlogLayer .bottom_l, .mBlogLayer .bottom_r {background:url(../images/logoNew_nocache.png) no-repeat scroll 0 0;height: 5px;width: 5px;}
+.mBlogLayer .top_l {background-position: 0 -304px;}
+.mBlogLayer .top_c, .mBlogLayer .bottom_c, .mBlogLayer .mid_l, .mBlogLayer .mid_r {background:url(../images/wraplayer_09.png) repeat scroll 0 0;height: 5px;}
+.mBlogLayer .top_r {background-position: -5px -304px;}
+.mBlogLayer .mid_c {background:#FFFFFF;}
+.mBlogLayer .layerBox {border: 1px solid #A0A0A0;}
+.layerBoxCon {overflow: hidden;}
+.layerSmartlogin {padding-top: 23px;position: relative;width: 100%;}
+.layerSmartlogin .layerMedia_close {position: absolute;right: 10px;top: 10px;width: 100%;}
+.layerMedia_close a.close {background:url(../images/gnbimgs.gif) no-repeat scroll 0 -193px;float: right;height: 8px;overflow: hidden;width: 8px;}
+.layerMedia_close a.close:hover {background-position:-8px -193px;}
+.layerSmartlogin .yellowBg {background-color:#FFFDDD;border:1px solid #F8F3D6;-moz-border-radius:5px;-webkit-border-radius:5px;border-radius:5px;font-size:14px;margin:0 auto 23px;width:450px;padding-left:15px;height:40px;line-height:40px;line-height:42px\9;overflow:hidden;color:#333;}
+.layerSmartlogin .yellowBg strong {font-weight:600;}
+.layerSmartlogin .infoForm {padding-left:33px;padding-bottom:25px;}
+.layerSmartlogin .infoLeft {width:268px;float:left;border-right:1px solid #ccc;}
+.layerSmartlogin .infoLeft caption {height:25px;line-height:25px;}
+.layerSmartlogin .inp {height:22px;background-color:#F8FBEF;border-color: #C4C7BD #EFEFEF #F2F2F2 #D2D5CA;border-style: solid;border-width: 1px;color: #333333;padding: 3px 2px 1px;}
+.layerSmartlogin .infoLeft .tab1 th {width:260px;padding-top:15px;}
+.layerSmartlogin .infoLeft .tab1 td {width:260px;padding-top:14px;text-align:left}
+.layerSmartlogin .infoLeft .tab1 td .inp {width:220px;}
+.layerSmartlogin .infoLeft .tab1 th .btn_normal {margin-right:52px;}
+.layerSmartlogin .infoLeft .tab1 th .chkb {vertical-align:middle;margin-right:3px;border:0;color: #333333;padding: 3px 2px 1px;}
+.layerSmartlogin .infoReg .tab2 th {width:100px;text-align:right;padding-top:11px;}
+.layerSmartlogin .infoReg .tab2 td {padding-top:12px;}
+.layerSmartlogin .infoReg .tab2 .td1 {width:180px;}
+.layerSmartlogin .infoReg .tab2 .inp {width:170px;}
+.layerSmartlogin .infoReg .tab2 .w1 {width:60px;}
+.layerSmartlogin .infoReg .tab2 .td1 .lf input {vertical-align:middle;margin-right:3px;}
+.layerSmartlogin .infoRight {width:200px;float:right;}
+.layerSmartlogin .infoRight .p1 {padding-bottom:20px;padding-top:4px;}
+.layerSmartlogin .infoRight .p2 {margin-left:12px;}
+.layerSmartlogin .btnlogin1 {background-image:url(../images/layerlogin_btn1.gif);background-repeat:no-repeat;width:120px;height:37px;display:block;}
+.layerSmartlogin .btnlogin1:hover {background-position:0 -39px;}
+.layerSmartlogin .btnlogin1_gray:link, .layerSmartlogin .btnlogin1_gray:visited, .layerSmartlogin .btnlogin1_gray:hover {background-position:0 -78px;}
+.layerSmartlogin .btnlogin1_load:link, .layerSmartlogin .btnlogin1_load:visited, .layerSmartlogin .btnlogin1_load:hover {background-position:0 -117px;}
+.layerSmartlogin .iswhat {float:left;margin-left:15px;}
+.layerSmartlogin .iswhat img {float:left;margin:5px 3px 0 0;vertical-align:middle;}
+.layerSmartlogin .iserro {-moz-border-radius:3px;background:#FDE3E4;border:1px solid #DFB9BA;height:25px;margin-left:9px;overflow:hidden;padding:0 5px;}
+.layerSmartlogin .iserro em {float:left;height:25px;line-height:25px;overflow:hidden;white-space:nowrap;}
+a.btn_normal:link, a.btn_normal:visited, a.btn_normal:hover, a.btn_hv:link, a.btn_hv:visited, a.btn_hv:hover, a.btn_notclick:link, a.btn_notclick:visited, a.btn_notclick:hover, a.btn_privacy:link, a.btn_privacy:visited, a.btn_privacy:hover {text-decoration:none;}
+.btn_normal, .btn_normal em, .newabtn_ok, .newabtn_ok em, .btn_notclick, .btn_notclick em, .newbtnadd, .newbtnadd em, .newbtnadd_dis, .newbtnadd_dis em, .btn_add, .btn_add em, .btn_green, .btn_green em, .newabtngrn, .newabtngrn em, .newbbtngrn, .newbbtngrn em, .btn_add, .btn_add em, .btn_gray, .btn_gray em, .btn_notclickbig, .btn_notclickbig em, .btn_longc {display:-moz-inline-stack;display:inline-block;background:url(../images/new_index_bg.png) no-repeat -320px -100px;height:23px;color:#333;line-height:23px;font-size:12px;font-weight:normal;cursor:pointer;text-decoration:none;}
+.btn_normal em {background-position:right -123px;height:23px;padding-right:20px;}
+.btn_normal {background-position:-320px -100px;height:23px;line-height:23px;padding-left:20px;}
+a.btn_normal:hover em {background-position:right -169px;display:inline-block;height:23px;text-decoration:none;}
+.MIB_linedot1 {background-image:url(../images/linedot1.gif);background-repeat:repeat-x;height:1px;overflow:hidden;clear:both;}
+.msnbind a.msnlink {display:inline-block;cursor:pointer;}
+.msnbind a.msnlink:hover {text-decoration:none;}
+.msnbind a.msnlink .txt {margin-left:3px;zoom:1;}
+.msnbind a.msnlink:hover .txt {text-decoration:underline;}
+.msnicon {width:24px;height:24px;background:url(../images/msnbind.png) no-repeat;vertical-align:middle;}
+.mBlogLayer .bottom_l {background-position: 0 -309px;}
+.mBlogLayer .bottom_r {background-position: -5px -309px;}
+.inputsuccess{background-image:url(../images/success.gif);background-position: center center;background-repeat: no-repeat;height: 141px;left: 8px;position: absolute;top: 6px;width:262px;}
+.tipicon {background:url(../images/tipicon.gif) no-repeat scroll 0 0 transparent;height: 16px;overflow: hidden;width: 16px;}
+.tip2 {background-position: 0 -16px;}
+.layerSmartlogin .iswhat img {float: left;margin: 5px 3px 0 0;vertical-align: middle;}
+#sinaNote {background: none repeat scroll 0 0 #FFFFFF;border: 1px solid #CCCCCC;margin: 0;overflow: hidden;padding: 0;position: absolute;text-align: left;width: auto;z-index: 999999;}
+.note {color: #999999;height: 30px;line-height: 28px;margin: 10px auto -6px;width: 560px;}
+#sinaNote li {clear: both;color: #999999;cursor: pointer;font-size: 12px;height: 20px;line-height: 20px;list-style: none outside none;margin: 0 1px;padding: 0 5px;}
+#sinaNote li.note {color: #999999;text-align: left;}

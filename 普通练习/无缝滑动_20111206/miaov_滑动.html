@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>淘宝幻灯滑入滑出效果 —— www.miaov.com —— 妙味课堂</title>
+<link href="miaov_style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="js/doMove.js"></script>
+<script type="text/javascript">
+window.onload = function(){
+	var oPacketDiv = document.getElementById('packet');
+	var aTab = document.getElementById('ol1').children;
+	var oPicUl = document.getElementById('ul1');
+	oPicUl.innerHTML += '<li>' + oPicUl.children[0].innerHTML + '</li>';
+	var picHeight = 150;
+	var currentIndex = 0;
+	for(var i=0; i<aTab.length; i++){
+		aTab[i].index = i;	
+		aTab[i].onclick = function(){
+			var speed = Math.abs(this.index - currentIndex%aTab.length) * 10;
+			startSlide(this.index, {speed: speed});
+		}
+	}
+	oPacketDiv.onmouseover = function(){
+		stopRolling();	
+	}
+	oPacketDiv.onmouseout = function(){
+		startRolling();	
+	}
+	startRolling();
+	
+	function startRolling(){
+		clearInterval(window.timer);
+		window.timer = setInterval(function(){
+			startSlide(currentIndex + 1);
+		}, 1500);
+	}
+	
+	function stopRolling(){
+		clearInterval(window.timer);
+	}
+	
+	function startSlide(newIndex, configs){
+		aTab[currentIndex%aTab.length].className = '';
+		aTab[newIndex%aTab.length].className = 'active';
+		slide(newIndex, configs);
+	}
+	
+	function slide(newIndex, configs){
+		if(currentIndex >= aTab.length){
+			currentIndex %= aTab.length;
+		}
+		setStyleInt(oPicUl, 'marginTop', -currentIndex*picHeight);
+		currentIndex = newIndex>aTab.length? newIndex%aTab.length: newIndex;
+		doMove(oPicUl, {marginTop: -currentIndex*picHeight}, null, configs);
+	}
+}
+</script>
+</head>
+
+<body>
+
+<div id="play">
+	<div class="packet" id="packet"><!-- 为了消除offsetXXX的兼容性问题 -->
+	    <ol id="ol1">
+	    	<li class="active">1</li>
+	        <li>2</li>
+	        <li>3</li>
+	        <li>4</li>
+	        <li>5</li>
+	    </ol>
+		<ul id="ul1">
+			<li><a href="http://www.miaov.com/"><img src="images/1.jpg" alt="广告一" width="470" height="150" /></a></li>
+			<li><a href="http://www.miaov.com/"><img src="images/2.jpg" alt="广告二" /></a></li>
+			<li><a href="http://www.miaov.com/"><img src="images/3.jpg" alt="广告三" /></a></li>
+	   		<li><a href="http://www.miaov.com/"><img src="images/4.jpg" alt="广告四" /></a></li>
+			<li><a href="http://www.miaov.com/"><img src="images/5.jpg" alt="广告五" /></a></li>
+		</ul>
+	</div>
+</div>
+
+</body>
+</html>

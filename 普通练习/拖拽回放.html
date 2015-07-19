@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<script type="text/ecmascript">
+var posArr = [];
+window.onload = function(){
+	var oDragDiv = document.getElementById('dragDiv');
+	oDragDiv.onmousedown = function(ev){
+		posArr.length = 0;
+		posArr.push({left:this.offsetLeft, top:this.offsetTop});
+		var oEvent = ev || event;
+		var disX = oDragDiv.offsetLeft - oEvent.clientX;
+		var disY = oDragDiv.offsetTop - oEvent.clientY;
+		document.onmousemove = function(ev){
+			var oEvent = ev || event;
+			oDragDiv.style.left = disX + oEvent.clientX + 'px';
+			oDragDiv.style.top = disY + oEvent.clientY + 'px';
+			//posArr.push({left:oDragDiv.offsetLeft, top:oDragDiv.offsetTop});
+			posArr.unshift({left:oDragDiv.offsetLeft, top:oDragDiv.offsetTop});
+		}
+		document.onmouseup = function(ev){
+			document.onmousemove = null;
+			document.onmouseup = null;
+			window.posIndex = 0;
+		}
+	}
+	var oRollbackBtn = document.getElementById('rollback');
+	oRollbackBtn.onclick = function(){
+		clearInterval(window.timer);
+		window.timer = setInterval(function(){
+			if(posIndex>=posArr.length){
+				posArr.length = 0;
+				clearInterval(window.timer);
+				return;
+			}
+			oDragDiv.style.left = posArr[posIndex].left + 'px';
+			oDragDiv.style.top = posArr[posIndex].top + 'px';
+			posIndex++;
+		}, 10);
+	}
+}
+</script>
+</head>
+
+<body>
+<div id="dragDiv" style="width:100px; height:100px; position:absolute; background-color:#39F; margin:0px; padding:0px;">
+</div>
+<input type="button" value="回放" id="rollback" style="width:50px; height:30px; left:200px; top:0px; position:absolute"/>
+</body>
+</html>

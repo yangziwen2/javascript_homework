@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+li.menu {list-style:none;}
+</style>
+<script type="text/javascript">
+var menuJson = [{
+		title: '我的电脑',
+		submenu: [{
+				title: 'c盘',
+				submenu: [{
+						title: 'windows',
+					},{
+						title: 'Program Files'
+					}
+				]
+			}
+		]	
+	},{
+		title: '我的文档'	,
+		action: new Function('alert("abc");')
+	},{
+		title: '网上邻居'	
+	}
+];
+window.onload = function(){
+	var oUl = createMenuTree(menuJson);
+	document.oncontextmenu = function(){
+		return false;	
+	}
+	document.onmousedown = function(ev){
+		var oEvent = ev || event;
+		if(oEvent.button != 2){
+			return true;	
+		}
+		closeMenu(oUl);
+		oUl.style.left = oEvent.clientX + 'px'
+		oUl.style.top = oEvent.clientY + 'px';
+		oUl.style.display = 'block';
+		oUl.style.position = 'absolute';
+		document.documentElement.appendChild(oUl);
+		return false;
+	}
+	document.onclick = function(ev){
+		var oEvent = ev || event;
+		closeMenu(oUl);
+		document.documentElement.removeChild(oUl);
+		oEvent.cancelBubble = true;
+	}
+	var oLiArr = oUl.getElementsByTagName('li');
+	for(var i=0; i<oLiArr.length; i++){
+		oLiArr[i].onclick = function(ev){
+			var oEvent = ev || event;
+			this.isOpen = this.isOpen? false:true;
+			if(this.isOpen && this.hasSubMenu){
+				openSubMenu(this);
+			}else{
+				closeSubMenus(this);	
+			}
+			oEvent.cancelBubble = true;
+		}
+	}
+}
+
+function closeSubMenus(oLi){
+	var oUlArr = oLi.getElementsByTagName('ul');
+	for(var i=0; i<oUlArr.length; i++){
+		oUlArr[i].style.display = 'none';	
+	}
+}
+
+function closeMenu(oUl){
+	var oLiArr = oUl.getElementsByTagName('li');
+	for(var i=0; i<oLiArr.length;i++){
+		closeSubMenus(oLiArr[i]);	
+	}
+}
+
+function openSubMenu(oLi){
+	var childrenNodes = oLi.childNodes;
+	for(var i=0; i<childrenNodes.length; i++){
+		if(childrenNodes[i].nodeType == 1){
+			childrenNodes[i].style.display = 'block';
+		}
+	}
+}
+
+function createMenuTree(menuJson){
+	var oUl = document.createElement('ul');
+	for(var i=0; i<menuJson.length; i++){
+		var oLi = document.createElement('li');
+		for(var key in menuJson[i]){
+			if('title' == key){
+				oLi.innerHTML = menuJson[i][key];
+			}else if('submenu' == key){
+				var oSubUl = createMenuTree(menuJson[i][key]);
+				oLi.appendChild(oSubUl);
+				oLi.hasSubMenu = true;
+			}else if('action' == key){
+				oLi.onclick = function(ev){
+					var oEvent = ev || event;
+					nenuJson[i][key]();	
+					oEvent.cancelBubble = true;
+				};
+				oLi.hasAction = true;
+			}
+		}
+		oLi.className = 'menu';
+		oUl.appendChild(oLi);
+	}
+	oUl.style.display = 'none';
+	oUl.style.cursor = 'pointer';
+	return oUl;
+}
+</script>
+</head>
+<body>
+</body>
+</html>

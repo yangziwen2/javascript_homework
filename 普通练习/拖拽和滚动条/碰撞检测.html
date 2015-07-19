@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>New Web Project</title>
+<style>
+*{
+	margin: 0px;
+	padding: 0px;
+}
+.wrap {
+	width: 600px; 
+	height: 350px;
+	position: relative;
+	margin: 50px auto 0px;
+	border: 1px solid #333;
+}
+.draggable {
+	width: 100px; height: 100px; background: red; position: absolute;
+	left: 0px; top:0px;
+}
+</style>
+<script src="event.js"></script>
+<script src="style.js"></script>
+<script src="drag.js"></script>
+<script>
+window.onload = function(){
+	var oDiv1 = document.getElementById('div1');
+	var oDiv2 = document.getElementById('div2');
+	dragXY(oDiv1, {
+		limited: true,
+		cling: 0,
+		fn: function(){
+			
+			var l1 = oDiv1.offsetLeft;
+			var r1 = l1 + oDiv1.offsetWidth;
+			var t1 = oDiv1.offsetTop;
+			var b1 = t1 + oDiv1.offsetHeight;
+			
+			var l2 = oDiv2.offsetLeft;
+			var r2 = l2 + oDiv2.offsetWidth;
+			var t2 = oDiv2.offsetTop;
+			var b2 = t2 + oDiv2.offsetHeight;
+			
+			if(r1<=l2 || l1 >= r2 || b1 <= t2 || t1 >= b2){
+				//碰不上的情形
+				oDiv1.style.backgroundColor = 'red';
+			}else{
+				oDiv1.style.backgroundColor = 'yellow';
+			}
+		}
+	});
+	dragXY(oDiv2, {limited: false});
+}
+
+// function dragXY(obj, paramObj){
+	// drag(obj, {
+		// direct: 'left',
+		// limited: paramObj.limited
+	// });
+	// drag(obj, {
+		// direct: 'top',
+		// limited: paramObj.limited
+	// })
+// }
+// 
+// function drag(obj, paramObj){
+	// var direct = paramObj.direct || 'left';	//拖拽方向
+	// var limited = paramObj.limited;	//是否限制移动范围
+	// addEvent(obj, 'mousedown', function(event){
+		// if(typeof drag.zIndex == 'number'){
+			// drag.zIndex ++;
+		// }else{
+			// drag.zIndex = 0;
+		// }
+		// obj.style.zIndex = drag.zIndex;
+		// event = event || window.event;
+		// var clientPos = getClientPos(event);
+		// var dist = clientPos - getStyleInt(obj, direct);
+		// addEvent(document, 'mousemove', dealMousemove);
+		// addEvent(document, 'mouseup', dealMouseup);
+		// event.preventDefault();
+		// event.returnValue = false;
+		// function dealMousemove(event){
+			// event = event || window.event;
+			// var clientPos = getClientPos(event);
+			// var newPos = clientPos - dist;
+			// if(limited){
+				// newPos > 0 || (newPos = 0);
+				// var max = getSize(obj.offsetParent, direct) - getSize(obj, direct);
+				// newPos < max || (newPos = max);
+			// }
+			// setStyleInt(obj, direct, newPos);
+			// if(typeof paramObj.fn == 'function'){
+				// paramObj.fn();
+			// }
+		// }
+// 		
+		// function dealMouseup(event){
+			// event = event || window.event;
+			// removeEvent(document, 'mousemove', dealMousemove);
+			// removeEvent(document, 'mouseup', dealMouseup);
+		// }
+	// });
+// 	
+	// function getClientPos(event){
+		// if(direct == 'left'){
+			// return event.clientX;
+		// }else{
+			// return event.clientY;
+		// }
+	// }
+// 	
+	// function getSize(obj, direct){
+		// switch(direct){
+			// case 'left':
+				// return getStyleInt(obj, 'width');
+			// case 'top':
+				// return getStyleInt(obj, 'height');
+		// }
+	// }
+// }
+</script>
+</head>
+<body>
+<div class="wrap">
+	<div id="div1" class="draggable"></div>
+	<div id="div2" class="draggable" style="left:100px; top: 100px; background-color: blue"></div>
+</div>
+</body>
+</html>

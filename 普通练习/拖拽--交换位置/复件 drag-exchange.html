@@ -1,0 +1,237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style type="text/css">
+* {margin:0px; padding:0px;}
+</style>
+<script type="text/javascript">
+window.onload = function(){
+	var oDiv = document.getElementById('div1');
+	var params = {
+		posLimit: {
+			left: 0,
+			right: function(){return document.documentElement.clientWidth;},
+			top: 0,
+			bottom: function(){return document.documentElement.clientHeight;}
+		},
+		positionBorder:{
+			borderWidth: '5px',
+			borderStyle: 'dashed',
+			borderColor: '#ccc',
+		},
+		isBorderDragged: false,
+		overlapFunc: exchangePosition
+	}
+	drag(oDiv, params);
+}
+
+function exchangePosition(draggedObj, targetObj){
+	var dl = draggedObj.offsetLeft;
+	var dt = draggedObj.offsetTop;
+	draggedObj.style.left = targetObj.offsetLeft + 'px';
+	draggedObj.style.top = targetObj.offsetTop + 'px';
+	targetObj.style.left = dl + 'px';
+	targetObj.style.top = dt + 'px';
+}
+
+function doOverlap(draggedObj, targetObjArr, overlapFunc){
+	if(typeof draggedObj != 'object'){
+		return false;
+	}
+	if(targetObjArr instanceof 'Object'){
+		targetObjArr = [targetObjArr];
+	}
+	if(! targetObjArr instanceof 'Array'){
+		return false;
+	}
+	for(var i=0; i<targetObjArr.length; i++){
+		if(draggedObj == targetObjArr[i]){
+			continue;
+		}
+		if(isOverlap(draggedObj, targetObjArr[i])){
+			overlapFunc(draggedObj, targetObjArr[i]);
+			return true;
+		}
+	}
+}
+
+function isOverlap(draggedObj, targetObj){
+	var l = targetObj.offsetLeft - draggedObj.offsetWidth;
+	var r = targetObj.offsetLeft + targetObj.offsetWidth;
+	var t = targetObj.offsetTop - draggedObj.offsetHeight;
+	var b = targetObj.offsetTop + targetObj.offsetHeight;
+	var dl = draggedObj.offsetLeft;
+	var dt = draggedObj.offsetTop;
+	if(dt>t && dt<b && dl>l && dl<b){
+		return true;
+	}
+	return false;
+}
+
+function drag(obj, params){
+	if(! typeof obj == 'object'){
+		return;
+	}
+	obj.onmousedown = function(ev){
+		var oEvent = ev || event;
+		if(oEvent.button == 2){
+			return false;
+		}
+		var oPosBorderDiv = initPositionBorder(obj, params.positionBorder);
+		initOriginPosition(params.isBorderDragged? oPosBorderDiv:obj, oEvent);
+		if(params.isBorderDragged){
+			oPosBorderDiv.style.zIndex = '99999';
+		}else{
+			obj.style.zIndex = '99999';
+		}
+		
+		document.onmousemove = function(ev){
+			var oEvent = ev || event;
+			return doMouseMove(params.isBorderDragged? oPosBorderDiv:obj, oEvent, params);
+		}
+		
+		document.onmouseup = function(ev){
+			var oEvent = ev || event;
+			document.onmousemove = null;
+			document.onmouseup = null;
+			if(params.isBorderDragged){
+				var iTargetLeft = getStyleIntValue(oPosBorderDiv, 'left') + parseInt(params.positionBorder.borderWidth);
+				var iTargetTop = getStyleIntValue(oPosBorderDiv, 'top') + parseInt(params.positionBorder.borderWidth);
+				setStyle(obj, 'left', iTargetLeft +'px');
+				setStyle(obj, 'top', iTargetTop + 'px');
+			}
+			document.body.removeChild(oPosBorderDiv);
+			obj.style.zIndex = '';
+		}
+		return false;
+	}
+}
+
+function doMouseMove(obj, oEvent, params){
+	var iTargetX = limitPosX(obj, oEvent.clientX + obj.disX, params.posLimit);
+	var iTargetY = limitPosY(obj, oEvent.clientY + obj.disY, params.posLimit);
+	setPosition(obj, iTargetX, iTargetY);
+	return false;
+}
+
+function initPositionBorder(obj, positionBorder){
+	if(typeof positionBorder == 'undefined'){
+		return null;
+	}
+	var oPosBorderDiv = document.createElement('div');
+	for(attr in positionBorder){
+		setStyle(oPosBorderDiv, attr, positionBorder[attr]);
+	}
+	var objBorderWidth = parseInt(positionBorder.borderWidth);
+	objBorderWidth = isNaN(objBorderWidth)? 0: objBorderWidth; 
+	setStyle(oPosBorderDiv, 'position', 'absolute');
+	var objLeft = getStyleIntValue(obj, 'left');
+	var objTop = getStyleIntValue(obj, 'top');
+	setStyle(oPosBorderDiv, 'left', (objLeft - objBorderWidth) + 'px');
+	setStyle(oPosBorderDiv, 'top', (objTop - objBorderWidth) + 'px');
+	setStyle(oPosBorderDiv, 'width', getStyleIntValue(obj, 'width') + 'px');
+	setStyle(oPosBorderDiv, 'height', getStyleIntValue(obj, 'height') + 'px');
+	document.body.appendChild(oPosBorderDiv);
+	return oPosBorderDiv;
+}
+
+function initOriginPosition(obj, oEvent){
+	var oriMouseX = oEvent.clientX;
+	var oriMouseY = oEvent.clientY;
+	obj.oriPosX = getStyleIntValue(obj, 'left');
+	obj.oriPosY = getStyleIntValue(obj, 'top');
+	obj.disX = obj.oriPosX - oriMouseX;
+	obj.disY = obj.oriPosY - oriMouseY;
+}
+
+function limitPosX(obj, posX, posLimit){
+	if(!posLimit){
+		return posX;
+	}
+	if(typeof posLimit.left != 'undefined'){
+		posX = Math.max(posX, returnValue(posLimit.left));
+	}
+	if(typeof posLimit.right != 'undefined'){
+		posX = Math.min(posX, returnValue(posLimit.right) - getStyleIntValue(obj, 'width'));
+	}
+	return posX;
+}
+
+function limitPosY(obj, posY, posLimit){
+	if(!posLimit){
+		return posY;
+	}
+	if(typeof posLimit.top != 'undefined'){
+		posY = Math.max(posY, returnValue(posLimit.top));
+	}
+	if(typeof posLimit.bottom != 'undefined'){
+		posY = Math.min(posY, returnValue(posLimit.bottom) - getStyleIntValue(obj, 'height'));
+	}
+	return posY;
+}
+
+function returnValue(input){
+	if(typeof input == 'function'){
+		return input();
+	}else{
+		return input;
+	}
+}
+
+function setPosition(obj, posX, posY){
+	setStyle(obj, 'left', posX + 'px');
+	setStyle(obj, 'top', posY + 'px');
+}
+
+function setStyle(obj, attr, value){
+	if(attr == 'opacity'){
+		obj.style.opacity = value/100;
+		obj.style.filter = 'alpha(opacity:'+value+')';
+	}else{
+		obj.style[attr] = value;
+	}
+}
+
+function getStyleIntValue(obj, attr, defaultValue){
+	var result = getOffsetStyle(obj, attr);
+	result = isNaN(result)? parseInt(getStyle(obj, attr)): result;
+	if(isNaN(result) && typeof defaultValue != 'undefined'){
+		return defaultValue;
+	}
+	return result;
+}
+
+function getStyle(obj, attr){
+	if(obj.currentStyle){
+		return obj.currentStyle[attr];
+	}else{
+		return getComputedStyle(obj, false)[attr];
+	}
+}
+
+function getOffsetStyle(obj, attr){
+	if(typeof attr != 'string' || attr.trim() == ''){
+		return NaN;
+	}
+	var attrStr = 'offset' + attr.substring(0,1).toUpperCase() + attr.substring(1).toLowerCase();
+	if(typeof obj[attrStr] == 'undefined'){
+		return NaN;
+	}
+	return obj[attrStr];
+}
+
+String.prototype.trim=function()
+{
+     return this.replace(/(^\s*)(\s*$)/g, '');
+}
+
+</script>
+</head>
+
+<div id="div1" style="left:10px; top:10px; width:100px; height:100px; position:absolute; border:1px solid #F00;background-color:#999">
+</div>
+<body>
+</body>
+</html>

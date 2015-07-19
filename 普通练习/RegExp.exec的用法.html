@@ -1,0 +1,45 @@
+<html>
+<head>
+<script>
+(function(){
+	String.prototype.detailMatch = function(re){
+		typeof re == 'string' && (re = new RegExp(re));
+		if(! re instanceof RegExp){
+			return [];	
+		}
+		var flags = 'g';
+		flags += re.ignoreCase? 'i':'';
+		flags += re.multiline? 'm': '';
+		re = new RegExp(re.source, flags);
+		re.global = true;
+		var resultArr = [];
+		for(re.lastIndex = 0; re.lastIndex < this.length;){
+			resultArr.push(re.exec(this));
+		}
+		resultArr.toString = detailMatchResultToString;
+		return resultArr;
+	}
+	function detailMatchResultToString(){
+		if(this.length == 0){
+			return '';	
+		}
+		var strBuffer = ['input :' + this[0].input + '\n\n'];
+		for(var i=0; i<this.length; i++){
+			strBuffer.push('matchContent: ' + this[i][0] + '\n');
+			strBuffer.push('index: ' + this[i].index + '\n');
+			strBuffer.push('\n');
+		}
+		return strBuffer.join('');
+	}
+})();
+
+var re = /a+/;
+var str = 'a b aa ca';
+var resultArr = [];
+var result = str.detailMatch(re);
+alert(result);
+</script>
+</head>
+<body>
+</body>
+</html>

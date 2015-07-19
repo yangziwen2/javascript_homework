@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<script src="jquery.js"></script>
+<script>
+window.onload = function(){
+	var oTxt = document.getElementById('txt');
+	var oBtn = document.getElementById('btn');
+	oBtn.onclick = function(){
+		var oDiv = document.createElement('div');
+		var str = oTxt.value;
+		var scriptRe = new RegExp('<script>[\\w\\W]*?<\\/script>', 'gi');
+		//scriptRe = /<script>[\w\W]*?<\/script>/gi;
+		var scriptArr = str.match(scriptRe) || [];
+		
+		var styleRe = new RegExp('<style>[\\w\\W]*?<\\/style>', 'gi');
+		var styleArr = str.match(styleRe) || [];
+		
+		var content = str.replace(scriptRe, '').replace(styleRe, '').replace(/\n/g, '<br/>');
+		oDiv.innerHTML = content;
+		document.body.appendChild(oDiv);
+		for(var i=0; i<scriptArr.length; i++){
+			var oScript = document.createElement('script');
+			var oText = document.createTextNode(scriptArr[i].replace(/<[\/]?script>/gi, ''));
+			//oScript.innerHTML =  scriptArr[i].replace(/<[\/]?script>/gi, '');
+			oScript.appendChild(oText);
+			document.body.appendChild(oScript);
+		}
+		
+		for(var i=0; i<styleArr.length; i++){
+			var oStyle = document.createElement('style');
+			oStyle.innerHTML =  styleArr[i].replace(/<[\/]?style>/gi, '');
+			document.body.appendChild(oStyle);
+		}
+	}
+}
+</script>
+</head>
+
+<body>
+<textarea cols="60" rows="10" id="txt">
+</textarea>
+<input type="button" value="button" id="btn" />
+</body>
+</html>

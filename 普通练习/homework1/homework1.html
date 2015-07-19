@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+*{margin:0; padding:0}
+#pannelDiv{width:288px; height:451px; background:url(images/homework1bg.bmp) no-repeat; position:relative; left:150px; top:100px;}
+#pannelDiv h3{margin-left:20px; color:#fff; position:relative; top:10px; font-size:18px}
+#pannelDiv p{color:#fff; position:relative; margin-left:20px; margin-right:10px; position:relative; top: 20px;}
+#pannelDiv span{font-weight:bold; font-size:14px}
+#pannelDiv ul{list-style:none; position:absolute; width:288px; top:80px;}
+#pannelDiv ul li{width:115px; height:40px; float:left;margin-left:10px;margin-top:10px; position:relative; left:14px;top:20px; text-align:center; cursor:pointer;}
+#pannelDiv ul li span{position:relative; top:10px;}
+#submitBtn {color:#fff; position:absolute; left:54px; top:365px; background:#ff9c18; width:178px; height:30px; text-align:center; display:block; cursor:pointer;}
+#submitBtn span{position:relative; top:5px;}
+.selected {background:url(images/btnOn.bmp); color:#ff9c18;}
+.unselected {background:url(images/btnOff.bmp);color:rgb(140,189,189);}
+
+</style>
+<script>
+window.onload = function(){
+	var oUl = document.getElementById('btnUl');
+	var oLiArr = document.getElementsByTagName('li');
+	for(var i=0; i<oLiArr.length; i++){
+		oLiArr[i].className = 'unselected';
+		oLiArr[i].onclick = function(){
+			if('unselected' == this.className){
+				this.className = 'selected';	
+			}else{
+				this.className = 'unselected';
+			}
+		};	
+	}
+};
+</script>
+</head>
+<body>
+<div id="pannelDiv">
+<h3>Choose your preferences.</h3>
+<p>You can create your homepage with your favorite items & content</p>
+<ul id="btnUl">
+	<li>
+    	<span>News</span>
+        <span class="shadow1" style="width:115px; height:40px; background:#999; position:relative; top:1px;"></span>
+        <span class="shadow1" style="width:115px; height:40px; background:#999; position:relative; top:1px;"></span>
+        <span class="shadow1" style="width:115px; height:40px; background:#999; position:relative; top:1px;"></span>
+    </li>
+    <li>
+    	<span>Cook</span>
+    </li>
+    <li>
+    	<span>Entertainment</span>
+    </li>
+    <li>
+    	<span>Economy</span>
+    </li>
+    <li>
+    	<span>Sports</span>
+    </li>
+    <li>
+    	<span>Fashion</span>
+    </li>
+    <li>
+    	<span>Shopping</span>
+    </li>
+    <li>
+    	<span>Movie</span>
+    </li>
+    <li>
+    	<span>Health</span>
+    </li>
+    <li>
+    	<span>IT</span>
+    </li>
+</ul>
+
+<span id="submitBtn"><span>Create Your Homepage!<span></span>
+</div>
+</body>
+</html>

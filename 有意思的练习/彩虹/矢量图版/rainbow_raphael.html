@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+#canvas {width:600px; height:350px; margin:100px auto 0px; border: 1px solid #333;}
+#buttons {text-align:center}
+</style>
+<script type="text/javascript" src="js/raphael-2.0.1.js"></script>
+<script>
+var colorArr = [
+	'#ff0000',
+	'#ff7f00',
+	'#ffff00',
+	'#00ff00',
+	'#00ffff',
+	'#0000ff',
+	'#8b00ff'
+];
+window.onload = function(){
+	var oStartBtn = document.getElementById('startBtn');
+	var oResetBtn = document.getElementById('resetBtn');
+	var r = Raphael('canvas', 600, 350);
+	 r.customAttributes.arc = function (cx, cy, angle, radius) {
+		var degree = Math.PI*angle/180;
+		x = cx - radius*Math.cos(degree);
+		y = cy - radius*Math.sin(degree);
+		// A rx, ry, ..., 是否是大弧, 是否顺时针, endX, endY
+		path = [["M", cx-radius, cy], ["A", radius, radius, 0, 0, 1, x, y]];
+		return {path: path};
+	};
+	var cx = 300,
+		cy = 250,
+		radius = 200,
+		angle = 60,
+		strokeWidth = 10;
+	var param = {'stroke-width': strokeWidth, fill:'none'};
+	var rainbowArr = [];
+	var initAngleArr = [];
+	for(var i=0; i<colorArr.length; i++, angle-=5, radius-=strokeWidth){
+		param.stroke = colorArr[i];
+		rainbowArr.push(r.path().attr(param).attr({arc: [cx, cy, angle, radius]}));
+		initAngleArr.push(angle);
+	}
+	oStartBtn.onclick = function(){
+		for(var i=0; i<rainbowArr.length; i++){
+			rainbowArr[i].animate({arc:[cx, cy, 180, rainbowArr[i].attrs.arc[3]]}, 1000, '<');
+		}
+	};
+	oResetBtn.onclick = function(){
+		for(var i=0; i<rainbowArr.length; i++){
+			rainbowArr[i].attr({arc:[cx, cy, initAngleArr[i], rainbowArr[i].attrs.arc[3]]});
+		}
+	}
+}
+</script>
+</head>
+<body>
+<div id="canvas">
+</div>
+<div id="buttons">
+    <input type="button" value="start" id="startBtn"/>
+    <input type="button" value="reset" id="resetBtn" />
+</div>
+</body>
+</html>

@@ -1,0 +1,211 @@
+﻿<html>
+<head>
+<script>
+window.onload = function(){
+	var oUl = document.getElementById('ul1');
+	var aCheckBox = oUl.getElementsByTagName('input');
+	var oSelectAll = document.getElementById('selectAll');
+	var oReverseBtn = document.getElementById('reverseBtn');
+	var sectLength = 32;
+	var statusArr = [];
+	var lastStatusNum = aCheckBox.length % sectLength;
+	var statusLength = parseInt(aCheckBox.length / sectLength) + 1;
+	for(var i=0; i<statusLength; i++){
+		statusArr.push(0);
+	}
+	var fullSectStatus = ~0;					//statusArr[0-statusArr.length-2]所对应的全选的status
+	var maxStatus = (1 << aCheckBox.length % sectLength) - 1;	//statusArr[statusArr.length-1]所对应的全选的status
+	for(var j=0; j<statusArr.length-1; j++){
+		var iBase = j*sectLength;
+		var index = 0;
+		for(var i=0; i<sectLength; i++){
+			index = iBase + i;
+			aCheckBox[index].index = index;
+			aCheckBox[index].sectIndex = i;
+			aCheckBox[index].onclick = function(){
+				var j = parseInt(this.index/sectLength);
+				var curStatus = 1 << this.sectIndex;
+				dealCheckBoxClick(this, statusArr[j], curStatus, fullSectStatus, j)
+			}
+		}
+	}
+	for(var i=(statusArr.length-1)*sectLength; i<aCheckBox.length; i++){
+		aCheckBox[i].index = i;
+		aCheckBox[i].sectIndex = i%sectLength;
+		aCheckBox[i].onclick = function(){
+			var j = statusArr.length - 1;
+			var curStatus = 1 << this.sectIndex;
+			dealCheckBoxClick(this, statusArr[j], curStatus, maxStatus, j);
+		}
+	}
+	oSelectAll.onclick = function(){
+		for(var i=0; i<aCheckBox.length; i++){
+			aCheckBox[i].checked = this.checked;
+		}
+		for(var i=0; i<statusLength-1; i++){
+			statusArr[i] = this.checked? fullSectStatus: 0;
+		}
+		statusArr[statusLength - 1] = this.checked? maxStatus: 0;
+	};
+	oReverseBtn.onclick = function(){
+		for(var i=0; i<aCheckBox.length; i++){
+			aCheckBox[i].checked = !aCheckBox[i].checked;
+		}
+		for(var i=0; i<statusArr.length-1; i++){
+			statusArr[i] = statusArr[i] ^ fullSectStatus;
+		}
+		statusArr[statusArr.length - 1] = statusArr[statusArr.length - 1] ^ maxStatus;
+		oSelectAll.checked = isAllChecked(statusArr, maxStatus);
+	}
+	function isAllChecked(statusArr, maxStatus){
+		var fullSectStatus = ~0;
+		for(var i=0; i<statusArr.length-1; i++){
+			if(statusArr[i] != fullSectStatus){
+				return false;
+			}
+		}
+		if(statusArr[statusArr.length-1] != maxStatus){
+			return false;
+		}
+		return true;
+	}
+	function dealCheckBoxClick(_this, status, curStatus, fullStatus, statusIndex){
+		var contraryStatus = curStatus ^ fullStatus;
+		status = status & contraryStatus;
+		status = status | (_this.checked? curStatus: 0);
+		statusArr[statusIndex] = status;
+		oSelectAll.checked = isAllChecked(statusArr, maxStatus);
+	}
+}
+</script>
+<style>
+li {list-style:none; float:left;}
+</style>
+</head>
+<body>
+<span>全选</span><input id="selectAll" type="checkbox"></input>
+<a id="reverseBtn" href="javascript:void(0)">反选</a>
+<ul id="ul1" style="width:200px;">
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+	<li><input type="checkbox"></input></li>
+</ul>
+</body>
+</html>

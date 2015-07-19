@@ -1,0 +1,61 @@
+<html>
+<head>
+<script>
+window.onload = function(){
+	var user =    
+    {    
+        "username":"andy",   
+        "age":20,   
+        "info": { "tel": "123456", "cellphone": "98765"},   
+        "address":   
+            [   
+                {"city":"beijing","postcode":"222333"},   
+                {"city":"newyork","postcode":"555666"}   
+            ]   
+    };
+    var json = obj2json(user);
+    alert(json);
+    var user2 = json2obj(json);
+    alert(user2);
+}
+
+function obj2json(obj){
+	if(typeof obj != 'object'){
+		if(typeof obj == 'string'){
+			return '\''+obj+'\'';
+		}else{
+			return obj;
+		}
+	}
+	var jsonStr = '';
+	if(obj.length){
+		for(var i=0; i<obj.length; i++){
+			jsonStr += ',' + obj2json(obj[i]); 
+		}
+		jsonStr = '[' + jsonStr.substring(1) + ']';
+	}else{
+		for(var attr in obj){
+			jsonStr += ',' + attr + ':' + obj2json(obj[attr]);
+		}
+		jsonStr = '{' + jsonStr.substring(1) + '}';
+	}
+	return jsonStr;
+}
+
+function json2obj(json){
+	if(typeof json != 'string'){
+		return null;
+	}
+	var obj = null;
+	try{
+		obj = eval('(' + json + ')');
+	}catch(err){
+	}
+	return obj;
+}
+</script>
+</head>
+<body>
+
+</body>
+</html>

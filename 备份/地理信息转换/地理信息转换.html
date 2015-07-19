@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+</head>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<script>
+var cityZhStr = '金斯敦,萨尔茨堡,奥斯陆,布拉格,哥本哈根,日内瓦,费城,坎昆,东京,布宜诺斯艾利斯,伊斯坦布尔,卢塞恩,渥太华,比勒陀利亚,雅典,维也纳,瓦杜兹,圣彼得堡,华沙,布达佩斯';
+var cityEnStr = 'Kingston,Salzburg,Oslo,Prague,Copenhagen,Geneva,Philadelphia,Cancun,Tokyo,Buenos Aires,Istanbul,Lucerne,Ottawa,Pretoria,Athens,Vienna,Vaduz,St. Petersburg,Warsaw,Budapest';
+var cityZhArr = cityZhStr.split(',');
+var cityEnArr = cityEnStr.split(',');
+var cityConvertMap = {};
+for(var i=0; i<cityZhArr.length; i++){
+	cityConvertMap[cityZhArr[i]] = cityEnArr[i];
+}
+var geocoder;
+var map;
+function initialize() {
+	geocoder = new google.maps.Geocoder();
+	var latlng = new google.maps.LatLng(39.908715, 116.397389);
+	//-34.397, 150.644);
+	var myOptions = {
+		zoom : 12,
+		center : latlng,
+		mapTypeId : google.maps.MapTypeId.ROADMAP
+	}
+	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+}
+
+function codeAddress() {
+	var address = document.getElementById("address").value;
+	if(geocoder) {
+		geocoder.geocode({
+			'address' : address
+		}, function(results, status) {
+			if(status == google.maps.GeocoderStatus.OK) {
+				map.setCenter(results[0].geometry.location);
+				alert(results[0].geometry.location)
+				var marker = new google.maps.Marker({
+					map : map,
+					position : results[0].geometry.location
+				});
+			} else {
+				alert("Geocode was not successful for the following reason: " + status);
+			}
+		});
+	}
+}
+function setAddressByLatLng(lat, lng){
+	lat = parseFloat(lat);
+	lng = parseFloat(lng);
+	if(isNaN(lat) || isNaN(lng)){
+		alert('请输入合法的经纬度！');
+		return;
+	}
+	var latlng = new google.maps.LatLng(lat, lng);
+	map.setCenter(latlng);
+	var marker = new google.maps.Marker({
+		map : map,
+		position : latlng
+	});
+	
+}
+function convertAddressInfo(){
+	var oriInfo = document.getElementById('oriInfo').value,
+		newInfoTxt = document.getElementById('newInfo');
+	newInfoTxt.value = '';
+	oriInfo = oriInfo.replace(/\n$/, '');
+	if(!oriInfo.replace(/\s/g, '')){
+		alert('没有输入');
+		return;
+	}
+	var infoArr = oriInfo.split('\n'),
+		resultInfoArr = [];
+	var resultIndex = 0;
+	findPos(0, infoArr.length);
+	function findPos(i, l){
+		if(i>=l){
+			return;
+		}
+		var detailArr = infoArr[i].split(',');
+		var queryStr = '';
+		// for(var j=1; j<detailArr.length; j++){
+			// queryStr += detailArr[j] + ' ';
+		// }
+		queryStr += detailArr[1];
+		queryStr += ', ' + cityConvertMap[detailArr[2]] || detailArr[2];
+		console.log(queryStr);
+		geocoder.geocode({
+			'address' : queryStr
+		}, function(results, status) {
+			console.dir(results);
+			if(status == google.maps.GeocoderStatus.OK) {
+				var fullName = '';
+				for(var k=0; k<results[resultIndex].address_components.length; k++){
+					fullName += ',' + results[resultIndex].address_components[k].long_name;
+				}
+				resultInfoArr[i] = {
+					id: detailArr[0],
+					formattedAddress: results[resultIndex].formatted_address,
+					lat: results[resultIndex].geometry.location.lat(),
+					lng: results[resultIndex].geometry.location.lng(),
+					fullName: fullName.substring(1)
+				}
+				if(!resultInfoArr[i].fullName.indexOf(detailArr[2]) == 0){
+					newInfoTxt.value += resultInfoArr[i].id + ':' + resultInfoArr[i].fullName + '[' + resultInfoArr[i].lat + ',' + resultInfoArr[i].lng + ']\n\n';
+				}
+			} else {
+				resultInfoArr[i] = null;
+				//newInfoTxt.value += detailArr[0] + ': 没有找到\n\n';
+			}
+			setTimeout(function(){findPos(i+1, l);}, 1500);
+		});
+	}
+	return resultInfoArr
+}
+</script>
+<body onload="initialize()">
+<div style="width: 1000px;">
+	<div id="leftWrap" style="display:inline-block">
+		<div id="map_canvas" style="width: 320px; height: 480px;"></div>
+		<div>
+			<input id="address" type="textbox" value="天安门， 北京">
+			<input type="button" value="Encode" onclick="codeAddress()">
+			</br/>
+			<input id="latInput" style="width:100px;"/>
+			<input id="lngInput" style="width:100px;"/>
+			<input id="locateBtn" type="button" value="go" onclick = "setAddressByLatLng(document.getElementById('latInput').value, document.getElementById('lngInput').value);"/>
+		</div>
+	</div>
+	<div style="display:inline-block">
+		<textarea cols="40" rows="31" id="oriInfo"></textarea>
+		<br/>
+		<input type="button" id="convertBtn" value="转换" onclick="convertAddressInfo()"/>
+	</div>
+	<div style="display:inline-block">
+		<textarea cols="40" rows="31" id="newInfo"></textarea>
+		<br/>
+		<input style="visibility: hidden" />
+	</div>
+</div>
+</body>
+</html>

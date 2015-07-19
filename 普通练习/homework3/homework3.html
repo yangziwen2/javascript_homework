@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+* {padding:0px; margin:0px;}
+li {list-style:none;}
+.showPannel {position:relative; left:300px; top:100px;}
+.title li {width:98px; height:30px; background:#999; border:1px solid #CCC; float:left; cursor:pointer; text-align:center; color:#FFF; line-height:30px;}
+.title .select {background:#09C; cursor:default; border:1px solid #999; color:#FF9; font-weight:bold;}
+.content {width:500px; height:277;}
+.content li {width:500px; height:277px; float:left; overflow:hidden; display:none}
+.content .show {display:block}
+</style>
+<script>
+window.currentSelectedTitleIndex = 0;
+window.onload = function(){
+	var oTitleDiv = document.getElementById('title');
+	var oContentDiv = document.getElementById('content');
+	var oTitleLis = oTitleDiv.getElementsByTagName('li');
+	var oContentLis = oContentDiv.getElementsByTagName('li');
+	for(var i=0; i<oTitleLis.length; i++){
+		oTitleLis[i].titleIndex = i;
+		oTitleLis[i].onmouseover = function(){
+			oTitleLis[window.currentSelectedTitleIndex].className = '';
+			oContentLis[window.currentSelectedTitleIndex].className = ''; 
+			window.currentSelectedTitleIndex = this.titleIndex;
+			this.className = 'select';
+			oContentLis[window.currentSelectedTitleIndex].className = 'show';
+		};
+	}
+};
+</script>
+</head>
+
+<body>
+<div class="showPannel">
+	<div class="title" id="title">
+    	<ul>
+        	<li class="select">织田信长</li>
+            <li>德川家康</li>
+            <li>丰臣秀吉</li>
+            <li>武田信玄</li>
+            <li>上衫谦信</li>
+        </ul>
+    </div>
+    <div class="content" id="content">
+    	<ul>
+        	<li class="show"><img src="images/zhitianxinchang.jpg" /></li>
+            <li><img src="images/dechuanjiakang.jpg"/></li>
+            <li><img src="images/fengchenxiuji.jpg"/></li>
+            <li><img src="images/wutianxinxuan.jpg"/></li>
+            <li><img src="images/shangshanqianxin.jpg"/></li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

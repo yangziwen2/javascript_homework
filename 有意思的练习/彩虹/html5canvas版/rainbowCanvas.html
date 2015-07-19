@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<script>
+var colorArr = [
+	'#ff0000',
+	'#ff7f00',
+	'#ffff00',
+	'#00ff00',
+	'#00ffff',
+	'#0000ff',
+	'#8b00ff'
+]
+window.onload = function(){
+	var canvas = document.getElementById('canvas');
+	var startBtn = document.getElementById('startBtn');
+	var resetBtn = document.getElementById('resetBtn');
+	var context = canvas.getContext('2d');
+	context.translate(300, 250);
+	var lineWidth = 10,
+		angle = -2*Math.PI/3;
+	var initAngleArr = [];
+	for(var i=0; i<colorArr.length; i++){
+		initAngleArr.push(angle - i * Math.PI/36);
+	}
+	initRainbow();
+	var timer = null;
+	startBtn.onclick = function(){
+		var totalTime = 1000;
+		clearInterval(timer);
+		var angleArr = initAngleArr.slice(0);
+		var angleSpeed = Math.PI/45;
+		timer = setInterval(function(){
+			var newAngle = 0;
+			for(var i=0; i<angleArr.length; i++){
+				angleSpeed = -initAngleArr[i]/totalTime*10;
+				newAngle = angleArr[i] + angleSpeed;
+				newAngle = newAngle>=0? 0: newAngle;
+				angleArr[i] = newAngle;
+			}
+			newAngle<-0.01 || (clearInterval(timer));
+			drawRainbow(angleArr);
+		}, 10);
+	};
+	resetBtn.onclick = function(){
+		clearInterval(timer);
+		context.clearRect(-300, -250, 600, 400);
+		initRainbow();
+	}
+	
+	function initRainbow(){
+		drawRainbow(initAngleArr);
+	}
+	
+	function drawRainbow(angleArr){
+		context.lineWidth = lineWidth;
+		for(var i=0, radius = 200; i<colorArr.length; i++, radius-=10){
+			context.beginPath();
+			context.strokeStyle = colorArr[i];
+			context.arc(0, 0, radius, -Math.PI, angleArr[i], false);
+			context.stroke();
+			context.closePath();
+		}
+	}
+}
+</script>
+</head>
+<body>
+<div style="width:600px; height:350px; margin:100px auto 0px;border: 1px solid #333;">
+	<canvas id="canvas" width="600" height="350"></canvas>
+</div>
+<div id="buttons" style="text-align:center">
+	<input type="button" value="start" id="startBtn"/>
+    <input type="button" value="reset" id="resetBtn"/>
+</div>
+</body>
+</html>

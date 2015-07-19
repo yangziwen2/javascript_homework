@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<script>
+var arr = [2, 3, 5]
+var numArr = [];
+var resultMethodArr = [];
+function iter(arr, nodeValue,result, targetNum){
+	result += nodeValue;
+	numArr.push(nodeValue);
+	if(result >= targetNum){
+		if(result == targetNum){
+			resultMethodArr.push(numArr.slice(1));
+		}
+	}else{
+		for(var i=0; i<arr.length; i++){
+			var flag = false;
+			for(var j=numArr.length-1; j>=0; j--){
+				if(arr[i] < numArr[j]){
+					flag = true;
+				}
+			}
+			if(flag){
+				continue;	
+			}
+			iter(arr, arr[i], result, targetNum);
+			numArr.pop();
+		}
+	}
+}
+iter(arr, 0, 0, 10);	//可修改targetNum参数来改变求和的目标数
+alert('共有'+resultMethodArr.length+'种方式');
+for(var i=0; i<resultMethodArr.length; i++){
+	alert(resultMethodArr[i]);	
+}
+</script>
+</head>
+
+<body>
+</body>
+</html>

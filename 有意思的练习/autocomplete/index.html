@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>自动补全</title>
+<style>
+body {
+	margin: 0px; 
+	padding: 0px;
+}
+.wrap {
+	width: 250px;
+	margin: 0px auto 0px;
+	padding-top: 50px;
+}
+#operPanel {
+	position: absolute;
+	list-style: none;
+	margin: 0px;
+	margin-left: 30px;
+	margin-top: 30px;
+	padding: 10px;
+}
+#operPanel li {
+	margin: 0px;
+}
+</style>
+<script src="ajax.js"></script>
+<script src="autocomplete.js"></script>
+<script>
+window.onload = function(){
+	var initBtn = document.getElementById('initBtn'),
+		destroyBtn = document.getElementById('destroyBtn'),
+		pageSizeSelector = document.getElementById('pageSizeSel'),
+		delaySelector = document.getElementById('delaySel');
+		sortedSelector = document.getElementById('sortedSel');
+	delaySelector.value = 500;
+	pageSizeSelector.value = 5;
+	var acHandler = null;
+	initBtn.onclick = function(){
+		acHandler = autoComplete({
+			url: 'data.txt',
+			field: document.getElementById('nameTxt'),
+			hiddenField: document.getElementById('hiddenNameTxt'),
+			delay: delaySelector.value,
+			pageSize: pageSizeSelector.value,
+			sorted: sortedSelector.value,
+			suggestProcessor: function(content){
+				var curInput = this.field.value;
+				var re = new RegExp(curInput, 'i');
+				return content.replace(re, function(matchedStr){
+					return '<b style="color:red">' + matchedStr + '</b>';
+				});
+			},
+			contentProcessor: function(content){return content;}
+		});
+		if(arguments[0]){
+			alert('AutoComplete已重新初始化');
+		}
+	};
+	destroyBtn.onclick = function(){
+		acHandler.destroy();
+		alert('AutoComplete已销毁');
+	};
+	delaySelector.onchange = function(){
+		var paramObj = acHandler.getParamObj();
+		paramObj.delay = this.value;
+		acHandler = autoComplete(paramObj);
+	};
+	pageSizeSelector.onchange = function(){
+		var paramObj = acHandler.getParamObj();
+		paramObj.pageSize = this.value;
+		acHandler = autoComplete(paramObj);
+	};
+	sortedSelector.onchange = function(){
+		var paramObj = acHandler.getParamObj();
+		paramObj.sorted = this.value;
+		acHandler = autoComplete(paramObj);
+	}
+	initBtn.onclick();
+}
+</script>
+</head>
+<body>
+<ul id="operPanel">
+	<li>
+		延迟时间：
+		<select id="delaySel">
+			<option value="100">0.1秒</option>
+			<option value="300">0.3秒</option>
+			<option value="500">0.5秒</option>
+			<option value="1000">1秒</option>
+			<option value="2000">2秒</option>
+		</select>
+	</li>
+	<li>
+		返回数目：
+		<select id="pageSizeSel">
+			<option value="3">3</option>
+			<option value="5">5</option>
+			<option value="10">10</option>
+		</select>
+	</li>
+	<li>
+		是否排序：
+		<select id="sortedSel">
+			<option value="true">是</option>
+			<option value="false">否</option>
+		</select>
+	</li>
+	<li>
+		<input type="button" value="初始化" id="initBtn"/>
+		<input type="button" value="销毁" id="destroyBtn"/>
+	</li>
+	<li><br/></li>
+	<li><a href="data.txt" target="_blank">自动补全返回的数据见此链接</a></li>
+</ul>
+<div class="wrap">
+	姓名：<input id="nameTxt"/>
+	<!-- 视情况添加hiddenField -->
+	<input id="hiddenNameTxt" type="hidden"/>
+</div>
+</body>
+</html>
